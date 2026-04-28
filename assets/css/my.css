@@ -1,0 +1,133 @@
+.font-kecil {
+	font-size: 12px;
+}
+
+
+.font-bold {
+	font-weight: bold !important;
+}
+.font-italic {
+	font-style: italic !important;
+}
+.dataTables_wrapper .dataTables_paginate {
+	float: right !important;
+}
+.dataTables_wrapper .dataTables_filter {
+	float: right !important;
+}
+.btn-sm {
+	padding: 6px 8px !important;
+}
+.hilang {
+	display: none !important;
+}
+.table-tbody td {
+	/* background-color: aqua !important; */
+	padding: 5px !important;
+}
+.btn-flat {
+	border-radius: 0px !important;
+}
+.bg-gray {
+	background-color: #e6e6e6 !important;
+}
+/* #pbtabel .table-body td {
+	border-bottom: red;
+} */
+.text-teal-green {
+	color: #175873 !important;
+}
+.pull-left {
+	float: left !important;
+}
+.pull-left select {
+	width: 50px !important;
+	margin-bottom: 5px;
+}
+.pull-right {
+	float: right !important;
+}
+.bottom-left {
+	float: left !important;
+}
+.bottom-right {
+	float: right !important;
+	margin-top: 5px;
+}
+.line-12 {
+	line-height: 12px !important;
+}
+.title-dok {
+	font-size: 14px;
+	font-weight: bold;
+}
+.font-strike {
+	text-decoration: line-through !important;
+}
+.font-10 {
+	font-size: 10px !important;
+}
+.font-12 {
+	font-size: 12px !important;
+}
+.font-14 {
+	font-size: 14px !important;
+}
+#preloader {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+	background-color: #f6f8fb !important;
+}
+.tab-editmesin {
+	color: black !important;
+	border-left: 1px solid #e0e0e0;
+	border-right: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
+	min-height: 250px;
+}
+.font-roboto {
+	font-family: roboto, "tahoma";
+}
+.borderbottomred {
+	border-bottom: red;
+}
+.badges {
+	font-size: 11px !important;
+	font-weight: bold;
+	padding: 3px 6px;
+}
+#headerhakuser .nav-item .active {
+	/* color: rgb(255, 68, 0) !important; */
+	color: blue;
+	font-weight: bold;
+	background-color: #e6eef6;
+}
+
+/* Login style button  */
+.tombolbulat img {
+	height: 65px !important;
+	width: 65px !important;
+	border-radius: 50%;
+	margin-right: 15px;
+}
+.font-hitam {
+	color: black !important;
+}
+.cobagaya {
+	border-radius: 0px !important;
+	border: 1px solid #dadfe5 !important;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	/* height: 38px !important; */
+	padding: 0px 4px 2px !important;
+	/* font-size: 0.875rem !important;
+	font-weight: 400; */
+	line-height: 1.4285714286;
+	color: #182433 !important;
+	/* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23929dab' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e"); */
+}

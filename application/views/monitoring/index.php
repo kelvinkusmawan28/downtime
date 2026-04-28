@@ -1,0 +1,301 @@
+<style>
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .rotating-gear {
+    animation: spin 2s linear infinite;
+    display: inline-block;
+    color: #6c757d;
+    font-size: 14px;
+
+  }
+
+
+  .mesin-card {
+    min-height: auto !important;
+    border-radius: 4px;
+
+  }
+
+  .mesin-no {
+    font-size: 10;
+    line-height: 1;
+  }
+</style>
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <div class="col-lg-12 ">
+    <div class="card h-100 ">
+      <div class="card-body">
+        <h5 class="card-title text-dark mb-3"> 📌 <?= $title; ?></h5>
+        <div class="row" style="border: 1px solid grey ; padding : 8px ; border-radius : 10px">
+          <div class="col-lg-3">
+            <label class="font-kecil  text-dark">Departemen</label>
+
+            <?php
+            $hakdowntime = $this->session->userdata('hakdowntime');
+            $akses_dept_diberi = [];
+
+            foreach ($downtime_dept_map as $index => $dept_code) {
+              $start = ($index * 2) - 2;
+              if (substr($hakdowntime, $start, 2) === '10') {
+                $akses_dept_diberi[] = $dept_code;
+              }
+            }
+            ?>
+            <select name="filter" id="filter" class="form-select font-kecil mt-0">
+              <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
+              <?php foreach ($dept_options as $option) : ?>
+                <?php if (in_array($option['dept_id'],  $akses_dept_diberi)) : ?>
+                  <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : ''  ?>>
+                    <?= $option['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $option['departemen']; ?>
+                  </option>
+                <?php endif; ?>
+              <?php endforeach; ?>
+
+            </select>
+          </div>
+          <div class="col-lg-3 mb-2">
+            <label class="font-kecil text-dark">Tanggal</label>
+            <input type="date" id="filter_tanggal" name="filter_tanggal" class="form-control font-kecil" value="<?= $tgl_sekarang; ?>">
+          </div>
+          <div class="col-lg-2 mt-4 text-end">
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-lg-12 ">
+      <div class="card h-100 ">
+        <div class="card-body">
+          <div class="row mt-3 ">
+            <div class="col-lg-11" style="border-right: 1px solid grey;">
+              <div class="row" id="list_mesin" style="padding: 10px;"> </div>
+            </div>
+            <div class="col-lg-1">
+              <div class="text-dark" style="font-size :10px">Total Mesin: <span id="total_mesin">0</span></div>
+              <div id="summary_clr"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- / Content -->
+
+<div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog " role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Keterangan Mesin STOP </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div id="loadforminput"></div>
+      </div>
+      <div class="modal-footer">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
+<script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
+
+
+
+<script>
+  $(document).ready(function() {
+
+    function loadMesin() {
+
+      let dept = $("#filter").val();
+      let tanggal = $("#filter_tanggal").val();
+
+
+      $.ajax({
+        url: "<?= base_url('monitoring/getMesinByDept') ?>",
+        type: "POST",
+        data: {
+          dept: dept,
+          tanggal: tanggal,
+
+        },
+        dataType: "json",
+
+
+        success: function(response) {
+          let html = '';
+          let mesin_perbaikan = 0;
+
+          $.each(response.mesin, function(i, mesin) {
+            let warna = "#eeeeee";
+            let gearHtml = '';
+
+            if (mesin.clr != null) {
+              warna = "rgb(" + mesin.clr + ")";
+              mesin_perbaikan++;
+              //  tampilkan icon gear tapi DIAM (tidak putar)
+              gearHtml = `<i class="fas fa-cog text-muted" style="font-size: 12px;"></i>`;
+            } else {
+              // Jika jalan, gear BERPUTAR
+              gearHtml = `<i class="fas fa-cog rotating-gear"></i>`;
+            }
+            let status = mesin.downtime_id ? 1 : 0;
+            html += `
+             <div class="col-3 col-sm-2 col-md-1 mb-2 px-1"> <div class="card text-center mesin-card" style="background:${warna}">
+                <div class="card-body p-2"> <div class="mesin-no fw-bold text-dark viewdata" data-mach="${mesin.downtime_id}" data-status="${status}" >                    
+                      <span>${mesin.mach_no} </span>  <br>
+                      <span style ="font-size : 8px ; "> ${mesin.name} </span>  
+                 </div>
+                    <div style="height: 15px; margin-top: 2px;"> ${gearHtml}
+                    </div>
+                </div>
+              </div>
+           </div>`;
+          });
+
+          $("#list_mesin").html(html);
+          $("#total_mesin").text(response.mesin.length);
+          $("#mesin_perbaikan").text(mesin_perbaikan);
+
+
+          let summaryHtml = '';
+
+          $.each(response.summary, function(i, row) {
+            let warna = "#eeeeee";
+
+            if (row.clr != null) {
+              warna = "rgb(" + row.clr + ")";
+            }
+            summaryHtml += `
+            <div style="display:flex;align-items:center;margin-bottom:5px">
+              
+              <div style="
+                width:40px;
+                height:20px;
+                background:${warna};
+                margin-right:5px;
+                color:#000;
+                font-size:12px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+              ">
+                ${row.ins_kode ?? 'OK'}
+              </div>
+
+              ${row.total}
+
+            </div>
+            `;
+
+          });
+
+          $("#summary_clr").html(summaryHtml);
+        }
+
+      });
+
+    }
+
+
+    $("#filter,#filter_tanggal").change(function() {
+      loadMesin();
+    });
+
+    loadMesin();
+    // AUTO REFRESH
+    setInterval(function() {
+      loadMesin();
+    }, 5000);
+  });
+</script>
+
+<script>
+  $(document).on("click", ".viewdata", function() {
+
+    var mach_id = $(this).data("mach");
+    var status = $(this).data("status");
+
+
+    let tanggal = $("#filter_tanggal").val();
+
+    if (status == 1) {
+
+      const url = "<?= base_url('monitoring/view/'); ?>" + mach_id + "/" + tanggal;
+
+      $("#basicModal").modal("show");
+
+      $("#loadforminput").load(url, function() {
+        simpanTimestamp();
+      });
+
+    } else {
+
+      alert("MESIN SEDANG BERPRODUKSI");
+
+    }
+
+  });
+
+  let timerData = [];
+
+  function simpanTimestamp() {
+
+    timerData = [];
+
+    $(".updateon").each(function() {
+
+      const el = $(this);
+      const startTimestamp = parseInt(el.data("start"));
+
+      if (!isNaN(startTimestamp)) {
+
+        timerData.push({
+          el: el,
+          start: startTimestamp
+        });
+
+      }
+
+    });
+
+  }
+
+  setInterval(function() {
+
+    const now = new Date().getTime();
+
+    timerData.forEach(function(item) {
+
+      const distance = now - item.start;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      item.el.text(
+        days + " Hari, " +
+        hours + " Jam, " +
+        minutes + " Menit, " +
+        seconds + " Detik"
+      );
+
+    });
+
+  }, 1000);
+</script>
