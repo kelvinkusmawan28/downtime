@@ -1426,12 +1426,13 @@ class Dashboard_model extends CI_model
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
         $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
 
-        // ✅ WHERE
+
         $this->db->where('downtime.status', 1);
         $this->db->where('downtime.tanggal >=', $tanggal_30_hari_lalu);
         $this->db->where('downtime.tanggal <=', $tanggal);
+        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
 
-        // ✅ filter tambahan (biar aman kalau kosong)
+
         if (!empty($mach_id)) {
             $this->db->where('downtime.nomesin_id', $mach_id);
         }
