@@ -43,6 +43,7 @@
 
 <script src="<?= base_url(); ?>/assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
+
 <!-- Page JS -->
 <script src="<?= base_url(); ?>/assets/js/dashboards-analytics.js"></script>
 

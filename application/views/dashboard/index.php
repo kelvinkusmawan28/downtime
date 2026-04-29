@@ -69,6 +69,8 @@
     <div class="card h-100">
       <div class="card-body">
         <h5 class="card-title text-info mb-3"> 📌 <?= $title; ?></h5>
+
+
         <div class="row">
           <div class="col-lg-6">
             <div class="row">
@@ -141,7 +143,17 @@
         <div class="card h-100">
           <div class="card-body">
             <div class="row mb-5">
-              <h5 class="text-danger">MESIN STOP</h5>
+              <div class="row">
+                <div class="col-lg-6">
+                  <h5 class="text-danger">MESIN STOP</h5>
+                </div>
+                <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
+                  <div class="col-lg-6 " style="text-align: right;">
+                    <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-primary text-white"><i class="fa fa-box-archive me-2"></i>Rekapulasi Data</a>
+                  </div>
+                <?php endif ?>
+              </div>
+
               <div class="col-lg-2 mb-2">
                 <label class="font-kecil font-bold text-primary">Tanggal</label>
                 <input type="date" id="filter_tanggal" name="filter_tanggal" class="form-control font-kecil" value="<?= $tgl_sekarang; ?>">
@@ -228,6 +240,7 @@
             <div id="last_update" style="font-size:12px; margin-top:10px;">
               Last Update: -
             </div>
+
           </div>
         </div>
       </div>

@@ -334,4 +334,211 @@ class Dashboard extends CI_Controller
         }
         redirect('dashboard');
     }
+
+    public function grafik()
+    {
+        $data['title'] = 'Rekapulasi Mesin Stop';
+        $data['tgl_sekarang'] = date('Y-m-d');
+        $data['bln_sekarang'] = date('m');
+        $data['thn_sekarang'] = date('Y');
+        $data['bulan_options'] = $this->Dashboard_model->getBulan();
+        $data['tahun_options'] = $this->Dashboard_model->getTahun();
+        $data['dept_options'] = $this->Dashboard_model->getFilter();
+
+        $data['filter_bulan'] = $this->session->userdata('filter_bulan') ?? 'all';
+        $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
+        $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
+        $data['reason'] = $this->db->get('downtime_ketof')->result_array();
+
+        $data['downtime_dept_map'] = [
+            1 => 'FN',
+            2 => 'NT',
+            3 => 'RR',
+            4 => 'SP',
+            5 => 'UT',
+            6 => 'GF',
+            7 => 'AR',
+
+        ];
+        $this->load->view('templates/header', $data);
+        $this->load->view('dashboard/grafik', $data);
+        $this->load->view('templates/footer');
+    }
+
+    // public function line()
+    // {
+    //     $bulan = $this->input->post('bulan');
+    //     $tahun = $this->input->post('tahun');
+    //     $dept = $this->input->post('dept');
+    //     $reason = $this->input->post('reason');
+
+    //     $this->db->select("
+    //         DATE(downtime_mesinof.tanggal) as tanggal,
+    //         COUNT(downtime_mesinof.ket_id) as jumlah
+    //     ");
+    //     $this->db->from('downtime_mesinof');
+    //     $this->db->join('downtime_ketof', 'downtime_ketof.id = downtime_mesinof.ket_id', 'left');
+
+    //     if ($dept != 'all') {
+    //         $this->db->where('downtime_mesinof.dept_id', $dept);
+    //     }
+
+    //     if ($bulan != 'all') {
+    //         $this->db->where('MONTH(downtime_mesinof.tanggal)', $bulan);
+    //     }
+
+    //     if ($tahun != 'all') {
+    //         $this->db->where('YEAR(downtime_mesinof.tanggal)', $tahun);
+    //     }
+
+    //     if ($reason != 'all') {
+    //         $this->db->where('downtime_mesinof.ket_id', $reason);
+    //     }
+
+    //     $this->db->group_by('DATE(downtime_mesinof.tanggal)');
+    //     $this->db->order_by('tanggal', 'ASC');
+
+    //     $result = $this->db->get()->result_array();
+
+    //     // 🔥 bikin 1 bulan full (1–31)
+    //     $jumlahHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
+
+    //     $dataFull = [];
+    //     for ($i = 1; $i <= $jumlahHari; $i++) {
+    //         $tgl = str_pad($i, 2, '0', STR_PAD_LEFT);
+    //         $dataFull[$tgl] = 0;
+    //     }
+
+    //     foreach ($result as $row) {
+    //         $tgl = date('d', strtotime($row['tanggal']));
+    //         $dataFull[$tgl] = (int)$row['jumlah'] . 'x';
+    //     }
+
+    //     echo json_encode([
+    //         'tanggal' => array_keys($dataFull),
+    //         'jumlah'  => array_values($dataFull)
+    //     ]);
+    // }
+    public function line()
+    {
+        $bulan  = $this->input->post('bulan');
+        $tahun  = $this->input->post('tahun');
+        $dept   = $this->input->post('dept');
+        $reason = $this->input->post('reason');
+
+
+        $mapDept = [
+            'SP' => 'sp',
+            'RR' => 'rr',
+            'NT' => 'nt',
+            'AR' => 'nt',
+            'UT' => 'nt',
+            'FN' => 'fn'
+        ];
+
+        $this->db->select("
+            DATE(downtime_mesinof.tanggal) as tanggal,
+            downtime_mesinof.ket_id,
+            downtime_ketof.code,
+            downtime_ketof.clr,
+            COUNT(*) as jumlah
+        ");
+
+        $this->db->from('downtime_mesinof');
+        $this->db->where('downtime_mesinof.ket_id IS NOT NULL', null, false);
+        $this->db->where('downtime_mesinof.ket_id !=', 0);
+
+        $this->db->join(
+            'downtime_ketof',
+            'downtime_ketof.id = downtime_mesinof.ket_id',
+            'left'
+        );
+
+        $this->db->join(
+            'downtime_libur',
+            'downtime_libur.tanggal = DATE(downtime_mesinof.tanggal)',
+            'left'
+        );
+
+        if (!empty($dept) && $dept != 'all') {
+            $this->db->where('downtime_mesinof.dept_id', $dept);
+
+            $fieldLibur = $mapDept[$dept] ?? null;
+
+            if ($fieldLibur) {
+                $this->db->where("(downtime_libur.$fieldLibur = 0 OR downtime_libur.$fieldLibur IS NULL)");
+            }
+        }
+
+        if (!empty($bulan) && $bulan != 'all') {
+            $this->db->where('MONTH(downtime_mesinof.tanggal)', $bulan);
+        }
+
+        if (!empty($tahun) && $tahun != 'all') {
+            $this->db->where('YEAR(downtime_mesinof.tanggal)', $tahun);
+        }
+
+        if (!empty($reason) && $reason != 'all') {
+            $this->db->where('downtime_mesinof.ket_id', $reason);
+        }
+
+        $this->db->group_by([
+            'DATE(downtime_mesinof.tanggal)',
+            'downtime_mesinof.ket_id'
+        ]);
+
+        $this->db->order_by('tanggal', 'ASC');
+
+        $result = $this->db->get()->result_array();
+
+        $tanggalList = [];
+        $temp = [];
+        $warnaMap = [];
+
+
+        foreach ($result as $row) {
+
+            if (empty($row['code'])) continue;
+
+            $tgl = date('d', strtotime($row['tanggal']));
+            $kode = $row['code'];
+
+            if (!in_array($tgl, $tanggalList)) {
+                $tanggalList[] = $tgl;
+            }
+
+            $temp[$kode][$tgl] = (int)$row['jumlah'];
+
+            $warnaMap[$kode] = !empty($row['clr'])
+                ? 'rgb(' . $row['clr'] . ')'
+                : '#999999';
+        }
+        ksort($temp);
+        ksort($warnaMap);
+
+
+        $series = [];
+        $colors = [];
+
+        foreach ($temp as $kode => $data) {
+            $line = [];
+
+            foreach ($tanggalList as $tgl) {
+                $line[] = isset($data[$tgl]) ? $data[$tgl] : 0;
+            }
+
+            $series[] = [
+                'name' => $kode,
+                'data' => $line
+            ];
+
+            $colors[] = $warnaMap[$kode];
+        }
+
+        echo json_encode([
+            'tanggal' => $tanggalList,
+            'series'  => $series,
+            'colors'  => $colors
+        ]);
+    }
 }
