@@ -146,7 +146,7 @@
       });
     }
 
-    // let chart = null;
+    let chart = null;
 
     // function renderChart(data) {
     //   const el = document.querySelector('#Chart-kelvin');
@@ -190,11 +190,86 @@
     //   chart.render();
     // }
 
-    let chart = null;
+    // pertanggal
+
+    // function renderChart(data) {
+    //   const el = document.querySelector('#Chart-kelvin');
+
+
+    //   if (chart !== null) {
+    //     chart.destroy();
+    //   }
+
+    //   const options = {
+    //     series: data.series,
+
+    //     chart: {
+    //       type: 'area',
+    //       height: 250,
+    //       toolbar: {
+    //         show: true,
+    //         tools: {
+    //           download: true
+    //         }
+    //       }
+    //     },
+
+    //     stroke: {
+    //       curve: 'smooth',
+    //       width: 3
+    //     },
+
+    //     dataLabels: {
+    //       enabled: false
+    //     },
+
+
+    //     colors: data.colors,
+
+    //     xaxis: {
+    //       categories: data.tanggal,
+    //       title: {
+    //         text: 'Tanggal'
+    //       }
+    //     },
+
+    //     yaxis: {
+    //       title: {
+    //         text: 'Jumlah'
+    //       }
+    //     },
+
+    //     legend: {
+    //       show: true
+    //     },
+
+    //     fill: {
+    //       type: 'gradient',
+    //       gradient: {
+    //         shadeIntensity: 1,
+    //         opacityFrom: 0.4,
+    //         opacityTo: 0.1,
+    //         stops: [0, 100]
+    //       }
+    //     },
+
+    //     tooltip: {
+    //       y: {
+    //         formatter: function(val) {
+    //           return val + " x Stop";
+    //         }
+    //       }
+    //     }
+    //   };
+
+    //   chart = new ApexCharts(el, options);
+    //   chart.render();
+    // }
+
+
 
     function renderChart(data) {
       const el = document.querySelector('#Chart-kelvin');
-
 
       if (chart !== null) {
         chart.destroy();
@@ -205,42 +280,45 @@
 
         chart: {
           type: 'area',
-          height: 250,
+          height: 300,
           toolbar: {
-            show: true,
-            tools: {
-              download: true
-            }
+            show: true
           }
         },
 
         stroke: {
           curve: 'smooth',
-          width: 3
+          width: 2
         },
 
         dataLabels: {
           enabled: false
         },
 
-
         colors: data.colors,
 
         xaxis: {
           categories: data.tanggal,
           title: {
-            text: 'Tanggal'
+            text: 'Tanggal / Shift',
+            text: 'Rata-rata: ' + data.rata_rata
+          },
+          labels: {
+            rotate: -45,
+            style: {
+              fontSize: '10px'
+            }
           }
         },
 
         yaxis: {
           title: {
-            text: 'Jumlah'
+            text: 'Jumlah Stop',
           }
         },
 
         legend: {
-          show: true
+          position: 'top'
         },
 
         fill: {
@@ -254,6 +332,11 @@
         },
 
         tooltip: {
+          x: {
+            formatter: function(val) {
+              return data.labelMap[val] || val;
+            }
+          },
           y: {
             formatter: function(val) {
               return val + " x Stop";

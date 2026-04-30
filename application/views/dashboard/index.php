@@ -149,7 +149,7 @@
                 </div>
                 <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
                   <div class="col-lg-6 " style="text-align: right;">
-                    <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-primary text-white"><i class="fa fa-box-archive me-2"></i>Rekapulasi Data</a>
+                    <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-warning text-dark"><i class="fa fa-chart-line me-2"></i>Rekapulasi Mesin Stop</a>
                   </div>
                 <?php endif ?>
               </div>

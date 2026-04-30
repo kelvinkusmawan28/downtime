@@ -364,7 +364,7 @@ class Dashboard extends CI_Controller
         $this->load->view('dashboard/grafik', $data);
         $this->load->view('templates/footer');
     }
-
+    // satu line
     // public function line()
     // {
     //     $bulan = $this->input->post('bulan');
@@ -419,13 +419,138 @@ class Dashboard extends CI_Controller
     //         'jumlah'  => array_values($dataFull)
     //     ]);
     // }
+
+    // pertanggal
+    // public function line()
+    // {
+    //     $bulan  = $this->input->post('bulan');
+    //     $tahun  = $this->input->post('tahun');
+    //     $dept   = $this->input->post('dept');
+    //     $reason = $this->input->post('reason');
+
+
+    //     $mapDept = [
+    //         'SP' => 'sp',
+    //         'RR' => 'rr',
+    //         'NT' => 'nt',
+    //         'AR' => 'nt',
+    //         'UT' => 'nt',
+    //         'FN' => 'fn'
+    //     ];
+
+    //     $this->db->select("
+    //         DATE(downtime_mesinof.tanggal) as tanggal,
+    //         downtime_mesinof.ket_id,
+    //         downtime_ketof.code,
+    //         downtime_ketof.clr,
+    //         COUNT(*) as jumlah
+    //     ");
+
+    //     $this->db->from('downtime_mesinof');
+    //     $this->db->where('downtime_mesinof.ket_id IS NOT NULL', null, false);
+    //     $this->db->where('downtime_mesinof.ket_id !=', 0);
+
+
+    //     $this->db->join(
+    //         'downtime_ketof',
+    //         'downtime_ketof.id = downtime_mesinof.ket_id',
+    //         'left'
+    //     );
+
+    //     $this->db->join(
+    //         'downtime_libur',
+    //         'downtime_libur.tanggal = DATE(downtime_mesinof.tanggal)',
+    //         'left'
+    //     );
+
+    //     if (!empty($dept) && $dept != 'all') {
+    //         $this->db->where('downtime_mesinof.dept_id', $dept);
+
+    //         $fieldLibur = $mapDept[$dept] ?? null;
+
+    //         if ($fieldLibur) {
+    //             $this->db->where("(downtime_libur.$fieldLibur = 0 OR downtime_libur.$fieldLibur IS NULL)");
+    //         }
+    //     }
+
+    //     if (!empty($bulan) && $bulan != 'all') {
+    //         $this->db->where('MONTH(downtime_mesinof.tanggal)', $bulan);
+    //     }
+
+    //     if (!empty($tahun) && $tahun != 'all') {
+    //         $this->db->where('YEAR(downtime_mesinof.tanggal)', $tahun);
+    //     }
+
+    //     if (!empty($reason) && $reason != 'all') {
+    //         $this->db->where('downtime_mesinof.ket_id', $reason);
+    //     }
+
+    //     $this->db->group_by([
+    //         'DATE(downtime_mesinof.tanggal)',
+    //         'downtime_mesinof.ket_id'
+    //     ]);
+
+    //     $this->db->order_by('tanggal', 'ASC');
+
+    //     $result = $this->db->get()->result_array();
+
+    //     $tanggalList = [];
+    //     $temp = [];
+    //     $warnaMap = [];
+
+
+    //     foreach ($result as $row) {
+
+    //         if (empty($row['code'])) continue;
+
+    //         $tgl = date('d', strtotime($row['tanggal']));
+    //         $kode = $row['code'];
+
+    //         if (!in_array($tgl, $tanggalList)) {
+    //             $tanggalList[] = $tgl;
+    //         }
+
+    //         $temp[$kode][$tgl] = (int)$row['jumlah'];
+
+    //         $warnaMap[$kode] = !empty($row['clr'])
+    //             ? 'rgb(' . $row['clr'] . ')'
+    //             : '#999999';
+    //     }
+    //     ksort($temp);
+    //     ksort($warnaMap);
+
+
+    //     $series = [];
+    //     $colors = [];
+
+    //     foreach ($temp as $kode => $data) {
+    //         $line = [];
+
+    //         foreach ($tanggalList as $tgl) {
+    //             $line[] = isset($data[$tgl]) ? $data[$tgl] : 0;
+    //         }
+
+    //         $series[] = [
+    //             'name' => $kode,
+    //             'data' => $line
+    //         ];
+
+    //         $colors[] = $warnaMap[$kode];
+    //     }
+
+    //     echo json_encode([
+    //         'tanggal' => $tanggalList,
+    //         'series'  => $series,
+    //         'colors'  => $colors
+    //     ]);
+    // }
+
     public function line()
     {
         $bulan  = $this->input->post('bulan');
         $tahun  = $this->input->post('tahun');
         $dept   = $this->input->post('dept');
         $reason = $this->input->post('reason');
-
 
         $mapDept = [
             'SP' => 'sp',
@@ -437,12 +562,13 @@ class Dashboard extends CI_Controller
         ];
 
         $this->db->select("
-            DATE(downtime_mesinof.tanggal) as tanggal,
-            downtime_mesinof.ket_id,
-            downtime_ketof.code,
-            downtime_ketof.clr,
-            COUNT(*) as jumlah
-        ");
+        DATE(downtime_mesinof.tanggal) as tanggal,
+        IF(downtime_mesinof.shift=3,0,downtime_mesinof.shift) as shift,
+        downtime_mesinof.ket_id,
+        downtime_ketof.code,
+        downtime_ketof.clr,
+        COUNT(*) as jumlah
+      ");
 
         $this->db->from('downtime_mesinof');
         $this->db->where('downtime_mesinof.ket_id IS NOT NULL', null, false);
@@ -484,10 +610,12 @@ class Dashboard extends CI_Controller
 
         $this->db->group_by([
             'DATE(downtime_mesinof.tanggal)',
+            'shift',
             'downtime_mesinof.ket_id'
         ]);
 
         $this->db->order_by('tanggal', 'ASC');
+        $this->db->order_by('shift', 'ASC');
 
         $result = $this->db->get()->result_array();
 
@@ -495,27 +623,62 @@ class Dashboard extends CI_Controller
         $temp = [];
         $warnaMap = [];
 
+        $tanggalIndexMap = [];
+        $currentIndex = 0;
+        $labelMap = [];
+
+        $urutanShift = [
+            3 => 1,
+            1 => 2,
+            2 => 3
+        ];
+        $mapShift = [
+            1 => 'P',
+            2 => 'S',
+            3 => 'M'
+        ];
 
         foreach ($result as $row) {
 
             if (empty($row['code'])) continue;
 
-            $tgl = date('d', strtotime($row['tanggal']));
-            $kode = $row['code'];
+            $tglFull = $row['tanggal'];
+            $shift   = (int)$row['shift'];
 
-            if (!in_array($tgl, $tanggalList)) {
-                $tanggalList[] = $tgl;
+            if (!isset($tanggalIndexMap[$tglFull])) {
+                $currentIndex++;
+                $tanggalIndexMap[$tglFull] = $currentIndex;
             }
 
-            $temp[$kode][$tgl] = (int)$row['jumlah'];
+            $tglIndex = $tanggalIndexMap[$tglFull];
+
+            $shiftFix = ($shift == 0 ? 3 : $shift);
+
+            $label = (($tglIndex - 1) * 3) + ($urutanShift[$shiftFix] ?? $shiftFix);
+
+            if (!in_array($label, $tanggalList)) {
+                $tanggalList[] = $label;
+            }
+
+            $tglView   = date('d', strtotime($tglFull));
+            $shiftView = ($shift == 0 ? 3 : $shift);
+            $shiftLabel = $mapShift[$shiftView] ?? $shiftView;
+            $labelMap[$label] = $tglView . ' (' . $shiftLabel . ')';
+
+
+
+            $kode = $row['code'];
+
+            $temp[$kode][$label] = (int)$row['jumlah'];
 
             $warnaMap[$kode] = !empty($row['clr'])
                 ? 'rgb(' . $row['clr'] . ')'
                 : '#999999';
         }
-        ksort($temp);
-        ksort($warnaMap);
 
+
+        sort($tanggalList);
+        ksort($temp);
 
         $series = [];
         $colors = [];
@@ -535,10 +698,25 @@ class Dashboard extends CI_Controller
             $colors[] = $warnaMap[$kode];
         }
 
+        // Hitung Total Jml dan Total Baris
+        $totalJml = 0;
+        $totalBaris = count($result);
+
+        foreach ($result as $row) {
+            $totalJml += (int)$row['jumlah'];
+        }
+
+        // “Rata-rata jumlah downtime untuk
+        // setiap kombinasi tanggal + shift + reason
+        // dalam dept & filter yang dipilih”
+        $rataRata = ($totalBaris > 0) ? ($totalJml / $totalBaris) : 0;
+
         echo json_encode([
-            'tanggal' => $tanggalList,
-            'series'  => $series,
-            'colors'  => $colors
+            'tanggal'  => $tanggalList,
+            'series'   => $series,
+            'colors'   => $colors,
+            'labelMap' => $labelMap,
+            'rata_rata' => round($rataRata, 2)
         ]);
     }
 }
