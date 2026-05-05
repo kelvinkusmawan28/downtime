@@ -464,6 +464,27 @@ class Instruksi extends CI_Controller
         }
 
         $post = $this->input->post();
+
+        $mesin = $post['mach_id'];
+        $cek_mesin = $this->Instruksi_model->CekMesin_update($mesin);
+
+
+        if ($cek_mesin) {
+            $this->session->set_flashdata('message', '
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <h4 class="alert-heading d-flex align-items-center flex-wrap gap-1">
+                <span class="alert-icon rounded-circle"><i class="icon-base bx bx-error"></i></span>Error!!
+                </h4>
+                <p><b>DATA TIDAK DAPAT DISIMPAN !</b> 
+                instruksi sebelumnya di mesin ini sedang progress . 
+                Mohon lakukan pengecekan terlebih dahulu. Terimkakasih</p>
+                <hr />
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            ');
+            redirect('instruksi');
+        }
         $data = [
             'user' => $this->session->userdata('name'),
             'kerusakan_mulai' => date('Y-m-d H:i'),

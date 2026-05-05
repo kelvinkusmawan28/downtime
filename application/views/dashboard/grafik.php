@@ -84,7 +84,7 @@
 
 
 
-      <div class="row">
+      <div class="row" style="padding: 10px;">
         <div id="Chart-kelvin"></div>
         <!-- <div id="incomeChart"></div> -->
       </div>
@@ -124,14 +124,23 @@
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <script>
   $(document).ready(function() {
+    const base_url = "<?= base_url() ?>";
+
     function loadGrafik() {
       const bulan = $('#filter_bulan').val();
       const tahun = $('#filter_tahun').val();
       const dept = $('#filter_dept').val();
       const reason = $('#reason').val();
+      console.log(reason);
+
+      if (reason == 41) {
+        url = 'dashboard/line_mesin_jalan';
+      } else {
+        url = 'dashboard/line';
+      }
 
       $.ajax({
-        url: "<?= base_url('dashboard/line') ?>",
+        url: base_url + url,
         type: "POST",
         data: {
           bulan,
@@ -191,7 +200,6 @@
     // }
 
     // pertanggal
-
     // function renderChart(data) {
     //   const el = document.querySelector('#Chart-kelvin');
 
@@ -267,6 +275,88 @@
     // }
 
 
+    // sebelum ada kondisi mesin jalan
+    // function renderChart(data) {
+    //   const el = document.querySelector('#Chart-kelvin');
+
+    //   if (chart !== null) {
+    //     chart.destroy();
+    //   }
+
+    //   const options = {
+    //     series: data.series,
+
+    //     chart: {
+    //       type: 'area',
+    //       height: 300,
+    //       toolbar: {
+    //         show: true
+    //       }
+    //     },
+
+    //     stroke: {
+    //       curve: 'smooth',
+    //       width: 2
+    //     },
+
+    //     dataLabels: {
+    //       enabled: false
+    //     },
+
+    //     colors: data.colors,
+
+    //     xaxis: {
+    //       categories: data.tanggal,
+    //       title: {
+    //         text: 'Tanggal / Shift',
+    //         text: 'Rata-rata: ' + data.rata_rata
+    //       },
+    //       labels: {
+    //         rotate: -45,
+    //         style: {
+    //           fontSize: '10px'
+    //         }
+    //       }
+    //     },
+
+    //     yaxis: {
+    //       title: {
+    //         text: 'Jumlah Stop',
+    //       }
+    //     },
+
+    //     legend: {
+    //       position: 'top'
+    //     },
+
+    //     fill: {
+    //       type: 'gradient',
+    //       gradient: {
+    //         shadeIntensity: 1,
+    //         opacityFrom: 0.4,
+    //         opacityTo: 0.1,
+    //         stops: [0, 100]
+    //       }
+    //     },
+
+    //     tooltip: {
+    //       x: {
+    //         formatter: function(val) {
+    //           return data.labelMap[val] || val;
+    //         }
+    //       },
+    //       y: {
+    //         formatter: function(val) {
+    //           return val + " x Stop";
+    //         }
+    //       }
+    //     }
+    //   };
+
+    //   chart = new ApexCharts(el, options);
+    //   chart.render();
+    // }
+
 
     function renderChart(data) {
       const el = document.querySelector('#Chart-kelvin');
@@ -274,6 +364,96 @@
       if (chart !== null) {
         chart.destroy();
       }
+
+      // 🔥 KHUSUS MESIN JALAN
+      if (!data.series) {
+
+        // 🔥 SORT DULU (tanggal + shift)
+        data.sort((a, b) => {
+          if (a.tanggal !== b.tanggal) {
+            return a.tanggal.localeCompare(b.tanggal);
+          }
+
+          let shiftA = a.shift == 0 ? 3 : a.shift;
+          let shiftB = b.shift == 0 ? 3 : b.shift;
+
+          return shiftA - shiftB;
+        });
+
+        let categories = [];
+        let values = [];
+        let fullLabel = [];
+
+        data.forEach((row, index) => {
+          let shift = row.shift == 0 ? 3 : row.shift;
+          let shiftLabel = shift == 1 ? 'P' : (shift == 2 ? 'S' : 'M');
+
+          // 🔥 X-axis jadi angka
+          categories.push(index + 1);
+
+          // 🔥 simpan label asli untuk tooltip
+          fullLabel.push(row.tanggal + ' (' + shiftLabel + ')');
+
+          values.push(row.jumlah);
+        });
+
+        const options = {
+          series: [{
+            name: 'MESIN JALAN',
+            data: values
+          }],
+
+          chart: {
+            type: 'area',
+            height: 300
+          },
+
+          stroke: {
+            curve: 'smooth'
+          },
+          xaxis: {
+            categories: categories,
+            labels: {
+              rotate: 0, // 👈 Paksa rotasi ke 0 derajat (lurus)
+              rotateAlways: false,
+              hideOverlappingLabels: true, // 👈 Sembunyikan label jika tetap tabrakan
+              style: {
+                fontSize: '8px'
+              },
+            },
+            title: {
+              text: 'Index - Rata-rata: ' + data.rata_rata
+            }
+          },
+
+          tooltip: {
+            x: {
+              formatter: function(val, opts) {
+                return fullLabel[opts.dataPointIndex]; // ✅ tampil detail di hover
+              }
+            },
+            y: {
+              formatter: function(val) {
+                return val + " Mesin";
+              }
+            }
+          },
+
+          yaxis: {
+            title: {
+              text: 'Jumlah Mesin Jalan'
+            }
+          }
+        };
+
+        chart = new ApexCharts(el, options);
+        chart.render();
+        return;
+      }
+
+      // ===============================
+      // 🔽 CODE LAMA (FIX ERROR)
+      // ===============================
 
       const options = {
         series: data.series,
@@ -299,15 +479,13 @@
 
         xaxis: {
           categories: data.tanggal,
-          title: {
-            text: 'Tanggal / Shift',
-            text: 'Rata-rata: ' + data.rata_rata
-          },
           labels: {
-            rotate: -45,
-            style: {
-              fontSize: '10px'
-            }
+            rotate: 0, // 👈 Tambahkan ini agar angka tegak lurus
+            rotateAlways: false,
+            tickAmount: 10 // 👈 Sesuaikan angka ini (misal tampilkan tiap 10 data saja)
+          },
+          title: {
+            text: 'Tanggal / Shift - Rata-rata: ' + data.rata_rata
           }
         },
 
@@ -339,7 +517,7 @@
           },
           y: {
             formatter: function(val) {
-              return val + " x Stop";
+              return val + " ";
             }
           }
         }

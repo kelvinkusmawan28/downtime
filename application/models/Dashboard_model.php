@@ -148,8 +148,24 @@ class Dashboard_model extends CI_model
         $this->db->order_by('bulan', 'ASC');
         return $this->db->get()->result_array();
     }
+    public function getBulan_off()
+    {
+        $this->db->select('MONTH(tanggal) as bulan, MONTHNAME(tanggal) as nama_bulan');
+        $this->db->from('downtime_mesinof');
+        $this->db->group_by('MONTH(tanggal)');
+        $this->db->order_by('bulan', 'ASC');
+        return $this->db->get()->result_array();
+    }
 
 
+    public function getTahun_off()
+    {
+        $this->db->select('YEAR(tanggal) as tahun');
+        $this->db->from('downtime_mesinof');
+        $this->db->group_by('YEAR(tanggal)');
+        $this->db->order_by('tahun', 'DESC');
+        return $this->db->get()->result_array();
+    }
     public function getTahun()
     {
         $this->db->select('YEAR(tanggal) as tahun');

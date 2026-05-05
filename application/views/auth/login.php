@@ -1,27 +1,55 @@
-<div class="container-xxl">
+<style>
+    .card-background-overlay {
+        background-color: transparent;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-background-overlay::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8)),
+            url('<?= base_url('assets/img/elements/tes4.png') ?>');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
+
+    }
+
+
+    .card-background-overlay .card-body {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+
+<div class="container-xxl ">
     <div class="authentication-wrapper authentication-basic container-p-y">
         <div class="authentication-inner">
             <!-- Register -->
-            <div class="card px-sm-6 px-0">
-                <div class="card-body">
-                    <div class="row">
-                        <div style="text-align: center;">
-                            <img src="<?= base_url(); ?>/assets/img/elements/user2.jpeg" style="width: 120px;">
-                        </div>
-                    </div>
-                    <h6 class="mb-1" style="font-size: 21px;">Selamat Datang Di Sistem Informasi Downtime Mesin ! 👋</h6>
+            <div class="card card-background-overlay px-sm-6 px-0 ">
+                <div class="card-body ">
+                    <p class="mb-5 lead fw-bold text-dark font-sans-serif text-center" style="font-size: 22px;">Selamat Datang Di Sistem Informasi Downtime Mesin! 👋</p>
                     <br>
                     <?= $this->session->flashdata('message'); ?>
-                    <form action="<?= base_url('auth'); ?>" method="POST" class="mb-6">
+                    <form action="<?= base_url('auth'); ?>" method="POST" class="mb-4">
                         <div class="mb-6">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter  username" autofocus />
+                            <label for="username" class="form-label text-dark">Username</label>
+                            <input type="text" class="form-control text-dark" id="username" name="username" placeholder="Enter  username" autofocus />
                         </div>
                         <div class="mb-6 form-password-toggle">
-                            <label class="form-label" for="password">Password</label>
+                            <label class="form-label text-dark" for="password">Password</label>
                             <div class="input-group input-group-merge">
-                                <input type="password" id="password" name="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
-                                <span class="input-group-text cursor-pointer"><i class="icon-base bx bx-hide"></i></span>
+                                <input type="password" id="password" name="password" class="form-control text-dark" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer text-dark"><i class="icon-base bx bx-hide"></i></span>
                             </div>
                         </div>
                         <div class="mb-8">

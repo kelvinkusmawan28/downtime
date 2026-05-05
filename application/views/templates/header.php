@@ -97,18 +97,16 @@
         </div> -->
 
         <div class="app-brand demo">
-          <a href="index.html" class="app-brand-link">
-            <div style="display: flex; align-items: center;">
+          <div class="mt-3" style="display: flex; align-items: center; padding :10px;">
 
-              <!-- <span class="app-brand-text demo menu-text fw-bold">Downtime</span> -->
-              <img src="<?= base_url(); ?>/assets/img/elements/header.jpeg" style="width: 140px; ">
-            </div>
-          </a>
+            <!-- <span class="app-brand-text demo menu-text fw-bold">Downtime</span> -->
+            <img src="<?= base_url(); ?>/assets/img/elements/tes4.png" style="width: 195px; ">
+          </div>
         </div>
 
 
 
-        <div class="menu-divider mt-0"></div>
+        <div class="menu-divider mt-3"></div>
 
         <div class="menu-inner-shadow"></div>
 

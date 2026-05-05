@@ -224,9 +224,8 @@ class Mesin_model extends CI_model
     {
         $this->db->from('downtime');
         $this->db->where('nomesin_id', $mesin);
+        $this->db->where('ins !=', 1);
         $this->db->where_in('status', [0, 2]);
-
-
         return $this->db->count_all_results();
     }
 
@@ -234,6 +233,7 @@ class Mesin_model extends CI_model
     {
         $this->db->from('downtime');
         $this->db->where('nomesin_id', $mesin);
+        $this->db->where('ins !=', 1);
         $this->db->where_in('status', 0);
         return $this->db->count_all_results();
     }

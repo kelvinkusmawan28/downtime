@@ -341,14 +341,14 @@ class Dashboard extends CI_Controller
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
-        $data['bulan_options'] = $this->Dashboard_model->getBulan();
-        $data['tahun_options'] = $this->Dashboard_model->getTahun();
+        $data['bulan_options'] = $this->Dashboard_model->getBulan_off();
+        $data['tahun_options'] = $this->Dashboard_model->getTahun_off();
         $data['dept_options'] = $this->Dashboard_model->getFilter();
 
         $data['filter_bulan'] = $this->session->userdata('filter_bulan') ?? 'all';
         $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
         $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
-        $data['reason'] = $this->db->get('downtime_ketof')->result_array();
+        $data['reason'] = $this->db->order_by('reason')->get('downtime_ketof_line')->result_array();
 
         $data['downtime_dept_map'] = [
             1 => 'FN',
@@ -561,6 +561,8 @@ class Dashboard extends CI_Controller
             'FN' => 'fn'
         ];
 
+
+
         $this->db->select("
         DATE(downtime_mesinof.tanggal) as tanggal,
         IF(downtime_mesinof.shift=3,0,downtime_mesinof.shift) as shift,
@@ -710,6 +712,157 @@ class Dashboard extends CI_Controller
         // setiap kombinasi tanggal + shift + reason
         // dalam dept & filter yang dipilih”
         $rataRata = ($totalBaris > 0) ? ($totalJml / $totalBaris) : 0;
+
+        echo json_encode([
+            'tanggal'  => $tanggalList,
+            'series'   => $series,
+            'colors'   => $colors,
+            'labelMap' => $labelMap,
+            'rata_rata' => round($rataRata, 2)
+        ]);
+    }
+    public function line_mesin_jalan()
+    {
+        $bulan  = $this->input->post('bulan');
+        $tahun  = $this->input->post('tahun');
+        $dept   = $this->input->post('dept');
+
+        $mapDept = [
+            'SP' => 'sp',
+            'RR' => 'rr',
+            'NT' => 'nt',
+            'AR' => 'nt',
+            'UT' => 'nt',
+            'FN' => 'fn'
+        ];
+
+        // 🔥 total mesin
+        $this->db->from('downtime_spekmesin');
+        if (!empty($dept) && $dept != 'all') {
+            $this->db->where('dept_kode', $dept);
+        }
+        $totalMesin = $this->db->count_all_results();
+
+        // 🔥 downtime semua reason
+        $this->db->select("
+            DATE(downtime_mesinof.tanggal) as tanggal,
+            IF(downtime_mesinof.shift=3,0,downtime_mesinof.shift) as shift,
+            COUNT(*) as jumlah
+        ");
+
+        $this->db->from('downtime_mesinof');
+
+        $this->db->where('downtime_mesinof.ket_id !=', 0);
+
+        // 🔥 JOIN LIBUR (WAJIB)
+        $this->db->join(
+            'downtime_libur',
+            'downtime_libur.tanggal = DATE(downtime_mesinof.tanggal)',
+            'left'
+        );
+
+        if (!empty($dept) && $dept != 'all') {
+            $this->db->where('downtime_mesinof.dept_id', $dept);
+
+            $fieldLibur = $mapDept[$dept] ?? null;
+
+            if ($fieldLibur) {
+                $this->db->where("(downtime_libur.$fieldLibur = 0 OR downtime_libur.$fieldLibur IS NULL)");
+            }
+        }
+
+        if (!empty($bulan) && $bulan != 'all') {
+            $this->db->where('MONTH(downtime_mesinof.tanggal)', $bulan);
+        }
+
+        if (!empty($tahun) && $tahun != 'all') {
+            $this->db->where('YEAR(downtime_mesinof.tanggal)', $tahun);
+        }
+
+        $this->db->group_by([
+            'DATE(downtime_mesinof.tanggal)',
+            'shift'
+        ]);
+
+        $this->db->order_by('tanggal', 'ASC');
+        $this->db->order_by('shift', 'ASC');
+
+        $result = $this->db->get()->result_array();
+
+        // =============================
+        // 🔥 FORMAT SAMA PERSIS KAYAK line()
+        // =============================
+        $tanggalList = [];
+        $temp = [];
+        $warnaMap = [];
+        $labelMap = [];
+
+        $tanggalIndexMap = [];
+        $currentIndex = 0;
+
+        $urutanShift = [3 => 1, 1 => 2, 2 => 3];
+        $mapShift = [1 => 'P', 2 => 'S', 3 => 'M'];
+        $totalJalan = 0;
+        $totalBaris = 0;
+
+        foreach ($result as $row) {
+
+            $tglFull = $row['tanggal'];
+            $shift   = (int)$row['shift'];
+
+            if (!isset($tanggalIndexMap[$tglFull])) {
+                $currentIndex++;
+                $tanggalIndexMap[$tglFull] = $currentIndex;
+            }
+
+            $tglIndex = $tanggalIndexMap[$tglFull];
+            $shiftFix = ($shift == 0 ? 3 : $shift);
+
+            $label = (($tglIndex - 1) * 3) + ($urutanShift[$shiftFix] ?? $shiftFix);
+
+            if (!in_array($label, $tanggalList)) {
+                $tanggalList[] = $label;
+            }
+
+            $tglView = date('d', strtotime($tglFull));
+            $shiftLabel = $mapShift[$shiftFix] ?? $shiftFix;
+            $labelMap[$label] = $tglView . ' (' . $shiftLabel . ')';
+
+            // 🔥 HITUNG MESIN JALAN
+            $jalan = $totalMesin - (int)$row['jumlah'];
+
+            // 🔥 TAMBAHAN UNTUK RATA-RATA
+            $totalJalan += $jalan;
+            $totalBaris++;
+
+            $kode = 'MESIN JALAN';
+
+            $temp[$kode][$label] = $jalan;
+            $warnaMap[$kode] = !empty($row['clr'])
+                ? 'rgb(' . $row['clr'] . ')'
+                : '#999999';
+        }
+        $rataRata = ($totalBaris > 0) ? ($totalJalan / $totalBaris) : 0;
+
+        sort($tanggalList);
+
+        $series = [];
+        $colors = [];
+
+        foreach ($temp as $kode => $data) {
+            $line = [];
+
+            foreach ($tanggalList as $tgl) {
+                $line[] = $data[$tgl] ?? 0;
+            }
+
+            $series[] = [
+                'name' => $kode,
+                'data' => $line
+            ];
+
+            $colors[] = $warnaMap[$kode];
+        }
 
         echo json_encode([
             'tanggal'  => $tanggalList,
