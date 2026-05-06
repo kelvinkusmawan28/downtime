@@ -89,11 +89,6 @@
 
                   </select>
                 </div>
-                <div class=" mt-3 col-lg-3">
-                  <a href="<?= base_url('downtime_mesin/reset_filter') ?>" class="btn btn-primary " style="font-size: 12px;">
-                    <i class="fa-solid fa-rotate me-2"></i> Bersihkan Filter
-                  </a>
-                </div>
               </div>
             </div>
           </div>
@@ -101,9 +96,9 @@
 
 
           <div class="table-responsive">
-            <table id="downtimeTable" class="tabel datatable">
+            <table id="downtimeTable" class="table table-bordered">
               <thead>
-                <tr>
+                <tr class="bg-primary text-dark">
                   <th>No</th>
                   <th>Departemen</th>
                   <th>Mesin</th>

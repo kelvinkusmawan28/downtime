@@ -736,12 +736,23 @@ class Dashboard extends CI_Controller
             'FN' => 'fn'
         ];
 
-        // 🔥 total mesin
         $this->db->from('downtime_spekmesin');
+
         if (!empty($dept) && $dept != 'all') {
-            $this->db->where('dept_kode', $dept);
+
+            if ($dept === 'NT') {
+                $this->db->where('preventif_kode', 'NT-NET');
+            } elseif ($dept === 'AR') {
+                $this->db->where('preventif_kode', 'NT');
+            } else {
+                $this->db->where('dept_kode', $dept);
+            }
         }
+
         $totalMesin = $this->db->count_all_results();
+
+
+
 
         // 🔥 downtime semua reason
         $this->db->select("
@@ -760,9 +771,21 @@ class Dashboard extends CI_Controller
             'downtime_libur.tanggal = DATE(downtime_mesinof.tanggal)',
             'left'
         );
+        $this->db->join(
+            'downtime_spekmesin',
+            'downtime_spekmesin.mach_id = downtime_mesinof.nomesin_id',
+            'left'
+        );
 
         if (!empty($dept) && $dept != 'all') {
-            $this->db->where('downtime_mesinof.dept_id', $dept);
+            if ($dept === 'NT') {
+                $this->db->where('downtime_spekmesin.preventif_kode', 'NT-NET');
+            } elseif ($dept === 'AR') {
+                $this->db->where('downtime_spekmesin.preventif_kode', 'NT');
+            } else {
+                $this->db->where('downtime_mesinof.dept_id', $dept);
+            }
+
 
             $fieldLibur = $mapDept[$dept] ?? null;
 

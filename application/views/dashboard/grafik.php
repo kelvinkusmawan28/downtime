@@ -132,6 +132,8 @@
       const dept = $('#filter_dept').val();
       const reason = $('#reason').val();
       console.log(reason);
+      console.log(dept);
+
 
       if (reason == 41) {
         url = 'dashboard/line_mesin_jalan';

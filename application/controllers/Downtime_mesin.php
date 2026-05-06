@@ -40,6 +40,7 @@ class Downtime_mesin extends CI_Controller
             4 => 'SP',
             5 => 'UT',
             6 => 'GF',
+            7 => 'AR',
         ];
         $this->load->view('templates/header', $data);
         $this->load->view('downtime/index', $data);
@@ -95,7 +96,7 @@ class Downtime_mesin extends CI_Controller
 
 
         $this->db->select('
-            d.nomesin_id,
+            d.nomesin_id,d.ins,
             SUM(d.downtime_kerusakan) as total_downtime,
             s.mach_no,
             s.mach_name,
@@ -133,6 +134,7 @@ class Downtime_mesin extends CI_Controller
         }
 
         $this->db->group_by('d.nomesin_id, s.mach_no, s.mach_name, dept.dept_id, dept.departemen');
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)');
         $this->db->order_by('s.mach_no', 'ASC');
         $this->db->limit($limit, $start);
 
@@ -187,12 +189,14 @@ class Downtime_mesin extends CI_Controller
         }
 
         $this->db->group_by('d.nomesin_id');
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)');
         $recordsFiltered = $this->db->get()->num_rows();
 
 
         $this->db->from('downtime');
         $this->db->where('status', 1);
         $this->db->group_by('nomesin_id');
+        $this->db->where('(ins != 1 OR ins IS NULL)');
         $recordsTotal = $this->db->get()->num_rows();
 
         echo json_encode([
@@ -483,7 +487,7 @@ class Downtime_mesin extends CI_Controller
 
 
         $this->db->select('
-            d.nomesin_id,
+            d.nomesin_id,d.ins,
             SUM(t.downtime) as total_downtime,
             s.mach_no,
             s.mach_name,
@@ -523,6 +527,7 @@ class Downtime_mesin extends CI_Controller
 
         $this->db->group_by('d.nomesin_id, s.mach_no, s.mach_name, dept.dept_id, dept.departemen');
         $this->db->order_by('s.mach_no', 'ASC');
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)');
         $this->db->limit($limit, $start);
 
         $data = $this->db->get()->result_array();
@@ -575,7 +580,7 @@ class Downtime_mesin extends CI_Controller
             $this->db->or_like('s.mach_name', $search);
             $this->db->group_end();
         }
-
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)');
         $this->db->group_by('d.nomesin_id');
         $recordsFiltered = $this->db->get()->num_rows();
 
@@ -583,6 +588,7 @@ class Downtime_mesin extends CI_Controller
         $this->db->from('downtime');
         $this->db->where('status', 1);
         $this->db->group_by('nomesin_id');
+        $this->db->where('(ins != 1 OR ins IS NULL)');
         $recordsTotal = $this->db->get()->num_rows();
 
         echo json_encode([

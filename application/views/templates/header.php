@@ -202,7 +202,14 @@
               <ul class="menu-sub">
                 <li class="menu-item">
                   <a href="<?= base_url('downtime_mesin'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Downtime</div>
+                    <div class="text-truncate" data-i18n="Without menu">Downtime Perbaikan</div>
+                  </a>
+                </li>
+              </ul>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?= base_url('downtime_mesin/ganti_instruksi'); ?>" class="menu-link">
+                    <div class="text-truncate" data-i18n="Without menu">Downtime GI</div>
                   </a>
                 </li>
               </ul>

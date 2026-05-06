@@ -113,6 +113,8 @@ class Report extends CI_Controller
         if ($tahun != 'all') {
             $this->db->where('YEAR(downtime.tanggal)', $tahun);
         }
+
+        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
         $this->db->where('downtime_tindakan_user.user IS NOT NULL');
 
         $this->db->group_by('downtime_tindakan_user.user');
@@ -164,7 +166,7 @@ class Report extends CI_Controller
             }
         }
 
-        // === Ambil Data ===
+
         $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_tindakan_user.user');
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
@@ -177,7 +179,7 @@ class Report extends CI_Controller
             if (!empty($akses_dept)) {
                 $this->db->where_in('downtime.dept_id', $akses_dept);
             } else {
-                $this->db->where('1=0'); // Tidak punya akses
+                $this->db->where('1=0');
             }
         }
 
@@ -193,7 +195,6 @@ class Report extends CI_Controller
 
         $data = $this->db->get()->result_array();
 
-        // Format data untuk ditampilkan di tabel
         $no = $start + 1;
         foreach ($data as &$row) {
             $row['no'] = $no++;
@@ -201,7 +202,7 @@ class Report extends CI_Controller
             $row['departemen'] = $row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen'];
         }
 
-        // === Hitung recordsFiltered ===
+
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
@@ -226,7 +227,7 @@ class Report extends CI_Controller
         $this->db->group_by('downtime_tindakan_user.user');
         $recordsFiltered = $this->db->get()->num_rows();
 
-        // === Hitung recordsTotal ===
+
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
@@ -245,7 +246,7 @@ class Report extends CI_Controller
         $this->db->group_by('downtime_tindakan_user.user');
         $recordsTotal = $this->db->get()->num_rows();
 
-        // === Response ke DataTables ===
+
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,

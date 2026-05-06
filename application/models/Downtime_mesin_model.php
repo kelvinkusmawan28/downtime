@@ -26,17 +26,18 @@ class Downtime_mesin_model extends CI_model
     public function getExport_Pdf($dept_id, $bulan, $tahun)
     {
         $this->db->select('
-        d.nomesin_id,
+        d.nomesin_id,d.ins,
         SUM(d.downtime_kerusakan) as total_downtime,
         s.mach_no,
         s.mach_name,
         dept.dept_id,
         dept.departemen
-    ');
+     ');
         $this->db->from('downtime d');
         $this->db->join('downtime_spekmesin s', 's.mach_id = d.nomesin_id', 'left');
         $this->db->join('dept', 'dept.dept_id = d.dept_id', 'left');
         $this->db->where('d.status', 1);
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)');
 
         if ($dept_id !== 'all' && !empty($dept_id)) {
             $this->db->where('d.dept_id', $dept_id);
@@ -58,7 +59,7 @@ class Downtime_mesin_model extends CI_model
     public function getExport_Pengerjaan($dept_id, $bulan, $tahun)
     {
         $this->db->select('
-        d.nomesin_id,
+        d.nomesin_id,d.ins,
         SUM(t.downtime) as total_downtime,
         s.mach_no,
         s.mach_name,
@@ -70,6 +71,7 @@ class Downtime_mesin_model extends CI_model
         $this->db->join('downtime_spekmesin s', 's.mach_id = d.nomesin_id', 'left');
         $this->db->join('dept', 'dept.dept_id = d.dept_id', 'left');
         $this->db->where('d.status', 1);
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)');
 
         if ($dept_id !== 'all' && !empty($dept_id)) {
             $this->db->where('d.dept_id', $dept_id);
