@@ -14,7 +14,7 @@
         width: 100%;
         height: 100%;
 
-        background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8)),
+        background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
             url('<?= base_url('assets/img/elements/tes4.png') ?>');
         background-repeat: no-repeat;
         background-size: cover;

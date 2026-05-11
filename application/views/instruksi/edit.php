@@ -5,7 +5,7 @@
     </div>
     <div class=" col-12">
         <label for="file_upload" class="form-label font-kecil">Upload( Foto, Gambar) Instruksi</label>
-        <input type="file" name="file_upload[]" class="form-control font-kecil" id="file_upload" accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.mp4" multiple>
+        <input type="file" name="file_upload[]" class="form-control font-kecil" id="file_upload" accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.mp4" multiple required>
     </div>
 
     <br>

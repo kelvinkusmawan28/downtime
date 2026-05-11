@@ -28,46 +28,77 @@
     font-size: 10;
     line-height: 1;
   }
+
+
+  .header-container {
+    background: #ffffff;
+    border-left: 5px solid gray;
+    border-right: 5px solid gray;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 15px 20px;
+    border-radius: 10px;
+  }
+
+  .font-kecil {
+    font-size: 0.85rem;
+  }
+
+  #jam {
+    font-size: 1.1rem;
+    color: red;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+  }
 </style>
 <!-- Content -->
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="col-lg-12 ">
     <div class="card h-100 ">
       <div class="card-body">
-        <h5 class="card-title text-dark mb-3"> 📌 <?= $title; ?></h5>
-        <div class="row" style="border: 1px solid grey ; padding : 8px ; border-radius : 10px">
+        <div class="row header-container align-items-center">
           <div class="col-lg-3">
-            <label class="font-kecil  text-dark">Departemen</label>
+            <h5 class="card-title text-dark mb-0">
+              <span class="me-2">📌</span><?= $title; ?> <br>
+              <i class="fa fa-calendar me-1"></i> <?= format_tanggal_indonesia($tgl_sekarang); ?>
+            </h5>
+          </div>
 
-            <?php
-            $hakdowntime = $this->session->userdata('hakdowntime');
-            $akses_dept_diberi = [];
-
-            foreach ($downtime_dept_map as $index => $dept_code) {
-              $start = ($index * 2) - 2;
-              if (substr($hakdowntime, $start, 2) === '10') {
-                $akses_dept_diberi[] = $dept_code;
+          <div class="col-lg-4">
+            <div class="d-flex align-items-center">
+              <label class="font-kecil text-muted me-2 mb-0">Departemen:</label>
+              <?php
+              $hakdowntime = $this->session->userdata('hakdowntime');
+              $akses_dept_diberi = [];
+              foreach ($downtime_dept_map as $index => $dept_code) {
+                $start = ($index * 2) - 2;
+                if (substr($hakdowntime, $start, 2) === '10') {
+                  $akses_dept_diberi[] = $dept_code;
+                }
               }
-            }
-            ?>
-            <select name="filter" id="filter" class="form-select font-kecil mt-0">
-              <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
-              <?php foreach ($dept_options as $option) : ?>
-                <?php if (in_array($option['dept_id'],  $akses_dept_diberi)) : ?>
-                  <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : ''  ?>>
-                    <?= $option['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $option['departemen']; ?>
-                  </option>
-                <?php endif; ?>
-              <?php endforeach; ?>
-
-            </select>
+              ?>
+              <select name="filter" id="filter" class="form-select form-select-sm font-kecil">
+                <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
+                <?php foreach ($dept_options as $option) : ?>
+                  <?php if (in_array($option['dept_id'], $akses_dept_diberi)) : ?>
+                    <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : '' ?>>
+                      <?= $option['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $option['departemen']; ?>
+                    </option>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </select>
+            </div>
           </div>
-          <div class="col-lg-3 mb-2">
-            <label class="font-kecil text-dark">Tanggal</label>
-            <input type="date" id="filter_tanggal" name="filter_tanggal" class="form-control font-kecil" value="<?= $tgl_sekarang; ?>">
-          </div>
-          <div class="col-lg-2 mt-4 text-end">
 
+          <div class="col-lg-3 text-end">
+            <div class="d-inline-flex align-items-center px-3 py-1 " style="border-bottom: 1px solid gray;">
+              <i class="fa fa-clock me-2 text-dark"></i>
+              <div id="jam"></div>
+            </div>
           </div>
         </div>
 
@@ -298,4 +329,27 @@
     });
 
   }, 1000);
+</script>
+<script>
+  function tampilJam() {
+    const sekarang = new Date();
+
+    let jam = sekarang.getHours();
+    let menit = sekarang.getMinutes();
+    let detik = sekarang.getSeconds();
+
+    // Tambah angka 0 di depan jika < 10
+    jam = jam < 10 ? '0' + jam : jam;
+    menit = menit < 10 ? '0' + menit : menit;
+    detik = detik < 10 ? '0' + detik : detik;
+
+    document.getElementById('jam').innerHTML =
+      jam + ':' + menit + ':' + detik;
+  }
+
+  // Jalankan setiap 1 detik
+  setInterval(tampilJam, 1000);
+
+  // Tampilkan langsung saat pertama load
+  tampilJam();
 </script>
