@@ -1,9 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-require_once APPPATH . '../vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Dashboard extends CI_Controller
 {
@@ -46,15 +42,15 @@ class Dashboard extends CI_Controller
                 $data['shift'] = 3;
             }
         }
-
         $data['filter_rc'] = $this->session->userdata('filter_rc');
 
 
         $data['reason'] = $this->db->get('downtime_ketof')->result_array();
         $data['rr_type'] = $this->Dashboard_model->getRR();
+        $data['nt_type'] = $this->Dashboard_model->getNT();
         $data['sp_type'] = $this->Dashboard_model->getSP();
         $data['fn_type'] = $this->Dashboard_model->getFN();
-        $data['nt_type'] = $this->Dashboard_model->getNT();
+
 
         $tanggal = $this->input->get('tanggal') ?? date('Y-m-d');
 
@@ -147,8 +143,6 @@ class Dashboard extends CI_Controller
         $result = $this->db->get()->result_array();
         echo json_encode($result);
     }
-
-
     public function detail()
     {
         $mesin = $this->input->post('mesin');
@@ -160,6 +154,7 @@ class Dashboard extends CI_Controller
         $data['detail'] = $this->Dashboard_model->GetDetail($mesin, $kerusakan, $dept_id, $bulan, $tahun);
         $this->load->view('dashboard/detail', $data);
     }
+
     public function detail_mesinof()
     {
         $code = $this->input->post('code');
@@ -174,8 +169,6 @@ class Dashboard extends CI_Controller
 
         $this->load->view('dashboard/mesinof', $data);
     }
-
-
     public function getMesinByDept()
     {
 
@@ -184,16 +177,14 @@ class Dashboard extends CI_Controller
         $shift = $this->input->post('shift');
         $reason = $this->input->post('reason');
         $preventif = $this->input->post('filter_rr');
-        $netting = $this->input->post('filter_nt');
         $spinning = $this->input->post('filter_sp');
         $finishing = $this->input->post('filter_fn');
         $filter_rc = $this->input->post('filter_rc');
+        $netting = $this->input->post('filter_nt');
 
 
         $this->session->set_userdata('dept', $dept);
-        $this->session->set_userdata('tanggal', $tanggal);
         $this->session->set_userdata('shift', $shift);
-        $this->session->set_userdata('reason', $reason);
         $this->session->set_userdata('filter_rc', $filter_rc);
 
         $data = $this->Dashboard_model->getMesinDashboard($dept, $tanggal, $shift, $reason, $preventif, $filter_rc, $spinning, $finishing, $netting);
@@ -213,12 +204,10 @@ class Dashboard extends CI_Controller
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['dept_id'] = $this->db->get_where('downtime_spekmesin', ['mach_id' => $mach_id])->row_array();
         $tanggal = $this->session->userdata('tanggal');
-        // var_dump($tanggal);
-        // die();
         $dept = $this->session->userdata('dept');
         $data['perbaikan'] = $this->Dashboard_model->getPerbaikan($mach_id, $tanggal, $dept);
 
-        date_default_timezone_set('Asia/Jakarta'); // pastikan timezone benar
+        date_default_timezone_set('Asia/Jakarta');
 
         $jam = date('H:i');
 
@@ -229,14 +218,15 @@ class Dashboard extends CI_Controller
         } else {
             $data['shift'] = 3;
         }
-        // var_dump($data['perbaikan']);
+
+        $data['ketof'] = $this->db->get('downtime_ketof')->result_array();
         $this->load->view('dashboard/add', $data);
     }
-
 
     public function edit($id)
     {
         $data['tgl_sekarang'] = date('Y-m-d');
+
         $mesin = $this->Dashboard_model->getdataByid($id);
         $data['title'] = $mesin;
         $data['mesinof'] = $mesin;
@@ -263,10 +253,10 @@ class Dashboard extends CI_Controller
             $dept
         );
 
+
         $tanggal = $this->session->userdata('tanggal');
         $dept = $this->session->userdata('dept');
         $data['perbaikan'] = $this->Dashboard_model->getPerbaikan($nomesin_id, $tanggal, $dept);
-
         $this->load->view('dashboard/edit', $data);
     }
 
@@ -284,7 +274,6 @@ class Dashboard extends CI_Controller
             redirect('dashboard');
         }
     }
-
     public function ket_bobin()
     {
         $inputan = $this->input->get('term');
@@ -306,7 +295,6 @@ class Dashboard extends CI_Controller
         echo json_encode($result);
     }
 
-
     public function simpan()
     {
         $post = $this->input->post();
@@ -326,10 +314,7 @@ class Dashboard extends CI_Controller
             </div>');
             redirect('Dashboard');
         }
-
         $query = $this->Dashboard_model->simpan();
-
-
         if ($query) {
             $this->session->set_flashdata('message', '
                   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -339,10 +324,9 @@ class Dashboard extends CI_Controller
         }
         redirect('dashboard');
     }
-
     public function grafik()
     {
-        $data['title'] = 'Rekapulasi Mesin Stop';
+        $data['title'] = 'Rekapitulasi Mesin Stop';
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
@@ -353,6 +337,7 @@ class Dashboard extends CI_Controller
         $data['filter_bulan'] = $this->session->userdata('filter_bulan') ?? 'all';
         $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
         $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
+        // $data['reason'] = $this->db->order_by('reason')->get('downtime_ketof')->result_array();
         $data['reason'] = $this->db->order_by('reason')->get('downtime_ketof_line')->result_array();
 
         $data['downtime_dept_map'] = [
@@ -369,186 +354,6 @@ class Dashboard extends CI_Controller
         $this->load->view('dashboard/grafik', $data);
         $this->load->view('templates/footer');
     }
-    // satu line
-    // public function line()
-    // {
-    //     $bulan = $this->input->post('bulan');
-    //     $tahun = $this->input->post('tahun');
-    //     $dept = $this->input->post('dept');
-    //     $reason = $this->input->post('reason');
-
-    //     $this->db->select("
-    //         DATE(downtime_mesinof.tanggal) as tanggal,
-    //         COUNT(downtime_mesinof.ket_id) as jumlah
-    //     ");
-    //     $this->db->from('downtime_mesinof');
-    //     $this->db->join('downtime_ketof', 'downtime_ketof.id = downtime_mesinof.ket_id', 'left');
-
-    //     if ($dept != 'all') {
-    //         $this->db->where('downtime_mesinof.dept_id', $dept);
-    //     }
-
-    //     if ($bulan != 'all') {
-    //         $this->db->where('MONTH(downtime_mesinof.tanggal)', $bulan);
-    //     }
-
-    //     if ($tahun != 'all') {
-    //         $this->db->where('YEAR(downtime_mesinof.tanggal)', $tahun);
-    //     }
-
-    //     if ($reason != 'all') {
-    //         $this->db->where('downtime_mesinof.ket_id', $reason);
-    //     }
-
-    //     $this->db->group_by('DATE(downtime_mesinof.tanggal)');
-    //     $this->db->order_by('tanggal', 'ASC');
-
-    //     $result = $this->db->get()->result_array();
-
-    //     // 🔥 bikin 1 bulan full (1–31)
-    //     $jumlahHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
-
-    //     $dataFull = [];
-    //     for ($i = 1; $i <= $jumlahHari; $i++) {
-    //         $tgl = str_pad($i, 2, '0', STR_PAD_LEFT);
-    //         $dataFull[$tgl] = 0;
-    //     }
-
-    //     foreach ($result as $row) {
-    //         $tgl = date('d', strtotime($row['tanggal']));
-    //         $dataFull[$tgl] = (int)$row['jumlah'] . 'x';
-    //     }
-
-    //     echo json_encode([
-    //         'tanggal' => array_keys($dataFull),
-    //         'jumlah'  => array_values($dataFull)
-    //     ]);
-    // }
-
-    // pertanggal
-    // public function line()
-    // {
-    //     $bulan  = $this->input->post('bulan');
-    //     $tahun  = $this->input->post('tahun');
-    //     $dept   = $this->input->post('dept');
-    //     $reason = $this->input->post('reason');
-
-
-    //     $mapDept = [
-    //         'SP' => 'sp',
-    //         'RR' => 'rr',
-    //         'NT' => 'nt',
-    //         'AR' => 'nt',
-    //         'UT' => 'nt',
-    //         'FN' => 'fn'
-    //     ];
-
-    //     $this->db->select("
-    //         DATE(downtime_mesinof.tanggal) as tanggal,
-    //         downtime_mesinof.ket_id,
-    //         downtime_ketof.code,
-    //         downtime_ketof.clr,
-    //         COUNT(*) as jumlah
-    //     ");
-
-    //     $this->db->from('downtime_mesinof');
-    //     $this->db->where('downtime_mesinof.ket_id IS NOT NULL', null, false);
-    //     $this->db->where('downtime_mesinof.ket_id !=', 0);
-
-
-    //     $this->db->join(
-    //         'downtime_ketof',
-    //         'downtime_ketof.id = downtime_mesinof.ket_id',
-    //         'left'
-    //     );
-
-    //     $this->db->join(
-    //         'downtime_libur',
-    //         'downtime_libur.tanggal = DATE(downtime_mesinof.tanggal)',
-    //         'left'
-    //     );
-
-    //     if (!empty($dept) && $dept != 'all') {
-    //         $this->db->where('downtime_mesinof.dept_id', $dept);
-
-    //         $fieldLibur = $mapDept[$dept] ?? null;
-
-    //         if ($fieldLibur) {
-    //             $this->db->where("(downtime_libur.$fieldLibur = 0 OR downtime_libur.$fieldLibur IS NULL)");
-    //         }
-    //     }
-
-    //     if (!empty($bulan) && $bulan != 'all') {
-    //         $this->db->where('MONTH(downtime_mesinof.tanggal)', $bulan);
-    //     }
-
-    //     if (!empty($tahun) && $tahun != 'all') {
-    //         $this->db->where('YEAR(downtime_mesinof.tanggal)', $tahun);
-    //     }
-
-    //     if (!empty($reason) && $reason != 'all') {
-    //         $this->db->where('downtime_mesinof.ket_id', $reason);
-    //     }
-
-    //     $this->db->group_by([
-    //         'DATE(downtime_mesinof.tanggal)',
-    //         'downtime_mesinof.ket_id'
-    //     ]);
-
-    //     $this->db->order_by('tanggal', 'ASC');
-
-    //     $result = $this->db->get()->result_array();
-
-    //     $tanggalList = [];
-    //     $temp = [];
-    //     $warnaMap = [];
-
-
-    //     foreach ($result as $row) {
-
-    //         if (empty($row['code'])) continue;
-
-    //         $tgl = date('d', strtotime($row['tanggal']));
-    //         $kode = $row['code'];
-
-    //         if (!in_array($tgl, $tanggalList)) {
-    //             $tanggalList[] = $tgl;
-    //         }
-
-    //         $temp[$kode][$tgl] = (int)$row['jumlah'];
-
-    //         $warnaMap[$kode] = !empty($row['clr'])
-    //             ? 'rgb(' . $row['clr'] . ')'
-    //             : '#999999';
-    //     }
-    //     ksort($temp);
-    //     ksort($warnaMap);
-
-
-    //     $series = [];
-    //     $colors = [];
-
-    //     foreach ($temp as $kode => $data) {
-    //         $line = [];
-
-    //         foreach ($tanggalList as $tgl) {
-    //             $line[] = isset($data[$tgl]) ? $data[$tgl] : 0;
-    //         }
-
-    //         $series[] = [
-    //             'name' => $kode,
-    //             'data' => $line
-    //         ];
-
-    //         $colors[] = $warnaMap[$kode];
-    //     }
-
-    //     echo json_encode([
-    //         'tanggal' => $tanggalList,
-    //         'series'  => $series,
-    //         'colors'  => $colors
-    //     ]);
-    // }
 
     public function line()
     {
@@ -565,8 +370,6 @@ class Dashboard extends CI_Controller
             'UT' => 'nt',
             'FN' => 'fn'
         ];
-
-
 
         $this->db->select("
         DATE(downtime_mesinof.tanggal) as tanggal,
@@ -705,7 +508,7 @@ class Dashboard extends CI_Controller
             $colors[] = $warnaMap[$kode];
         }
 
-        // Hitung Total Jml dan Total Baris
+
         $totalJml = 0;
         $totalBaris = count($result);
 
@@ -713,9 +516,7 @@ class Dashboard extends CI_Controller
             $totalJml += (int)$row['jumlah'];
         }
 
-        // “Rata-rata jumlah downtime untuk
-        // setiap kombinasi tanggal + shift + reason
-        // dalam dept & filter yang dipilih”
+
         $rataRata = ($totalBaris > 0) ? ($totalJml / $totalBaris) : 0;
 
         echo json_encode([
@@ -741,8 +542,8 @@ class Dashboard extends CI_Controller
             'FN' => 'fn'
         ];
 
-        $this->db->from('downtime_spekmesin');
 
+        $this->db->from('downtime_spekmesin');
         if (!empty($dept) && $dept != 'all') {
 
             if ($dept === 'NT') {
@@ -753,13 +554,8 @@ class Dashboard extends CI_Controller
                 $this->db->where('dept_kode', $dept);
             }
         }
-
         $totalMesin = $this->db->count_all_results();
 
-
-
-
-        // 🔥 downtime semua reason
         $this->db->select("
             DATE(downtime_mesinof.tanggal) as tanggal,
             IF(downtime_mesinof.shift=3,0,downtime_mesinof.shift) as shift,
@@ -770,7 +566,7 @@ class Dashboard extends CI_Controller
 
         $this->db->where('downtime_mesinof.ket_id !=', 0);
 
-        // 🔥 JOIN LIBUR (WAJIB)
+
         $this->db->join(
             'downtime_libur',
             'downtime_libur.tanggal = DATE(downtime_mesinof.tanggal)',
@@ -817,9 +613,7 @@ class Dashboard extends CI_Controller
 
         $result = $this->db->get()->result_array();
 
-        // =============================
-        // 🔥 FORMAT SAMA PERSIS KAYAK line()
-        // =============================
+
         $tanggalList = [];
         $temp = [];
         $warnaMap = [];
@@ -856,10 +650,10 @@ class Dashboard extends CI_Controller
             $shiftLabel = $mapShift[$shiftFix] ?? $shiftFix;
             $labelMap[$label] = $tglView . ' (' . $shiftLabel . ')';
 
-            // 🔥 HITUNG MESIN JALAN
+
             $jalan = $totalMesin - (int)$row['jumlah'];
 
-            // 🔥 TAMBAHAN UNTUK RATA-RATA
+
             $totalJalan += $jalan;
             $totalBaris++;
 
@@ -899,131 +693,5 @@ class Dashboard extends CI_Controller
             'labelMap' => $labelMap,
             'rata_rata' => round($rataRata, 2)
         ]);
-    }
-
-
-
-    public function export_excel()
-    {
-        $dept_id = $this->session->userdata('dept');
-        $tanggal = $this->session->userdata('tanggal');
-        $shift = $this->session->userdata('shift');
-        $reason = $this->session->userdata('reason');
-
-        if ($shift == 1) {
-            $name_shift = 'PAGI';
-        } elseif ($shift == 2) {
-            $name_shift = 'SIANG';
-        } else {
-            $name_shift = 'MALAM';
-        }
-
-        $detail = $this->Dashboard_model->getExport($dept_id, $tanggal, $shift, $reason);
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Tunggu Bahan');
-
-        // Title
-        $sheet->setCellValue('C1', 'TUNGGU BAHAN');
-        $sheet->setCellValue('C2', 'Periode: ' . format_tanggal_indonesia($tanggal) . ' Shift ' . $name_shift);
-
-        $sheet->mergeCells('C1:G1');
-        $sheet->mergeCells('C2:G2');
-
-        $sheet->getStyle('C1')->getFont()->setBold(true)->setSize(14);
-        $sheet->getStyle('C2')->getFont()->setItalic(true);
-
-        $sheet->getStyle('C1:C2')
-            ->getAlignment()
-            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-        // Header
-        $sheet->setCellValue('C4', 'No');
-        $sheet->setCellValue('D4', 'Departemen');
-        $sheet->setCellValue('E4', 'Mesin');
-        $sheet->setCellValue('F4', 'Spek Bahan');
-        $sheet->setCellValue('G4', 'Ppic Notes');
-
-        $headerStyle = [
-            'font' => [
-                'bold' => true
-            ],
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ]
-            ],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'color' => [
-                    'argb' => 'FFEFEFEF'
-                ]
-            ]
-        ];
-
-        $sheet->getStyle('C4:G4')->applyFromArray($headerStyle);
-
-        // Data
-        $rowNum = 5;
-        $no = 1;
-
-        foreach ($detail as $row) {
-
-            if (empty($row['mach_no'])) {
-                continue;
-            }
-
-            $departemen = ($row['departemen'] == 'FINISHED GOODS')
-                ? 'GUDANG'
-                : $row['departemen'];
-
-            $mesin = 'Mesin ' . $row['mach_no'];
-            $bahan = $row['jenis'];
-
-            $sheet->setCellValue('C' . $rowNum, $no++);
-            $sheet->setCellValue('D' . $rowNum, $departemen);
-            $sheet->setCellValue('E' . $rowNum, $mesin);
-            $sheet->setCellValue('F' . $rowNum, $bahan);
-            $sheet->setCellValue('G' . $rowNum, $row['keterangan_ppic']);
-
-            $rowNum++;
-        }
-
-        // Baris terakhir data
-        $lastRow = $rowNum - 1;
-
-        // Border
-        $sheet->getStyle('C4:G' . $lastRow)->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ]
-            ]
-        ]);
-
-        // Auto Size
-        foreach (range('C', 'G') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
-
-        // Align nomor center
-        $sheet->getStyle('C5:C' . $lastRow)
-            ->getAlignment()
-            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-        // Export
-        $filename = 'Laporan TB.xlsx';
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment;filename=\"$filename\"");
-        header('Cache-Control: max-age=0');
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
     }
 }

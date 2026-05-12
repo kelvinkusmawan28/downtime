@@ -148,9 +148,16 @@
                   <h5 class="text-danger">MESIN STOP</h5>
                 </div>
                 <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
-                  <div class="col-lg-6 " style="text-align: right;">
+
+                  <div class="col-lg-4 " style="text-align: right;">
                     <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-warning text-dark"><i class="fa fa-chart-line me-2"></i>Rekapulasi Mesin Stop</a>
                   </div>
+                  <div class="col-lg-2 " id="goto_excel">
+                    <a class="btn btn-light btn-sm" href="<?= base_url('dashboard/export_excel') ?>">
+                      <i class="fa fa-file-excel text-success  me-2"></i><span class="ml-1" style="color:green;">Export To Excel</span>
+                    </a>
+                  </div>
+
                 <?php endif ?>
               </div>
 
@@ -483,6 +490,14 @@
     $("#filter").change(toggleFilterBox);
     toggleFilterBox()
 
+    function btnMuncul() {
+      let reason = $("#reason").val();
+      $("#goto_excel").toggle(reason == "24");
+    }
+    $("#reason").change(btnMuncul);
+    btnMuncul()
+
+
     function loadMesin() {
 
       let dept = $("#filter").val();
@@ -712,7 +727,9 @@
     });
 
     loadMesin();
-
+    setInterval(function() {
+      loadMesin();
+    }, 5000);
   });
 </script>
 

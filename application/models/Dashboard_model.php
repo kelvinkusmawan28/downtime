@@ -1214,7 +1214,7 @@ class Dashboard_model extends CI_model
 
         if ($id_ketof == 19) {
             $this->db->where('dept_id', $post['dept_id']);
-            $this->db->where('status', 2);
+            $this->db->where_in('status', [0, 2]);
             $this->db->where('nomesin_id', $post['mach_id']);
 
             $cekpi = $this->db->get('downtime');
@@ -1232,7 +1232,7 @@ class Dashboard_model extends CI_model
         }
         if ($id_ketof == 20) {
             $this->db->where('dept_id', $post['dept_id']);
-            $this->db->where('status', 2);
+            $this->db->where_in('status', [0, 2]);
             $this->db->where('nomesin_id', $post['mach_id']);
 
             $cekpi = $this->db->get('downtime');
@@ -1641,5 +1641,20 @@ class Dashboard_model extends CI_model
         $this->db->order_by('downtime_mesinof.ket_on', 'DESC');
         $this->db->limit(1);
         return $this->db->get()->row_array();
+    }
+
+    public function getExport($dept_id, $tanggal, $shift, $reason)
+    {
+        $this->db->select("downtime_mesinof. *, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, tb_benang.jenis");
+        $this->db->from('downtime_mesinof');
+        $this->db->join('dept', 'dept.dept_id = downtime_mesinof.dept_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime_mesinof.nomesin_id', 'left');
+        $this->db->join('tb_benang', 'tb_benang.id = downtime_mesinof.ket_tb', 'left');
+        $this->db->where('downtime_mesinof.dept_id', $dept_id);
+        $this->db->where('downtime_mesinof.tanggal', $tanggal);
+        $this->db->where('downtime_mesinof.ket_id', $reason);
+        $this->db->where('downtime_mesinof.shift', $shift);
+
+        return $this->db->get()->result_array();
     }
 }

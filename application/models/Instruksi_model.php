@@ -137,9 +137,33 @@ class Instruksi_model extends CI_model
         $this->db->set('status_on', $waktu_selesai);
         $this->db->set('kerusakan_selesai', $waktu_selesai);
         $this->db->set('downtime_kerusakan', $selisih_menit);
-        $this->db->where('id', $id);
 
-        return $this->db->update('downtime');
+        $this->db->trans_start();
+        $this->db->where('id', $id);
+        $this->db->update('downtime');
+
+        if ($data['kerusakan_id'] == 1326 || $data['kerusakan_id'] == 1327 || $data['kerusakan_id'] == 1328) {
+
+            $this->db->where('dept_id', $data['dept_id']);
+            $this->db->where('nomesin_id', $data['nomesin_id']);
+            $this->db->where('ket_id', 5);
+            $this->db->order_by('id', 'DESC');
+            $this->db->limit(1);
+
+            $cek = $this->db->get('downtime_mesinof');
+
+            if ($cek->num_rows() > 0) {
+
+                $row = $cek->row();
+
+                $this->db->set('ket_id', 0);
+                $this->db->where('id', $row->id);
+                $this->db->update('downtime_mesinof');
+            }
+        }
+
+        $this->db->trans_complete();
+        return $this->db->trans_status();
     }
 
 
