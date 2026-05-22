@@ -94,7 +94,7 @@
                   <select name="filter_status" id="filter_status" class="form-select font-kecil mt-0">
                     <option value="all" <?= $filter_status == 'all' ? 'selected' : '' ?>>Semua Status</option>
                     <option class="text-dark" value="2" <?= $filter_status == 2  ? 'selected' : '' ?>>Antrian</option>
-                    <option class="text-dark" value="1" <?= $filter_status == 1  ? 'selected' : '' ?>>Close</option>
+                    <!-- <option class="text-dark" value="1" <?= $filter_status == 1  ? 'selected' : '' ?>>Close</option> -->
                     <option class="text-dark" value="0" <?= $filter_status == 0  ? 'selected' : '' ?>>Progres</option>
 
                   </select>

@@ -208,13 +208,6 @@
               </ul>
               <ul class="menu-sub">
                 <li class="menu-item">
-                  <a href="<?= base_url('downtime_mesin/ganti_instruksi'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Downtime GI</div>
-                  </a>
-                </li>
-              </ul>
-              <ul class="menu-sub">
-                <li class="menu-item">
                   <a href="<?= base_url('downtime_mesin/pengerjaan'); ?>" class="menu-link">
                     <div class="text-truncate" data-i18n="Without menu">Rekap Pengerjaan</div>
                   </a>
@@ -224,6 +217,13 @@
                 <li class="menu-item">
                   <a href="<?= base_url('instruksi/report'); ?>" class="menu-link">
                     <div class="text-truncate" data-i18n="Without menu">Laporan Ganti Instruksi</div>
+                  </a>
+                </li>
+              </ul>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?= base_url('mesin/report_perbaikan'); ?>" class="menu-link">
+                    <div class="text-truncate" data-i18n="Without menu">Laporan Perbaikan</div>
                   </a>
                 </li>
               </ul>

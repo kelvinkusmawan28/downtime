@@ -134,6 +134,7 @@ class Instruksi extends CI_Controller
         }
 
         $this->db->where('downtime.ins', 1);
+        $this->db->where_in('status', ['0', '2']);
         $this->db->group_by('downtime.id');
         $this->db->order_by('downtime.id', 'DESC');
         $this->db->limit($limit, $start);
@@ -291,6 +292,7 @@ class Instruksi extends CI_Controller
         $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
 
         $this->db->where('downtime.ins', 1);
+        $this->db->where_in('status', ['0', '2']);
 
 
         if ($dept_id !== 'all' && !empty($dept_id)) {
@@ -331,6 +333,7 @@ class Instruksi extends CI_Controller
 
         $this->db->from('downtime');
         $this->db->where('downtime.ins', 1);
+        $this->db->where_in('status', ['0', '2']);
         $recordsTotal = $this->db->count_all_results();
 
         header('Content-Type: application/json');
@@ -833,12 +836,12 @@ class Instruksi extends CI_Controller
                         <span class="font-bold text-success updateon" style="font-size: 10px;" data-start="' . $start_time . '">Loading...</span>
                     ';
             } else {
-
+                $name = $row['name'] ?? '-';
                 $row['status'] = '
-                    <span"><i class="fa-solid fa-check text-danger"></i>  <span class=" text-dark">Selesai </span</span><br>
+                    <span"><i class="fa-solid fa-check text-danger"></i>  <span class=" text-dark">Selesai </span></span><br> 
                     <small class="font-bold" style="font-size:12px; color:red;">' .
                     'Downtime ' . format_downtime($row['downtime_kerusakan'])  .
-                    '</small>';
+                    '</small> <br> <span class="text-dark">Pemeriksa : ' . $name . '</span>';
             }
             $row['petugas'] = '<span style="color:black;">' . $row['nama_petugas'] . '</span>';
         }

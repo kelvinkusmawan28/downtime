@@ -34,6 +34,7 @@ class Mesin extends CI_Controller
             4 => 'SP',
             5 => 'UT',
             6 => 'GF',
+            7 => 'AR',
         ];
 
 
@@ -53,237 +54,7 @@ class Mesin extends CI_Controller
         redirect('mesin');
     }
 
-    // public function filter_downtime()
-    // {
-    //     $dept_id = $this->input->post('dept_id');
-    //     $status = $this->input->post('status');
-    //     $bulan = $this->input->post('bulan');
-    //     $tahun = $this->input->post('tahun');
 
-    //     $this->session->set_userdata('filter_status', $status);
-    //     $this->session->set_userdata('filter_bulan', $bulan);
-    //     $this->session->set_userdata('filter_tahun', $tahun);
-    //     $this->session->set_userdata('filter_dept', $dept_id);
-
-    //     $limit = $this->input->post('length');
-    //     $start = $this->input->post('start');
-    //     $draw = $this->input->post('draw');
-    //     $search = $this->input->post('search')['value'];
-
-
-    //     $hakdowntime = $this->session->userdata('hakdowntime');
-
-    //     $hak_dept_downtime = [
-    //         1 => 'FN',
-    //         2 => 'NT',
-    //         3 => 'RR',
-    //         4 => 'SP',
-    //         5 => 'UT',
-    //         6 => 'GF',
-    //         7 => 'AR',
-    //     ];
-
-    //     $akses_dept = [];
-
-
-    //     foreach ($hak_dept_downtime as $index => $dept_code) {
-    //         $start_pos = ($index * 2) - 2;
-    //         if (substr($hakdowntime, $start_pos, 2) === '10') {
-    //             $akses_dept[] = $dept_code;
-    //         }
-    //     }
-
-    //     $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
-    //     $this->db->from('downtime');
-    //     $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
-    //     $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
-    //     $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
-    //     $this->db->join('user', 'user.id = downtime.status_by', 'left');
-    //     $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
-
-    //     if ($dept_id !== 'all' && !empty($dept_id)) {
-
-    //         $this->db->where('downtime.dept_id', $dept_id);
-    //     } else {
-
-    //         if (!empty($akses_dept)) {
-    //             $this->db->where_in('downtime.dept_id', $akses_dept);
-    //         } else {
-
-    //             $this->db->where('1=0');
-    //         }
-    //     }
-
-    //     if ($status !== 'all' && $status !== null && $status !== '') {
-    //         $this->db->where('downtime.status', $status);
-    //     }
-
-
-    //     if ($bulan !== 'all' && !empty($bulan)) {
-    //         $this->db->where('MONTH(downtime.tanggal)', $bulan);
-    //     }
-    //     if ($tahun !== 'all' && !empty($tahun)) {
-    //         $this->db->where('YEAR(downtime.tanggal)', $tahun);
-    //     }
-
-    //     if (!empty($search)) {
-    //         $this->db->group_start();
-    //         $this->db->like('downtime_spekmesin.mach_no', $search);
-    //         $this->db->or_like('downtime_kerusakan.remark', $search);
-    //         $this->db->group_end();
-    //     }
-    //     $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
-    //     $this->db->group_by('downtime.id');
-    //     $this->db->order_by('downtime.id', 'DESC');
-    //     $this->db->limit($limit, $start);
-    //     $data = $this->db->get()->result_array();
-
-    //     //  view
-    //     $no = $start + 1;
-    //     foreach ($data as &$row) {
-    //         $row['no'] = '<span style="color:black;">' . $no++ . '</span>';
-    //         $row['tanggal'] = '<span style="color:black;">' . format_tanggal_indonesia($row['tanggal']) . '</span>';
-    //         $row['departemen'] = '<span style="color:black;">' .
-    //             ($row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen']) .
-    //             '</span>';
-    //         $row['mesin'] = '<span style="color:black;">' . 'Mesin '  . $row['mach_no'] . '</span>' . '<br><span style="color:black;">' . $row['mach_name'] . '</span>';
-
-    //         $row['kerusakan'] = '<a href="' . base_url() . 'mesin/view/' . $row['id'] . '" style="text-decoration: underline; color:red ;" title="Views Data">' . $row['remark'] . '</a>';
-    //         $id = $row['id'];
-    //         $status_value = $row['status'];
-    //         if ($status_value == 0) {
-
-    //             $start_time = strtotime($row['kerusakan_mulai']) * 1000;
-
-    //             $row['status'] = '
-    //                     <span class="badge bg-success">PROGRES</span><br>
-    //                     <small class="font-bold text-dark" style="font-size: 12px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
-    //                     <span class="font-bold text-success updateon" data-start="' . $start_time . '">Loading...</span>
-    //                 ';
-
-    //             $dropdown = '';
-
-
-    //             if (!empty($row['id_downtime'])) {
-    //                 if (!empty($row['kesimpulan'])) {
-    //                     $dropdown .= '
-    //                     <li>
-    //                         <a class="btn btn-outline-primary font-kecil status" 
-    //                            data-id="' . $id . '" 
-    //                            data-url="' . base_url() . 'mesin/status_ok/' . $id . '" 
-    //                            href="#">
-    //                            <i class="fa fa-lock me-2"></i> Kunci Data
-    //                         </a>
-    //                     </li>';
-    //                 } else {
-    //                     $dropdown .= '<span  style="font-size : 14px ; color:red; margin-left:10px ;" >Isi Kesimpulan !</span> <br>';
-    //                 }
-    //             } else {
-    //                 $dropdown .= '<span  style="font-size : 14px ; color:red; margin-left:10px ;" >Belum Ada Tindakan !</span> <br>';
-    //             }
-
-
-    //             $dropdown .= '
-    //             <li><a class="btn btn-outline-danger font-kecil hapus" style="margin-top : 5px ;"  data-id="' . $id . '" data-url="' . base_url() . 'mesin/hapus/' . $id . '" href="#"><i class="fa fa-trash me-2" ></i> Hapus Data</a></li>
-    //              ';
-
-
-    //             $row['aksi'] = '';
-    //             $cekdowntime = $this->session->userdata('cekdowntime');
-    //             if ($cekdowntime == '1') {
-    //                 $row['aksi'] = '
-    //                     <div class="dropdown font-kecil">
-    //                         <a class="btn btn-secondary dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    //                             Aksi
-    //                         </a>
-    //                         <ul class="dropdown-menu">' . $dropdown . '</ul>
-    //                     </div>';
-    //             }
-    //         } else {
-
-    //             $row['status'] = '
-    //                 <span class="badge bg-danger">CLOSE</span><br>
-    //                 <small class="font-bold" style="font-size:9px; color:black;">' .
-    //                 $row['name'] . '<br>' .
-    //                 format_tanggal_indonesia_waktu($row['status_on']) .
-    //                 '</small><br>
-    //                 <small class="font-bold" style="font-size:14px; color:red;">' .
-    //                 'Downtime ' . format_downtime($row['downtime_kerusakan'])  .
-    //                 '</small>';
-
-    //             $dropdown = '
-    //                 <li><a class="btn btn-outline-warning font-kecil status_cansel" data-id="' . $id . '" data-url="' . base_url() . 'mesin/status_cansel/' . $id . '" href="#"><i class="fa fa-key me-2"></i> Buka Data</a></li>
-
-    //             ';
-
-    //             $row['aksi'] = '';
-    //             $cekdowntime = $this->session->userdata('cekdowntime');
-    //             if ($cekdowntime == '1') {
-
-    //                 $row['aksi'] = '
-    //                     <div class="dropdown font-kecil">
-    //                         <a class="btn btn-info dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    //                             Aksi
-    //                         </a>
-    //                         <ul class="dropdown-menu">' . $dropdown . '</ul>
-    //                     </div>';
-    //             }
-    //         }
-    //     }
-
-    //     // Penghitungan data yang difilter
-    //     $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
-    //     $this->db->from('downtime');
-    //     $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
-    //     $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
-    //     $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
-    //     $this->db->join('user', 'user.id = downtime.status_by', 'left');
-    //     $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
-
-    //     if ($dept_id !== 'all' && !empty($dept_id)) {
-
-    //         $this->db->where('downtime.dept_id', $dept_id);
-    //     } else {
-
-    //         if (!empty($akses_dept)) {
-    //             $this->db->where_in('downtime.dept_id', $akses_dept);
-    //         } else {
-
-    //             $this->db->where('1=0');
-    //         }
-    //     }
-
-    //     if ($status !== 'all' && $status !== null && $status !== '') {
-    //         $this->db->where('downtime.status', $status);
-    //     }
-
-    //     if ($bulan !== 'all' && !empty($bulan)) {
-    //         $this->db->where('MONTH(downtime.tanggal)', $bulan);
-    //     }
-    //     if ($tahun !== 'all' && !empty($tahun)) {
-    //         $this->db->where('YEAR(downtime.tanggal)', $tahun);
-    //     }
-
-    //     if (!empty($search)) {
-    //         $this->db->group_start();
-    //         $this->db->like('downtime_spekmesin.mach_no', $search);
-    //         $this->db->or_like('downtime_kerusakan.remark', $search);
-    //         $this->db->group_end();
-    //     }
-
-    //     $recordsFiltered = $this->db->count_all_results();
-
-    //     // Penghitungan data total
-    //     $this->db->from('downtime');
-    //     $recordsTotal = $this->db->count_all_results();
-
-    //     echo json_encode([
-    //         'draw' => intval($draw),
-    //         'recordsTotal' => $recordsTotal,
-    //         'recordsFiltered' => $recordsFiltered,
-    //         'data' => $data
-    //     ]);
-    // }
 
 
     public function filter_downtime()
@@ -367,6 +138,7 @@ class Mesin extends CI_Controller
         }
 
         $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+        $this->db->where_in('status', ['0', '2']);
 
         // 🔥 PENTING: hindari duplicate
         $this->db->group_by('downtime.id');
@@ -532,6 +304,7 @@ class Mesin extends CI_Controller
         }
 
         $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+        $this->db->where_in('status', ['0', '2']);
         $this->db->group_by('downtime.id');
 
         $recordsFiltered = $this->db->count_all_results();
@@ -539,6 +312,7 @@ class Mesin extends CI_Controller
         // ================== COUNT TOTAL ==================
         $this->db->from('downtime');
         $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+        $this->db->where_in('status', ['0', '2']);
         $recordsTotal = $this->db->count_all_results();
 
         header('Content-Type: application/json');
@@ -848,6 +622,7 @@ class Mesin extends CI_Controller
         $this->load->view('mesin/detail', $data);
         $this->load->view('templates/footer');
     }
+
 
 
     public function tambah_tindakan($id_halaman)
@@ -1166,5 +941,224 @@ class Mesin extends CI_Controller
         $filter_dept = $this->session->userdata('filter_dept');
         $result = $this->Mesin_model->getTeknisiLike($inputan, $filter_dept);
         echo json_encode($result);
+    }
+
+    public function report_perbaikan()
+    {
+        $data['title'] = 'Laporan Perbaikan Mesin';
+        $data['tgl_sekarang'] = date('Y-m-d');
+        $data['bln_sekarang'] = date('m');
+        $data['thn_sekarang'] = date('Y');
+        $id_dept = $this->session->userdata('id_dept');
+        $data['mesin'] = $this->Mesin_model->getdata_dept($id_dept);
+        $data['bulan_options'] = $this->Mesin_model->getBulan();
+        $data['tahun_options'] = $this->Mesin_model->getTahun();
+        $data['dept_options'] = $this->Mesin_model->getFilter();
+
+        $data['filter_status'] = $this->session->userdata('filter_status') ?? 'all';
+        $data['filter_bulan'] = $this->session->userdata('filter_bulan') ?? 'all';
+        $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
+        $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
+        $data['downtime_dept_map'] = [
+            1 => 'FN',
+            2 => 'NT',
+            3 => 'RR',
+            4 => 'SP',
+            5 => 'UT',
+            6 => 'GF',
+            7 => 'AR',
+        ];
+
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('mesin/report_perbaikan', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function filter_perbaikan()
+    {
+        $dept_id = $this->input->post('dept_id');
+        $status = $this->input->post('status');
+        $bulan = $this->input->post('bulan');
+        $tahun = $this->input->post('tahun');
+
+        $this->session->set_userdata('filter_status', $status);
+        $this->session->set_userdata('filter_bulan', $bulan);
+        $this->session->set_userdata('filter_tahun', $tahun);
+        $this->session->set_userdata('filter_dept', $dept_id);
+
+        $limit = $this->input->post('length');
+        $start = $this->input->post('start');
+        $draw = $this->input->post('draw');
+        $search = $this->input->post('search')['value'];
+
+
+        $hakdowntime = $this->session->userdata('hakdowntime');
+
+        $hak_dept_downtime = [
+            1 => 'FN',
+            2 => 'NT',
+            3 => 'RR',
+            4 => 'SP',
+            5 => 'UT',
+            6 => 'GF',
+            7 => 'AR',
+        ];
+
+        $akses_dept = [];
+
+
+        foreach ($hak_dept_downtime as $index => $dept_code) {
+            $start_pos = ($index * 2) - 2;
+            if (substr($hakdowntime, $start_pos, 2) === '10') {
+                $akses_dept[] = $dept_code;
+            }
+        }
+
+        $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
+        $this->db->from('downtime');
+        $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('user', 'user.id = downtime.status_by', 'left');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+
+            $this->db->where('downtime.dept_id', $dept_id);
+        } else {
+
+            if (!empty($akses_dept)) {
+                $this->db->where_in('downtime.dept_id', $akses_dept);
+            } else {
+
+                $this->db->where('1=0');
+            }
+        }
+
+        if ($status !== 'all' && $status !== null && $status !== '') {
+            $this->db->where('downtime.status', $status);
+        }
+
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('downtime_spekmesin.mach_no', $search);
+            $this->db->or_like('downtime_kerusakan.remark', $search);
+            $this->db->group_end();
+        }
+        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+        $this->db->group_by('downtime.id');
+        $this->db->order_by('downtime.id', 'DESC');
+        $this->db->limit($limit, $start);
+        $data = $this->db->get()->result_array();
+
+        //  view
+        $no = $start + 1;
+        foreach ($data as &$row) {
+            $row['no'] = '<span style="color:black;">' . $no++ . '</span>';
+            $row['tanggal'] = '<span style="color:black;">' . format_tanggal_indonesia($row['tanggal']) . '</span>';
+            $row['departemen'] = '<span style="color:black;">' .
+                ($row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen']) .
+                '</span>';
+            $row['mesin'] = '<span style="color:black;">' . 'Mesin '  . $row['mach_no'] . '</span>' . '<br><span style="color:black;">' . $row['mach_name'] . '</span>';
+
+            $row['kerusakan'] = '<a href="' . base_url() . 'mesin/view_report/' . $row['id'] . '" style="text-decoration: underline; color:red ;" title="Views Data">' . $row['remark'] . '</a>';
+            $id = $row['id'];
+            $status_value = $row['status'];
+            if ($status_value == 0) {
+
+                $start_time = strtotime($row['kerusakan_mulai']) * 1000;
+
+                $row['status'] = '
+                      <span class= "text-dark" >Progres ..  <i class ="fa fa-spinner fa-spin me-2"></i> </span><br>
+                        <small class="font-bold text-dark" style="font-size: 12px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
+                        <span class="font-bold text-success updateon" style="font-size: 10px;" data-start="' . $start_time . '">Loading...</span>
+                    ';
+            } else if ($status_value == 1) {
+                $name = $row['name'] ?? '-';
+                $row['status'] = '
+                <span"><i class="fa-solid fa-check text-danger"></i>  <span class=" text-dark">Selesai </span></span><br> 
+                    <small class="font-bold" style="font-size:14px; color:red;">' .
+                    'Downtime ' . format_downtime($row['downtime_kerusakan'])  .
+                    '</small> <br> <span class="text-dark">Pemeriksa : ' . $name . '</span>';
+            } else {
+                $row['status'] = '
+                <span class=" text-dark">Waiting List .. </span><br>
+              ';
+            }
+        }
+
+        // Penghitungan data yang difilter
+        $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
+        $this->db->from('downtime');
+        $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('user', 'user.id = downtime.status_by', 'left');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+
+            $this->db->where('downtime.dept_id', $dept_id);
+        } else {
+
+            if (!empty($akses_dept)) {
+                $this->db->where_in('downtime.dept_id', $akses_dept);
+            } else {
+
+                $this->db->where('1=0');
+            }
+        }
+
+        if ($status !== 'all' && $status !== null && $status !== '') {
+            $this->db->where('downtime.status', $status);
+        }
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('downtime_spekmesin.mach_no', $search);
+            $this->db->or_like('downtime_kerusakan.remark', $search);
+            $this->db->group_end();
+        }
+
+        $recordsFiltered = $this->db->count_all_results();
+
+        // Penghitungan data total
+        $this->db->from('downtime');
+        $recordsTotal = $this->db->count_all_results();
+
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data
+        ]);
+    }
+
+    public function view_report($id)
+    {
+        $data['title'] = ' Detail Tindakan Perbaikan';
+        $data['detail'] = $this->Mesin_model->getdataByid($id);
+        $data['tindakan'] = $this->db->get_where('downtime_tindakan', ['id_downtime' => $id])->result_array();
+        $data['id_halaman'] = $id;
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('mesin/detail_report', $data);
+        $this->load->view('templates/footer');
     }
 }
