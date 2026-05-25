@@ -1066,7 +1066,7 @@ class Dashboard_model extends CI_model
         }
 
 
-        if ($post['ket_id'] == 5) {
+        if ($post['ket_id'] == 5 && ($post['dept_id'] == 'NT' || $post['dept_id'] == 'AR')) {
 
             $this->db->where('dept_id', $post['dept_id']);
             $this->db->where('nomesin_id', $post['nomesin_id']);

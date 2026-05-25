@@ -679,7 +679,7 @@
                     <span class="fw-semibold small" style = "font-size: 10px; ><i class="far fa-calendar-alt me-1"></i> ${row.tanggal}</span>
                   </div>
                   <div class="col-6">
-                    <label class="text-muted small d-block">Departemen</label>
+                    <label class="text-muted small d-block">Departemen :</label>
                     <span class="badge bg-info text-dark border fw-medium small" style = "font-size: 10px;">${row.departemen}</span>
                   </div>
                 </div>
