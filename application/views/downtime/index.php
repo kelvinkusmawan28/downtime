@@ -36,7 +36,6 @@
           <div style="border: 1px solid #0d6efd;  padding: 5px; border-radius: 5px;">
             <div class="col-lg-12">
               <div class="row" style="padding:10px;">
-
                 <div class="col-lg-3">
                   <label class="font-kecil font-bold text-azure text-primary" st>Bulan</label>
                   <select name="filter_bulan" id="filter_bulan" class="form-select font-kecil mt-0">
@@ -90,6 +89,14 @@
                   </select>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-lg-12" style="text-align: right;">
+                  <span>Downtime Perbaikan:
+                    <span id="total_downtime"></span>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -140,6 +147,14 @@
           d.tahun = $('#filter_tahun').val();
           console.log('bulan:', d.bulan);
           console.log('tahun:', d.tahun);
+        },
+        dataSrc: function(json) {
+
+          // tampilkan total downtime
+          $('#total_downtime').html(json.total_downtime);
+
+          // wajib return data
+          return json.data;
         }
       },
       columns: [{

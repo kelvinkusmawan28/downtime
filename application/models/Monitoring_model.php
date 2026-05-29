@@ -193,4 +193,127 @@ class Monitoring_model extends CI_model
 
         return $this->db->get()->result();
     }
+    public function getSummary_pi($dept)
+    {
+        $hakdowntime = $this->session->userdata('hakdowntime');
+
+        $hak_dept_downtime = [
+            1 => 'FN',
+            2 => 'NT',
+            3 => 'RR',
+            4 => 'SP',
+            5 => 'UT',
+            6 => 'GF',
+            7 => 'AR'
+        ];
+
+        $akses_dept = [];
+
+
+        foreach ($hak_dept_downtime as $index => $dept_code) {
+            $start_pos = ($index * 2) - 2;
+            if (substr($hakdowntime, $start_pos, 2) === '10') {
+                $akses_dept[] = $dept_code;
+            }
+        }
+
+        $this->db->select("
+       kl.ins_kode,  kl.clr,
+        COUNT(*) as total_pi
+         ");
+
+        $this->db->from('downtime_spekmesin m');
+
+        $this->db->join(
+            'downtime d',
+            "m.mach_id = d.nomesin_id",
+            'left'
+        );
+
+        $this->db->join(
+            'downtime_kerusakan kl',
+            'd.kerusakan_id = kl.rusak_id',
+            'left'
+        );
+
+        if ($dept !== 'all' && !empty($dept)) {
+
+            $this->db->where('m.dept_kode', $dept);
+        } else {
+
+            if (!empty($akses_dept)) {
+                $this->db->where_in('m.dept_kode', $akses_dept);
+            } else {
+
+                $this->db->where('1=0');
+            }
+        }
+
+
+        $this->db->where_in('kl.ins_kode', ['PI', 'PO']);
+        $this->db->where_in('d.status', [0, 2]);
+
+        return $this->db->get()->result();
+    }
+    public function getSummary_gm($dept)
+    {
+        $hakdowntime = $this->session->userdata('hakdowntime');
+
+        $hak_dept_downtime = [
+            1 => 'FN',
+            2 => 'NT',
+            3 => 'RR',
+            4 => 'SP',
+            5 => 'UT',
+            6 => 'GF',
+            7 => 'AR'
+        ];
+
+        $akses_dept = [];
+
+
+        foreach ($hak_dept_downtime as $index => $dept_code) {
+            $start_pos = ($index * 2) - 2;
+            if (substr($hakdowntime, $start_pos, 2) === '10') {
+                $akses_dept[] = $dept_code;
+            }
+        }
+
+        $this->db->select("
+       kl.ins_kode,  kl.clr,
+        COUNT(*) as total_gm
+         ");
+
+        $this->db->from('downtime_spekmesin m');
+
+        $this->db->join(
+            'downtime d',
+            "m.mach_id = d.nomesin_id",
+            'left'
+        );
+
+        $this->db->join(
+            'downtime_kerusakan kl',
+            'd.kerusakan_id = kl.rusak_id',
+            'left'
+        );
+
+        if ($dept !== 'all' && !empty($dept)) {
+
+            $this->db->where('m.dept_kode', $dept);
+        } else {
+
+            if (!empty($akses_dept)) {
+                $this->db->where_in('m.dept_kode', $akses_dept);
+            } else {
+
+                $this->db->where('1=0');
+            }
+        }
+
+        $this->db->where_in('kl.ins_kode', ['GM', 'GI', 'GB']);
+        $this->db->where_in('d.status', [0, 2]);
+
+        return $this->db->get()->result();
+    }
 }

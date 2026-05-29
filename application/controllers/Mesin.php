@@ -1015,7 +1015,7 @@ class Mesin extends CI_Controller
             }
         }
 
-        $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
+        $this->db->select('downtime.*,SUM(downtime.downtime_kerusakan) as total , dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
         $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
@@ -1142,10 +1142,41 @@ class Mesin extends CI_Controller
         $this->db->from('downtime');
         $recordsTotal = $this->db->count_all_results();
 
+        // TOTAL DOWNTIME
+        $this->db->select('SUM(downtime.downtime_kerusakan) as total_downtime');
+        $this->db->from('downtime');
+
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+            $this->db->where('downtime.dept_id', $dept_id);
+        } else {
+            if (!empty($akses_dept)) {
+                $this->db->where_in('downtime.dept_id', $akses_dept);
+            } else {
+                $this->db->where('1=0');
+            }
+        }
+
+        if ($status !== 'all' && $status !== null && $status !== '') {
+            $this->db->where('downtime.status', $status);
+        }
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+
+        $total_downtime = $this->db->get()->row_array();
+
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
+            'total_downtime' => format_menit($total_downtime['total_downtime']),
             'data' => $data
         ]);
     }

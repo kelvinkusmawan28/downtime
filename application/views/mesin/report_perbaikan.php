@@ -88,7 +88,9 @@
               </div>
             </div>
           </div>
-
+          <h5>Total Downtime :
+            <span id="total_downtime"></span>
+          </h5>
           <hr>
           <div class="table-responsive">
             <table id="downtimeTable" class="tabel table-bordered">
@@ -139,10 +141,16 @@
           d.status = $('#filter_status').val();
           d.bulan = $('#filter_bulan').val();
           d.tahun = $('#filter_tahun').val();
-          console.log('Status:', d.status);
-          console.log('bulan:', d.bulan);
-          console.log('tahun:', d.tahun);
+        },
+        dataSrc: function(json) {
+
+          // tampilkan total downtime
+          $('#total_downtime').html(json.total_downtime);
+
+          // wajib return data
+          return json.data;
         }
+
       },
       columns: [{
           data: 'no'

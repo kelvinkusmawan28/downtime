@@ -148,8 +148,9 @@
               </li>
             </ul>
           </li>
+
           <?php
-          if ($this->session->userdata('cekdowntime') == '1') :
+          if ($this->session->userdata('cekdowntime_master') == '1') :
           ?>
             <li class="menu-item">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -186,12 +187,15 @@
                 </li>
               </ul>
             </li>
-
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="fa-solid fa-list me-2"></i>
-                <div class="text-truncate" data-i18n="Layouts">Report </div>
-              </a>
+          <?php endif; ?>
+          <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+              <i class="fa-solid fa-list me-2"></i>
+              <div class="text-truncate" data-i18n="Layouts">Report </div>
+            </a>
+            <?php
+            if ($this->session->userdata('cekdowntime') == '1') :
+            ?>
               <ul class="menu-sub">
                 <li class="menu-item">
                   <a href="<?= base_url('report'); ?>" class="menu-link">
@@ -213,6 +217,8 @@
                   </a>
                 </li>
               </ul>
+            <?php endif; ?>
+            <?php if ($this->session->userdata('cekdowntime_gi') == '1') : ?>
               <ul class="menu-sub">
                 <li class="menu-item">
                   <a href="<?= base_url('instruksi/report'); ?>" class="menu-link">
@@ -220,6 +226,8 @@
                   </a>
                 </li>
               </ul>
+            <?php endif; ?>
+            <?php if ($this->session->userdata('cekdowntime_pi') == '1') : ?>
               <ul class="menu-sub">
                 <li class="menu-item">
                   <a href="<?= base_url('mesin/report_perbaikan'); ?>" class="menu-link">
@@ -227,9 +235,10 @@
                   </a>
                 </li>
               </ul>
-            </li>
+            <?php endif; ?>
+          </li>
 
-          <?php endif; ?>
+
 
           <li class="menu-item">
             <a href="<?= base_url('monitoring'); ?>" class="menu-link">

@@ -47,10 +47,14 @@ class Monitoring extends CI_Controller
 
         $data = $this->Monitoring_model->getMesinMonitoring($dept);
         $summary = $this->Monitoring_model->getSummaryClr($dept);
+        $summary_pi = $this->Monitoring_model->getSummary_pi($dept);
+        $summary_gm = $this->Monitoring_model->getSummary_gm($dept);
 
         echo json_encode([
             'mesin' => $data,
-            'summary' => $summary
+            'summary' => $summary,
+            'summary_pi' => $summary_pi,
+            'summary_gm' => $summary_gm
         ]);
     }
 

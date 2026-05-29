@@ -32,13 +32,10 @@
 
   .header-container {
     background: #ffffff;
-    border-left: 5px solid gray;
-    border-right: 5px solid gray;
     border-bottom: 1px solid gray;
-    border-top: 1px solid gray;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     padding: 15px 20px;
-    border-radius: 10px;
+    border-radius: 5px;
   }
 
   .font-kecil {
@@ -47,12 +44,85 @@
 
   #jam {
     font-size: 1.1rem;
-    color: red;
+    color: black;
     font-variant-numeric: tabular-nums;
     font-weight: 700;
 
     letter-spacing: 1px;
 
+  }
+
+  .stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eef2f6;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 15px;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #6c757d;
+    margin: 0;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #2d3436;
+    display: block;
+  }
+
+
+  .bg-progres {
+    background-color: #e3f2fd;
+    color: #0d6efd;
+  }
+
+  .detail-progres {
+    border-left: 1px solid #e3f2fd;
+    border-bottom: 3px solid #e3f2fd;
+  }
+
+  .bg-waiting {
+    background-color: #FEFD99;
+    color: #777C6D;
+  }
+
+  .detail-waiting {
+    border-left: 1px solid #FEFD99;
+    border-bottom: 3px solid #FEFD99;
+  }
+
+  .bg-total {
+    background-color: #D1D3D4;
+    color: #EEEEEE;
+  }
+
+  .detail-total {
+    border-left: 1px solid #D1D3D4;
+    border-bottom: 3px solid #D1D3D4;
   }
 </style>
 <!-- Content -->
@@ -61,39 +131,12 @@
     <div class="card h-100 ">
       <div class="card-body">
         <div class="row header-container align-items-center">
-          <div class="col-lg-3">
+          <div class="col-lg-8">
             <h5 class="card-title text-dark mb-0">
               <span class="me-2">📌</span><?= $title; ?> <br>
               <i class="fa fa-calendar me-1"></i> <?= format_tanggal_indonesia($tgl_sekarang); ?>
             </h5>
           </div>
-
-          <div class="col-lg-4">
-            <div class="d-flex align-items-center">
-              <label class="font-kecil text-muted me-2 mb-0">Departemen:</label>
-              <?php
-              $hakdowntime = $this->session->userdata('hakdowntime');
-              $akses_dept_diberi = [];
-              foreach ($downtime_dept_map as $index => $dept_code) {
-                $start = ($index * 2) - 2;
-                if (substr($hakdowntime, $start, 2) === '10') {
-                  $akses_dept_diberi[] = $dept_code;
-                }
-              }
-              ?>
-              <select name="filter" id="filter" class="form-select form-select-sm font-kecil">
-                <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
-                <?php foreach ($dept_options as $option) : ?>
-                  <?php if (in_array($option['dept_id'], $akses_dept_diberi)) : ?>
-                    <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : '' ?>>
-                      <?= $option['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $option['departemen']; ?>
-                    </option>
-                  <?php endif; ?>
-                <?php endforeach; ?>
-              </select>
-            </div>
-          </div>
-
           <div class="col-lg-3 text-end">
             <div class="d-inline-flex align-items-center px-3 py-1 " style="border-bottom: 1px solid gray;">
               <i class="fa fa-clock me-2 text-dark"></i>
@@ -101,27 +144,80 @@
             </div>
           </div>
         </div>
+        <div class="container mt-4">
+          <div class="row">
 
-      </div>
-    </div>
-    <div class="col-lg-12 ">
-      <div class="card h-100 ">
-        <div class="card-body">
-          <div class="row mt-3 ">
-            <div class="col-lg-11" style="border-right: 1px solid grey;">
-              <div class="row" id="list_mesin" style="padding: 10px;"> </div>
+            <div class="col-md-4 col-sm-6 ">
+              <div class="stat-card detail-waiting">
+                <div class="stat-icon bg-waiting"><i class="fas fa-gear"></i></div>
+                <div>
+                  <p class="stat-label">Perbaikan IN & OUT</p>
+                  <span class="stat-value" id="summary_pi">0</span>
+                </div>
+              </div>
             </div>
-            <div class="col-lg-1">
-              <div class="text-dark" style="font-size :10px">Total Mesin: <span id="total_mesin">0</span></div>
-              <div id="summary_clr"></div>
+            <div class="col-md-4 col-sm-6">
+              <div class="stat-card detail-progres">
+                <div class="stat-icon bg-progres"><i class="fas fa-spinner fa-spin"></i></div>
+                <div>
+                  <p class="stat-label">GI/GB/GM</p>
+                  <span class="stat-value" id="summary_gm">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+              <div class="stat-card detail-total">
+                <div class="stat-icon bg-total"><i class="fas fa-list"></i></div>
+                <div>
+                  <p class="stat-label">Total Mesin</p>
+                  <span class="stat-value" id="total_mesin">0</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        <div class="col-lg-4">
+          <div class="d-flex align-items-center">
+            <label class="font-kecil text-muted me-2 mb-0">Departemen:</label>
+            <?php
+            $hakdowntime = $this->session->userdata('hakdowntime');
+            $akses_dept_diberi = [];
+            foreach ($downtime_dept_map as $index => $dept_code) {
+              $start = ($index * 2) - 2;
+              if (substr($hakdowntime, $start, 2) === '10') {
+                $akses_dept_diberi[] = $dept_code;
+              }
+            }
+            ?>
+            <select name="filter" id="filter" class="form-select form-select-sm font-kecil">
+              <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
+              <?php foreach ($dept_options as $option) : ?>
+                <?php if (in_array($option['dept_id'], $akses_dept_diberi)) : ?>
+                  <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : '' ?>>
+                    <?= $option['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $option['departemen']; ?>
+                  </option>
+                <?php endif; ?>
+              <?php endforeach; ?>
+            </select>
+          </div>
+        </div>
+        <div class="row mt-2 ">
+          <div class="col-lg-1">
+            <div id="summary_clr"></div>
+          </div>
+          <div class="col-lg-11" style="border-left: 1px solid grey;">
+            <div class="row" id="list_mesin" style="padding: 10px;"> </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
+
   </div>
 </div>
-</div>
+
 <!-- / Content -->
 
 <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true">
@@ -236,6 +332,36 @@
           });
 
           $("#summary_clr").html(summaryHtml);
+
+          let summary_pi = '';
+          $.each(response.summary_pi, function(i, row) {
+
+            summary_pi += `
+            <div>
+            
+
+              ${row.total_pi}
+
+            </div>
+            `;
+
+          });
+          $("#summary_pi").html(summary_pi);
+
+
+          let summary_gm = '';
+          $.each(response.summary_gm, function(i, row) {
+            summary_gm += `
+            <div>
+            
+
+              ${row.total_gm}
+
+            </div>
+            `;
+
+          });
+          $("#summary_gm").html(summary_gm);
         }
 
       });
