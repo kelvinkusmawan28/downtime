@@ -33,12 +33,14 @@
         <div class="card-header ">
           <div class="row">
             <div class="col-6">
-              <h5 class="mb-1 me-2"><?= $title; ?></h5>
+              <h6><?= $title; ?></h6>
             </div>
             <div class="col-6" style="text-align: right;">
               <a href="<?= base_url('dashboard'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
             </div>
           </div>
+
+
 
         </div>
         <div class="card-body font-kecil ">
@@ -125,7 +127,11 @@
               </div>
             </div>
           </div>
-
+          <div class="row mt-3">
+            <div class="col-12" style="text-align: right; ">
+              <a href="<?= base_url('riwayat'); ?>" style="text-decoration: underline; color: black ;"> <i class="fa fa-clock-rotate-left text-danger me-2"></i> <span style="font-size: 14px;;"> History <?= $this->session->userdata('name'); ?> </span> </a>
+            </div>
+          </div>
           <hr>
           <!-- <div class="table-responsive">
             <table id="downtimeTable" class="tabel table-bordered">

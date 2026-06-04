@@ -67,40 +67,39 @@
   </div>
   <div class="col-lg-12 ">
     <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title text-info mb-3"> 📌 <?= $title; ?></h5>
-
-
-        <div class="row">
-          <div class="col-lg-6">
+      <div class="col-lg-12 ">
+        <div class="card h-100">
+          <div class="card-body">
             <div class="row">
-              <div class="col-lg-3">
-                <label class="font-kecil font-bold text-azure text-primary" st>Bulan</label>
-                <select name="filter_bulan" id="filter_bulan" class="form-select font-kecil mt-0">
-                  <option value="all" <?= $filter_bulan == 'all' ? 'selected' : '' ?>>Semua Bulan</option>
-                  <?php foreach ($bulan_options as $bl) : ?>
-                    <?php if (!empty($bl['bulan']) && !empty($bl['nama_bulan'])) : ?>
-                      <option value="<?= $bl['bulan']; ?>" <?= ($filter_bulan == $bl['bulan'] || ($filter_bulan == 'all' && $bln_sekarang == $bl['bulan'])) ? 'selected' : '' ?>>
-                        <?= $bl['nama_bulan']; ?>
-                      </option>
-
-                    <?php endif; ?>
+              <div class="col-lg-6">
+                <h5 class="text-danger">MESIN STOP</h5>
+              </div>
+            </div>
+            <div class="row mb-5" style=" border : 1px solid black;  border-radius : 5px ; padding :10px ;">
+              <div class="col-lg-2 mb-2">
+                <label class="font-kecil font-bold text-dark">Tanggal</label>
+                <input type="date" id="filter_tanggal" name="filter_tanggal" class="form-control font-kecil" value="<?= $tgl_sekarang; ?>">
+              </div>
+              <div class="col-lg-2 mb-2">
+                <label class="font-kecil font-bold text-dark">Shift</label>
+                <select name="shift" id="shift" class="form-control font-kecil">
+                  <option value="1" <?= $shift == 1  ? 'selected' : '' ?>>PAGI</option>
+                  <option value="2" <?= $shift == 2  ? 'selected' : '' ?>>SIANG</option>
+                  <option value="3" <?= $shift == 3  ? 'selected' : '' ?>>MALAM</option>
+                </select>
+              </div>
+              <div class="col-lg-2 mb-2">
+                <label class="font-kecil font-bold text-dark">Reason</label>
+                <select name="reason" id="reason" class="form-control font-kecil">
+                  <option value="all">Semua</option>
+                  <?php foreach ($reason as $data) : ?>
+                    <option value="<?= $data['id']; ?>"><?= $data['reason']; ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>
               <div class="col-lg-3">
-                <label class="font-kecil font-bold text-azure text-primary">Tahun</label>
-                <select name="filter_tahun" id="filter_tahun" class="form-select font-kecil mt-0">
-                  <option value="all" <?= $filter_tahun == 'all' ? 'selected' : '' ?>>Semua Tahun</option>
-                  <?php foreach ($tahun_options as $th) : ?>
-                    <option value="<?= $th['tahun']; ?>" <?= ($filter_tahun == $th['tahun'] || ($filter_tahun == 'all' && $thn_sekarang == $th['tahun'])) ? 'selected' : '' ?>>
-                      <?= $th['tahun']; ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              <div class="col-lg-5">
 
-                <label class="font-kecil font-bold text-azure text-primary">Departemen</label>
+                <label class="font-kecil font-bold text-azure text-dark">Departemen</label>
 
                 <?php
                 $hakdowntime = $this->session->userdata('hakdowntime');
@@ -126,64 +125,8 @@
 
                 </select>
               </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-6">
-              <div id="myCustomChart"></div>
-            </div>
-          </div>
-          <div class="col-lg-5">
-            <ul id="list-mesin-terbanyak" class="p-0 m-0"></ul>
-            </ul>
-          </div>
-        </div>
-
-
-      </div>
-      <div class="col-lg-12 ">
-        <div class="card h-100">
-          <div class="card-body">
-            <div class="row mb-5">
-              <div class="row">
-                <div class="col-lg-6">
-                  <h5 class="text-danger">MESIN STOP</h5>
-                </div>
-                <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
-
-                  <div class="col-lg-4 " style="text-align: right;">
-                    <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-warning text-dark"><i class="fa fa-chart-line me-2"></i>Rekapulasi Mesin Stop</a>
-                  </div>
-                  <div class="col-lg-2 " id="goto_excel">
-                    <a class="btn btn-light btn-sm" href="<?= base_url('dashboard/export_excel') ?>">
-                      <i class="fa fa-file-excel text-success  me-2"></i><span class="ml-1" style="color:green;">Export To Excel</span>
-                    </a>
-                  </div>
-
-                <?php endif ?>
-              </div>
-
-              <div class="col-lg-2 mb-2">
-                <label class="font-kecil font-bold text-primary">Tanggal</label>
-                <input type="date" id="filter_tanggal" name="filter_tanggal" class="form-control font-kecil" value="<?= $tgl_sekarang; ?>">
-              </div>
-              <div class="col-lg-2 mb-2">
-                <label class="font-kecil font-bold text-primary">Shift</label>
-                <select name="shift" id="shift" class="form-control font-kecil">
-                  <option value="1" <?= $shift == 1  ? 'selected' : '' ?>>PAGI</option>
-                  <option value="2" <?= $shift == 2  ? 'selected' : '' ?>>SIANG</option>
-                  <option value="3" <?= $shift == 3  ? 'selected' : '' ?>>MALAM</option>
-                </select>
-              </div>
-              <div class="col-lg-2 mb-2">
-                <label class="font-kecil font-bold text-primary">Reason</label>
-                <select name="reason" id="reason" class="form-control font-kecil">
-                  <option value="all">Semua</option>
-                  <?php foreach ($reason as $data) : ?>
-                    <option value="<?= $data['id']; ?>"><?= $data['reason']; ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
               <div class="col-lg-2 mb-2" id="filter_rr_box">
-                <label class="font-kecil font-bold text-primary">Type Mesin RR</label>
+                <label class="font-kecil font-bold text-dark">Type Mesin RR</label>
                 <select name="filter_rr" id="filter_rr" class="form-control font-kecil">
                   <option value="all">Semua</option>
                   <?php foreach ($rr_type as $data) : ?>
@@ -194,7 +137,7 @@
                 </select>
               </div>
               <div class="col-lg-2 mb-2" id="filter_sp_box">
-                <label class="font-kecil font-bold text-primary">Type Mesin SP</label>
+                <label class="font-kecil font-bold text-dark">Type Mesin SP</label>
                 <select name="filter_sp" id="filter_sp" class="form-control font-kecil">
                   <option value="all">Semua</option>
                   <?php foreach ($sp_type as $key) : ?>
@@ -205,7 +148,7 @@
                 </select>
               </div>
               <div class="col-lg-2 mb-2" id="filter_nt_box">
-                <label class="font-kecil font-bold text-primary">Type Mesin NT</label>
+                <label class="font-kecil font-bold text-dark">Type Mesin NT</label>
                 <select name="filter_nt" id="filter_nt" class="form-control font-kecil">
                   <option value="all">Semua</option>
                   <?php foreach ($nt_type as $key) : ?>
@@ -216,7 +159,7 @@
                 </select>
               </div>
               <div class="col-lg-2 mb-2" id="filter_fn_box">
-                <label class="font-kecil font-bold text-primary">Type Mesin FN</label>
+                <label class="font-kecil font-bold text-dark">Type Mesin FN</label>
                 <select name="filter_fn" id="filter_fn" class="form-control font-kecil">
                   <option value="all">Semua</option>
                   <?php foreach ($fn_type as $key) : ?>
@@ -227,7 +170,7 @@
                 </select>
               </div>
               <div class="col-lg-2 mb-2" id="filter_rc_box">
-                <label class="font-kecil font-bold text-primary">Type Mesin Aroza</label>
+                <label class="font-kecil font-bold text-dark">Type Mesin Aroza</label>
                 <select name="filter_rc" id="filter_rc" class="form-control font-kecil">
                   <option value="all">Semua</option>
                   <option value="0">Netting</option>
@@ -235,12 +178,40 @@
                 </select>
               </div>
             </div>
+            <div class="row">
+              <div class="card" style="background-color: #F5F5F5;  border-bottom : 1px solid black;">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="card-body">
+                      <h6 class="text-dark">Distribusi Status Mesin</h6>
+                      <div id="summaryChart"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card-body">
+                      <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
+                        <h6> <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-light text-dark"><i class="fa fa-chart-line me-2"></i>Rekapulasi Mesin Stop</a></h6>
+                      <?php endif ?>
+                      <div id="summaryBarChart"></div>
+                    </div>
+                  </div>
+                  <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
+                    <div class="col-md-2 " id="goto_excel">
+                      <a class="btn btn-light btn-sm" href="<?= base_url('dashboard/export_excel') ?>">
+                        <i class="fa fa-file-excel text-success  me-2"></i><span class="ml-1" style="color:green;">Export To Excel</span>
+                      </a>
+                    </div>
+                  <?php endif ?>
+
+                </div>
+              </div>
+            </div>
+
             <div class=" row mt-3">
               <div class="col-lg-11" style="border-right: 1px solid grey;">
                 <div class="row" id="list_mesin"> </div>
               </div>
-              <div class="col-lg-1">
-                <p class="text-danger" style="font-size: 11px;">Total Mesin: <span id="total_mesin">0</span></p>
+              <div class="col-lg-1" style=" background-color: #eeeeee; padding : 10px ; border-radius : 5px;">
                 <div id="summary_clr"></div>
               </div>
             </div>
@@ -353,127 +324,7 @@
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
 
-<script>
-  function renderChart(data) {
-    const chartElement = document.querySelector('#myCustomChart');
 
-    if (window.statisticsChart) {
-      window.statisticsChart.destroy();
-    }
-
-    const labels = data.map(item => "Mesin " + item.mach_no);
-    const series = data.map(item => parseInt(item.total_downtime));
-
-    const orderChartConfig = {
-      chart: {
-        height: 200,
-        type: 'donut',
-        offsetX: 15
-      },
-      labels: labels,
-      series: series,
-      colors: ['#28C76F', '#00cfe8', '#FF9F43', '#7367F0', '#EA5455'],
-      stroke: {
-        width: 5,
-        colors: ['#fff']
-      },
-      dataLabels: {
-        enabled: false
-      },
-      legend: {
-        show: false
-      },
-      plotOptions: {
-        pie: {
-          donut: {
-            size: '75%',
-            labels: {
-              show: true,
-              name: {
-                fontSize: '14px'
-              },
-              value: {
-                fontSize: '18px',
-                formatter: function(val) {
-                  return parseInt(val);
-                }
-              },
-              total: {
-                show: true,
-                label: 'Total',
-                formatter: function(w) {
-                  let total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                  return total + '';
-                }
-              }
-            }
-          }
-        }
-      }
-    };
-
-    window.statisticsChart = new ApexCharts(chartElement, orderChartConfig);
-    window.statisticsChart.render();
-  }
-
-  $(document).ready(function() {
-    function loadKerusakanTerbanyak() {
-      const dept_id = $('#filter').val();
-      const bulan = $('#filter_bulan').val();
-      const tahun = $('#filter_tahun').val();
-
-      $.ajax({
-        url: "<?= base_url('dashboard/getKerusakan_Terbanyak') ?>",
-        type: "POST",
-        data: {
-          dept_id,
-          bulan,
-          tahun
-        },
-        success: function(response) {
-          const data = JSON.parse(response);
-
-
-          let html = '';
-          data.forEach(row => {
-            html += `
-            <li class="d-flex align-items-center mb-4">
-              <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-primary 
-                detail"
-                data-mesin="${row.nomesin_id}"
-                data-kerusakan="${row.kerusakan_id}"
-                style="cursor:pointer">
-                <i class="icon-base bx bx-cog"></i>
-              </span>
-              </div>
-              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                <div class="me-2">
-                  <h6 class="mb-0">Mesin ${row.mach_no} (${row.mach_name}) </h6>
-                  <small>${row.kerusakan} (${row.departemen})</small>
-                </div>
-                <div class="user-progress">
-                  <h6 class="mb-0">${row.total_downtime}x</h6>
-                </div>
-              </div>
-            </li>`;
-          });
-          $('#list-mesin-terbanyak').html(html);
-
-
-
-          renderChart(data);
-        }
-      });
-    }
-
-    $('#filter, #filter_bulan, #filter_tahun').on('change', function() {
-      loadKerusakanTerbanyak();
-    });
-
-    loadKerusakanTerbanyak();
-  });
-</script>
 
 <script>
   $(document).ready(function() {
@@ -623,7 +474,7 @@
                
 
                 <div class="card text-center edit d-flex flex-column justify-content-center" 
-                  style="background:${warna}; min-height: 50px; height: auto;" 
+                  style="background:${warna}; min-height: 20px; height: auto;" 
                   data-mach="${mesin.mach_id}"
                   data-id="${mesin.id}"
                   title="Mesin ${mesin.mach_no} (${mesin.mach_name})\n${mesin.reason_left ?? ''}${mesin.jenis_left ? ' - ' + mesin.jenis_left : ''}">
@@ -694,6 +545,126 @@
 
           $("#summary_clr").html(summaryHtml);
 
+          let labels = [];
+          let series = [];
+          let colors = [];
+
+          $.each(response.summary, function(i, row) {
+
+            labels.push(row.code ? row.code : 'OK');
+
+            series.push(parseFloat(row.total));
+
+            colors.push(
+              row.clr ?
+              'rgb(' + row.clr + ')' :
+              '#eeeeee'
+            );
+          });
+
+          $('#summaryChart').html('');
+
+          const options = {
+
+            chart: {
+              type: 'donut',
+              height: 250
+            },
+
+            labels: labels,
+
+            series: series,
+
+            colors: colors,
+
+            legend: {
+              position: 'bottom'
+            },
+
+            dataLabels: {
+              enabled: true
+            },
+
+            plotOptions: {
+              pie: {
+                donut: {
+                  size: '65%',
+
+                  labels: {
+                    show: true,
+
+                    total: {
+                      show: true,
+                      label: 'Total Mesin',
+
+                      formatter: function(w) {
+
+                        let total = w.globals.seriesTotals.reduce(
+                          (a, b) => a + b,
+                          0
+                        );
+
+                        return total;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          const chart = new ApexCharts(
+            document.querySelector("#summaryChart"),
+            options
+          );
+
+          chart.render();
+          $('#summaryBarChart').html('');
+
+          const optionsBar = {
+            chart: {
+              type: 'bar',
+              height: 250
+            },
+
+            series: [{
+              data: series
+            }],
+
+            colors: colors,
+
+            xaxis: {
+              categories: labels
+            },
+
+            plotOptions: {
+              bar: {
+                horizontal: true,
+                distributed: true,
+                borderRadius: 4
+              }
+            },
+
+            dataLabels: {
+              enabled: true,
+              style: {
+                fontSize: '12px',
+                colors: ['#000000']
+              }
+            },
+
+            legend: {
+              show: false
+            }
+          };
+
+          const chartBar = new ApexCharts(
+            document.querySelector("#summaryBarChart"),
+            optionsBar
+          );
+
+          chartBar.render();
+
 
           //  LAST UPDATE
           let last = response.lastupdate;
@@ -727,9 +698,9 @@
     });
 
     loadMesin();
-    setInterval(function() {
-      loadMesin();
-    }, 5000);
+    // setInterval(function() {
+    //   loadMesin();
+    // }, 5000);
   });
 </script>
 

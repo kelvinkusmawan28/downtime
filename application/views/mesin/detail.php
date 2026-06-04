@@ -200,6 +200,9 @@
                       <?= $detail['remark']; ?>
                     </div>
                     <div class="text-muted small mt-1">
+                      <?php if ($this->session->userdata('name') == $detail['user']) : ?>
+                        <a href="#" data-id="<?= $detail['id']; ?>" class="keterangan text-info" style="text-decoration: underline;">Klik Edit Disini</a>
+                      <?php endif; ?>
                       Detail: <?= $detail['keterangan'] ?: '-'; ?>
                     </div>
                   </div>
@@ -465,6 +468,22 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="basicModal-keterangan" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail Kerusakan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="load-detail"></div>
+      </div>
+      <div class="modal-footer">
+
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- <div class="offcanvas offcanvas-start" tabindex="-1" id="modal-view" aria-labelledby=" offcanvasExampleLabel" style="width: 50%;">
   <div class="offcanvas-header">
@@ -650,6 +669,15 @@
       if (data) {
         $("#basicModal-kesimpulan").modal("show");
         $("#load-kesimpulan").load("<?= base_url(); ?>mesin/kesimpulan_detail/" + encodeURIComponent(data));
+      } else {
+        alert("Data tidak valid!");
+      }
+    });
+    $(document).on('click', '.keterangan', function() {
+      var data = $(this).data("id");
+      if (data) {
+        $("#basicModal-keterangan").modal("show");
+        $("#load-detail").load("<?= base_url(); ?>mesin/keterangan_detail/" + encodeURIComponent(data));
       } else {
         alert("Data tidak valid!");
       }

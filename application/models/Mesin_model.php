@@ -165,6 +165,12 @@ class Mesin_model extends CI_model
         $this->db->where('id', $data['id']);
         return $this->db->update('downtime', $data);
     }
+    public function UpdateData_keterangan()
+    {
+        $data = $_POST;
+        $this->db->where('id', $data['id']);
+        return $this->db->update('downtime', $data);
+    }
 
     public function getdataByid($id)
     {

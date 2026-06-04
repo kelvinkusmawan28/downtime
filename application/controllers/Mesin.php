@@ -13,7 +13,7 @@ class Mesin extends CI_Controller
 
     public function index()
     {
-        $data['title'] = 'Downtime Mesin';
+        $data['title'] = 'Perbaikan Mesin';
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
@@ -249,9 +249,21 @@ class Mesin extends CI_Controller
                     }
                 }
 
+                $hapus = '';
+
+                if ($this->session->userdata('name') == $row['user']) {
+                    $hapus = '
+                    <a href="#" class="btn btn-danger btn-sm hapus"
+                    data-id="' . $row['id'] . '"
+                    data-url="' . base_url() . 'mesin/hapus/' . $row['id'] . '">
+                    Hapus
+                 </a>
+                    ';
+                }
+
                 $aksi .= '
                 <a href="' . base_url() . 'mesin/view/' . $row['id'] . '" 
-                class="btn bg-light btn-sm">Detail</a>
+                class="btn bg-light btn-sm">Detail</a>  ' . $hapus . '
                 ';
             }
 
@@ -554,10 +566,29 @@ class Mesin extends CI_Controller
         $data['id_halaman'] = $id;
         $this->load->view('mesin/kesimpulan_detail', $data);
     }
+    public function keterangan_detail($id)
+    {
+        $data['detail'] = $this->Mesin_model->getdataByid($id);
+        $data['id_halaman'] = $id;
+        $this->load->view('mesin/keterangan_detail', $data);
+    }
 
     public function update_kesimpulan_detail($id_halaman)
     {
         $query = $this->Mesin_model->UpdateData_kesimpulan();
+        if ($query) {
+            $this->session->set_flashdata('message', '
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            Kesimpulan Berhasil Di Tambahkan!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                     </div>
+                    ');
+        }
+        redirect('mesin/view/' . $id_halaman);
+    }
+    public function update_keterangan_detail($id_halaman)
+    {
+        $query = $this->Mesin_model->UpdateData_keterangan();
         if ($query) {
             $this->session->set_flashdata('message', '
                         <div class="alert alert-success alert-dismissible fade show" role="alert">

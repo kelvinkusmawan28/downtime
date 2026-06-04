@@ -14,7 +14,7 @@ class Riwayat extends CI_Controller
     public function index()
     {
         $id = $this->session->userdata('id');
-        $data['title'] = 'Riwayat Perbaikan';
+        $data['title'] = 'History Perbaikan';
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
         $data['user'] = $this->Riwayat_model->getdata($id);
@@ -30,15 +30,7 @@ class Riwayat extends CI_Controller
         $this->load->view('riwayat/index', $data);
         $this->load->view('templates/footer');
     }
-    public function reset_filter()
-    {
 
-        $this->session->unset_userdata('filter_bulan');
-        $this->session->unset_userdata('filter_tahun');
-
-
-        redirect('mesin');
-    }
 
     public function filter_riwayat()
     {

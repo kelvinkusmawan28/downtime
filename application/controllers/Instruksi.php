@@ -988,4 +988,26 @@ class Instruksi extends CI_Controller
         $data['detail'] = $this->Instruksi_model->getProgres($dept, $status);
         $this->load->view('instruksi/progres', $data);
     }
+
+
+
+    public function petugas()
+    {
+        $data['title'] = 'Laporan  Ganti Instruksi';
+        $data['dept_options'] = $this->Instruksi_model->getFilter();
+        $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
+        $data['downtime_dept_map'] = [
+            // 1 => 'FN',
+            2 => 'NT',
+            // 3 => 'RR',
+            // 4 => 'SP',
+            // 5 => 'UT',
+            // 6 => 'GF',
+            7 => 'AR',
+        ];
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('instruksi/petugas', $data);
+        $this->load->view('templates/footer');
+    }
 }
