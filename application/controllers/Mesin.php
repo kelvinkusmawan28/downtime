@@ -9,6 +9,7 @@ class Mesin extends CI_Controller
         $this->load->model('Mesin_model');
 
         is_logged_in();
+        cek_akses_pi();
     }
 
     public function index()

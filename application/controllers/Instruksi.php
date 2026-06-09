@@ -9,6 +9,8 @@ class Instruksi extends CI_Controller
         $this->load->model('Instruksi_model');
 
         is_logged_in();
+
+        cek_akses_gi();
     }
 
     public function index()
@@ -995,6 +997,14 @@ class Instruksi extends CI_Controller
     {
         $data['title'] = 'Laporan  Ganti Instruksi';
         $data['dept_options'] = $this->Instruksi_model->getFilter();
+        $data['bln_sekarang'] = date('m');
+        $data['thn_sekarang'] = date('Y');
+        $data['bulan_options'] = $this->Instruksi_model->getBulan();
+        $data['tahun_options'] = $this->Instruksi_model->getTahun();
+
+
+        $data['filter_bulan'] = $this->session->userdata('filter_bulan') ?? 'all';
+        $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
         $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
         $data['downtime_dept_map'] = [
             // 1 => 'FN',
@@ -1009,5 +1019,220 @@ class Instruksi extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('instruksi/petugas', $data);
         $this->load->view('templates/footer');
+    }
+
+
+    public function filter_petugas()
+    {
+        $dept_id = $this->input->post('dept_id');
+        $bulan   = $this->input->post('bulan');
+        $tahun   = $this->input->post('tahun');
+
+        $limit = $this->input->post('length');
+        $start = $this->input->post('start');
+        $draw  = $this->input->post('draw');
+        $search = $this->input->post('search')['value'];
+
+        $this->session->set_userdata('filter_dept', $dept_id);
+        $this->session->set_userdata('filter_bulan', $bulan);
+        $this->session->set_userdata('filter_tahun', $tahun);
+
+        // akses dept
+        $hakdowntime = $this->session->userdata('hakdowntime');
+
+        $hak_dept_downtime = [
+            2 => 'NT',
+            7 => 'AR',
+        ];
+
+        $akses_dept = [];
+        foreach ($hak_dept_downtime as $index => $dept_code) {
+            $start_pos = ($index * 2) - 2;
+            if (substr($hakdowntime, $start_pos, 2) === '10') {
+                $akses_dept[] = $dept_code;
+            }
+        }
+
+        // =========================
+        // QUERY UTAMA (ANTI DUPLICATE)
+        // =========================
+        $this->db->select("
+            downtime_tindakan_user.user AS nama,
+    
+            COUNT(DISTINCT CASE WHEN downtime_kerusakan.ins_kode = 'GM' THEN downtime.id END) AS gm,
+            COUNT(DISTINCT CASE WHEN downtime_kerusakan.ins_kode = 'GB' THEN downtime.id END) AS gb,
+            COUNT(DISTINCT CASE WHEN downtime_kerusakan.ins_kode = 'GI' THEN downtime.id END) AS gi
+        ");
+
+        $this->db->from('downtime');
+
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+        $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
+
+        // filter dept
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+            $this->db->where('downtime.dept_id', $dept_id);
+        } else {
+            if (!empty($akses_dept)) {
+                $this->db->where_in('downtime.dept_id', $akses_dept);
+            } else {
+                $this->db->where('1=0');
+            }
+        }
+
+        // filter bulan & tahun
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        // search
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('downtime_tindakan_user.user', $search);
+            $this->db->group_end();
+        }
+
+        $this->db->where('downtime.ins', 1);
+        $this->db->where('downtime_tindakan_user.user IS NOT NULL', null, false);
+
+        // IMPORTANT FIX: group per user
+        $this->db->group_by('downtime_tindakan_user.user');
+
+        $this->db->limit($limit, $start);
+
+        $data = $this->db->get()->result_array();
+
+        // =========================
+        // FORMAT OUTPUT
+        // =========================
+        $no = $start + 1;
+        foreach ($data as &$row) {
+            $row['no'] = $no++;
+            $row['nama'] = '<span style="color:black;">' . $row['nama'] . '</span>';
+            $row['gm'] = (int)$row['gm'];
+            $row['gm'] = (int)$row['gm'];
+            $row['gb'] = (int)$row['gb'];
+            $row['gi'] = (int)$row['gi'];
+
+            $row['total'] = $row['gm'] + $row['gb'] + $row['gi'];
+        }
+        // usort($data, function ($a, $b) {
+        //     return $b['total'] <=> $a['total']; // DESC (terbesar ke terkecil)
+        // });
+
+        // =========================
+        // FILTERED COUNT (FIX)
+        // =========================
+        $this->db->select("COUNT(DISTINCT downtime_tindakan_user.user) AS total");
+        $this->db->from('downtime');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+        $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
+
+        $this->db->where('downtime.ins', 1);
+        $this->db->where('downtime_tindakan_user.user IS NOT NULL', null, false);
+
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+            $this->db->where('downtime.dept_id', $dept_id);
+        }
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        $recordsFiltered = $this->db->get()->row()->total;
+
+        // =========================
+        // TOTAL COUNT (FIX)
+        // =========================
+        $this->db->select("COUNT(DISTINCT downtime_tindakan_user.user) AS total");
+        $this->db->from('downtime');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+        $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
+
+        $this->db->where('downtime.ins', 1);
+        $this->db->where('downtime_tindakan_user.user IS NOT NULL', null, false);
+
+        $recordsTotal = $this->db->get()->row()->total;
+
+        // =========================
+        // RESPONSE
+        // =========================
+        echo json_encode([
+            'draw' => intval($draw),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
+        ]);
+    }
+    public function gi_terbanyak()
+    {
+        $dept_id = $this->input->post('dept_id');
+        $bulan   = $this->input->post('bulan');
+        $tahun   = $this->input->post('tahun');
+
+        $hakdowntime = $this->session->userdata('hakdowntime');
+
+        $hak_dept_downtime = [
+            2 => 'NT',
+            7 => 'AR',
+        ];
+
+        $akses_dept = [];
+        foreach ($hak_dept_downtime as $index => $dept_code) {
+            $start_pos = ($index * 2) - 2;
+            if (substr($hakdowntime, $start_pos, 2) === '10') {
+                $akses_dept[] = $dept_code;
+            }
+        }
+
+        $this->db->select("
+        downtime_tindakan_user.user,
+        COUNT(DISTINCT downtime.id) as total
+     ");
+
+        $this->db->from('downtime');
+
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+        $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
+
+        $this->db->where('downtime.ins', 1);
+        $this->db->where('downtime.status', 1);
+        $this->db->where('downtime_tindakan_user.user IS NOT NULL', null, false);
+
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+            $this->db->where('downtime.dept_id', $dept_id);
+        } else {
+            if (!empty($akses_dept)) {
+                $this->db->where_in('downtime.dept_id', $akses_dept);
+            } else {
+                $this->db->where('1=0');
+            }
+        }
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        $this->db->group_by('downtime_tindakan_user.user'); // ✅ INI YANG BENAR
+        $this->db->order_by('total', 'DESC');
+        // $this->db->limit(15);
+
+        $result = $this->db->get()->result_array();
+        echo json_encode($result);
     }
 }

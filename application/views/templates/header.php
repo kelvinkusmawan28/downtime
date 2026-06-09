@@ -120,7 +120,7 @@
           </li>
 
           <!-- Layouts -->
-          <li class="menu-item">
+          <!-- <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
               <i class="fa fa-file me-2"></i>
               <div class="text-truncate" data-i18n="Layouts">Document</div>
@@ -147,7 +147,7 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> -->
 
           <?php
           if ($this->session->userdata('cekdowntime_master') == '1') :
@@ -188,14 +188,15 @@
               </ul>
             </li>
           <?php endif; ?>
-          <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-              <i class="fa-solid fa-list me-2"></i>
-              <div class="text-truncate" data-i18n="Layouts">Report </div>
-            </a>
-            <?php
-            if ($this->session->userdata('cekdowntime') == '1') :
-            ?>
+          <?php
+          if ($this->session->userdata('cekdowntime') == '1') :
+          ?>
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="fa-solid fa-list me-2"></i>
+                <div class="text-truncate" data-i18n="Layouts">Report </div>
+              </a>
+
               <ul class="menu-sub">
                 <li class="menu-item">
                   <a href="<?= base_url('report'); ?>" class="menu-link">
@@ -217,27 +218,34 @@
                   </a>
                 </li>
               </ul>
-            <?php endif; ?>
-            <?php if ($this->session->userdata('cekdowntime_gi') == '1') : ?>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="<?= base_url('instruksi/report'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Laporan Ganti Instruksi</div>
-                  </a>
-                </li>
-              </ul>
-            <?php endif; ?>
-            <?php if ($this->session->userdata('cekdowntime_pi') == '1') : ?>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="<?= base_url('mesin/report_perbaikan'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Laporan Perbaikan</div>
-                  </a>
-                </li>
-              </ul>
-            <?php endif; ?>
-          </li>
 
+              <?php if ($this->session->userdata('cekdowntime_gi') == '1') : ?>
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('instruksi/report'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Laporan Ganti Instruksi</div>
+                    </a>
+                  </li>
+                </ul>
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('instruksi/petugas'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Petugas GI</div>
+                    </a>
+                  </li>
+                </ul>
+              <?php endif; ?>
+              <?php if ($this->session->userdata('cekdowntime_pi') == '1') : ?>
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('mesin/report_perbaikan'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Laporan Perbaikan</div>
+                    </a>
+                  </li>
+                </ul>
+              <?php endif; ?>
+            </li>
+          <?php endif; ?>
 
 
           <li class="menu-item">
