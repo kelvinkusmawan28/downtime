@@ -116,6 +116,17 @@ class Instruksi_model extends CI_model
         return $hapusdowntime && $hapustindakan;
     }
 
+    public function hapus_tindakan_gi($id)
+    {
+        $this->db->where('id_downtime', $id);
+        $downtim_tindakan = $this->db->delete('downtime_tindakan');
+        $this->db->where('id_tindakan', $id);
+        $downtim_tindakan_user = $this->db->delete('downtime_tindakan_user');
+
+        return $downtim_tindakan && $downtim_tindakan_user;
+    }
+
+
 
 
     public function Status_ok($id)

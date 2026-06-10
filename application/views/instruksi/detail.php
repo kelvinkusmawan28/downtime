@@ -285,9 +285,12 @@
               </div>
               <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
                 <?php if ($detail['status'] == 0) : ?>
-                  <div class="row">
+                  <div class="row mt-3">
                     <div class="col-md-4" style="text-align: center;">
-                      <a href="<?= base_url('instruksi/status_ok/' . $id_halaman); ?>" class="btn btn-sm btn-danger text-dark"> SELESAI</a>
+                      <a href="<?= base_url('instruksi/status_ok/' . $id_halaman); ?>" class="btn btn-sm btn-success text-dark"> SELESAI</a>
+                      <a href="#" data-id="<?= $detail['id']; ?>" data-url="<?= base_url('instruksi/hapus_tindakan/' . $id_halaman); ?>" class="btn btn-warning btn-sm text-dark status_cansel" title="Reset Data">
+                        Reset Data
+                      </a>
                     </div>
                   </div>
                 <?php endif; ?>
@@ -312,7 +315,36 @@
 </div>
 <!-- / Content -->
 
-
+<div class="modal modal-blur fade" id="modal-status_cansel" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-status bg-warning"></div>
+      <div class="modal-body text-center py-4">
+        <svg class="icon mb-2 text-warning icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z" />
+          <path d="M12 9v4" />
+          <path d="M12 17h.01" />
+        </svg>
+        <h3>Anda Yakin,</h3>
+        <div class="text-secondary" id="message">Data Ini Ingin Di Reset ?</div>
+      </div>
+      <div class="modal-footer">
+        <div class="w-100">
+          <div class="row">
+            <div class="col"><a id="btn-okk" href="#" class="btn btn-warning w-100">
+                Ya
+              </a></div>
+            <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">
+                Tidak
+              </a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -455,6 +487,12 @@
 
     document.getElementById('confirmSubmit').addEventListener('click', function() {
       document.querySelector('form').submit();
+    });
+
+    $(document).on('click', '.status_cansel', function() {
+      var url = $(this).data("url");
+      $("#btn-okk").attr("href", url);
+      $("#modal-status_cansel").modal("show");
     });
 
 

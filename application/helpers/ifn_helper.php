@@ -20,7 +20,7 @@ function cek_akses_gi()
     $ci = get_instance();
     $akses = $ci->session->userdata('cekdowntime_gi');
 
-    if ($akses !== 1) {
+    if ($akses != 1) {
         redirect('dashboard');
     }
 }
@@ -29,7 +29,7 @@ function cek_akses_pi()
     $ci = get_instance();
     $akses = $ci->session->userdata('cekdowntime_pi');
 
-    if ($akses !== 1) {
+    if ($akses != 1) {
         redirect('dashboard');
     }
 }

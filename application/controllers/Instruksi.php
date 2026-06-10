@@ -549,6 +549,18 @@ class Instruksi extends CI_Controller
         }
         redirect('instruksi');
     }
+    public function hapus_tindakan($id)
+    {
+        $hasil = $this->Instruksi_model->hapus_tindakan_gi($id);
+        if ($hasil) {
+            $this->session->set_flashdata('message', '
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            Data Berhasil Teriset!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>');
+        }
+        redirect('instruksi/view/' . $id);
+    }
 
     public function status_ok($id)
     {
