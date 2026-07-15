@@ -243,4 +243,45 @@ class Mesin_model extends CI_model
         $this->db->where_in('status', 0);
         return $this->db->count_all_results();
     }
+    public function getExport_Pdf($bulan, $tahun)
+    {
+        $this->db->select("
+            d.dept_id,
+            dept.departemen,
+            d.nomesin_id,
+            s.mach_no,
+            s.mach_name,
+            GROUP_CONCAT(DISTINCT k.remark SEPARATOR '; ') AS kerusakan,
+            SUM(d.downtime_kerusakan) AS total_downtime
+        ");
+
+        $this->db->from('downtime d');
+        $this->db->join('downtime_spekmesin s', 's.mach_id = d.nomesin_id', 'left');
+        $this->db->join('downtime_kerusakan k', 'k.rusak_id = d.kerusakan_id', 'left');
+        $this->db->join('dept', 'dept.dept_id = d.dept_id', 'left');
+
+        $this->db->where('d.status', 1);
+        $this->db->where('(d.ins != 1 OR d.ins IS NULL)', NULL, FALSE);
+
+        if ($bulan != 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(d.tanggal)', $bulan);
+        }
+
+        if ($tahun != 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(d.tanggal)', $tahun);
+        }
+
+        $this->db->group_by("
+            d.dept_id,
+            dept.departemen,
+            d.nomesin_id,
+            s.mach_no,
+            s.mach_name
+        ");
+
+        $this->db->order_by('dept.departemen', 'ASC');
+        $this->db->order_by('total_downtime', 'DESC');
+
+        return $this->db->get()->result_array();
+    }
 }

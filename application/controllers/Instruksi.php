@@ -576,19 +576,19 @@ class Instruksi extends CI_Controller
         redirect('instruksi');
     }
 
-    // public function status_cansel($id)
-    // {
-    //     $query = $this->Mesin_model->Status_cansel($id);
-    //     if ($query) {
-    //         $this->session->set_flashdata('message', '
-    //                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    //                         Status Data Kembali Progres!
-    //                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    //                  </div>
-    //                 ');
-    //     }
-    //     redirect('mesin');
-    // }
+    public function status_cansel($id)
+    {
+        $query = $this->Instruksi_model->Status_cansel($id);
+        if ($query) {
+            $this->session->set_flashdata('message', '
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            Status Data Kembali Di Buka!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                     </div>
+                    ');
+        }
+        redirect('instruksi/report');
+    }
 
     public function view($id)
     {
@@ -811,7 +811,10 @@ class Instruksi extends CI_Controller
 
 
 
-            $row['no'] = '<span style="color:black;">' . $no++ . '</span>';
+            $row['no'] = ' <a class=" status_cansel text-dark"
+                                data-id="' . $row['id'] . '"
+                                data-url="' . base_url() . 'instruksi/status_cansel/' . $row['id'] . '"
+                                href="#">' . $no++ . '</a>';
             $row['nomesin'] = '<span style="color:black;">' . 'Mesin '  . $row['mach_no'] . '</span>' . '<br><span style="color:black;">' . $row['mach_name'] . '</span>';
             $row['instruksi'] = 'Instruksi . 
                                 <a href="#" 
@@ -828,7 +831,8 @@ class Instruksi extends CI_Controller
                     : ''
                 )
                 . '</span>';
-            $row['selesai'] = '<span style="color:black;">' .
+
+            $row['selesai'] =  '<span style="color:black;">' .
                 (!empty($row['kerusakan_selesai'])
                     ? date('H:i', strtotime($row['kerusakan_selesai']))
                     : ''

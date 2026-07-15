@@ -65,6 +65,7 @@ class Downtime_mesin extends CI_Controller
         $dept_id = $this->input->post('dept_id');
         $bulan   = $this->input->post('bulan');
         $tahun   = $this->input->post('tahun');
+        $semester = $this->input->post('semester');
 
         $this->session->set_userdata('filter_bulan', $bulan);
         $this->session->set_userdata('filter_tahun', $tahun);
@@ -119,7 +120,16 @@ class Downtime_mesin extends CI_Controller
         }
 
         if ($bulan !== 'all' && !empty($bulan)) {
+
             $this->db->where('MONTH(d.tanggal)', $bulan);
+        } elseif ($semester == '1') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 1);
+            $this->db->where('MONTH(d.tanggal) <=', 6);
+        } elseif ($semester == '2') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 7);
+            $this->db->where('MONTH(d.tanggal) <=', 12);
         }
 
         if ($tahun !== 'all' && !empty($tahun)) {
@@ -174,7 +184,16 @@ class Downtime_mesin extends CI_Controller
         }
 
         if ($bulan !== 'all' && !empty($bulan)) {
+
             $this->db->where('MONTH(d.tanggal)', $bulan);
+        } elseif ($semester == '1') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 1);
+            $this->db->where('MONTH(d.tanggal) <=', 6);
+        } elseif ($semester == '2') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 7);
+            $this->db->where('MONTH(d.tanggal) <=', 12);
         }
 
         if ($tahun !== 'all' && !empty($tahun)) {
@@ -242,8 +261,9 @@ class Downtime_mesin extends CI_Controller
         $dept_id = $this->input->get('dept_id');
         $bulan   = $this->input->get('bulan');
         $tahun   = $this->input->get('tahun');
+        $semester = $this->input->post('semester');
 
-        $detail = $this->Downtime_mesin_model->getExport_Pdf($dept_id, $bulan, $tahun);
+        $detail = $this->Downtime_mesin_model->getExport_Pdf($dept_id, $bulan, $tahun, $semester);
 
         $pdf = new PDF('P', 'mm', 'A4');
         $pdf->AliasNbPages();
@@ -332,7 +352,7 @@ class Downtime_mesin extends CI_Controller
         $bulan = $this->input->get('bulan');
         $tahun = $this->input->get('tahun');
 
-        $detail = $this->Downtime_mesin_model->getExport_Pdf($dept_id, $bulan, $tahun);
+        $detail = $this->Downtime_mesin_model->getExport_Pdf($dept_id, $bulan, $tahun, $semester);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -483,10 +503,12 @@ class Downtime_mesin extends CI_Controller
         $dept_id = $this->input->post('dept_id');
         $bulan   = $this->input->post('bulan');
         $tahun   = $this->input->post('tahun');
+        $semester = $this->input->post('semester');
 
         $this->session->set_userdata('filter_bulan_pengerjaan', $bulan);
         $this->session->set_userdata('filter_tahun_pengerjaan', $tahun);
         $this->session->set_userdata('filter_dept_pengerjaan', $dept_id);
+        $this->session->set_userdata('filter_semester_pengerjaan', $semester);
 
         $limit  = $this->input->post('length');
         $start  = $this->input->post('start');
@@ -538,7 +560,16 @@ class Downtime_mesin extends CI_Controller
         }
 
         if ($bulan !== 'all' && !empty($bulan)) {
+
             $this->db->where('MONTH(d.tanggal)', $bulan);
+        } elseif ($semester == '1') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 1);
+            $this->db->where('MONTH(d.tanggal) <=', 6);
+        } elseif ($semester == '2') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 7);
+            $this->db->where('MONTH(d.tanggal) <=', 12);
         }
 
         if ($tahun !== 'all' && !empty($tahun)) {
@@ -594,7 +625,16 @@ class Downtime_mesin extends CI_Controller
         }
 
         if ($bulan !== 'all' && !empty($bulan)) {
+
             $this->db->where('MONTH(d.tanggal)', $bulan);
+        } elseif ($semester == '1') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 1);
+            $this->db->where('MONTH(d.tanggal) <=', 6);
+        } elseif ($semester == '2') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 7);
+            $this->db->where('MONTH(d.tanggal) <=', 12);
         }
 
         if ($tahun !== 'all' && !empty($tahun)) {
@@ -631,8 +671,18 @@ class Downtime_mesin extends CI_Controller
         $dept_id = $this->input->get('dept_id');
         $bulan   = $this->input->get('bulan');
         $tahun   = $this->input->get('tahun');
+        $semester = $this->input->get('semester');
 
-        $detail = $this->Downtime_mesin_model->getExport_Pengerjaan($dept_id, $bulan, $tahun);
+        $detail = $this->Downtime_mesin_model->getExport_Pengerjaan($dept_id, $bulan, $tahun, $semester);
+
+        if ($semester == '1') {
+            $periode = 'SEMESTER 1 (JAN-JUN)';
+        } elseif ($semester == '2') {
+            $periode = 'SEMESTER 2 (JUL-DES)';
+        } else {
+            $periode = 'BULAN: ' . strtoupper(get_nama_bulan($bulan));
+        }
+
 
         $pdf = new PDF('P', 'mm', 'A4');
         $pdf->AliasNbPages();
@@ -645,7 +695,7 @@ class Downtime_mesin extends CI_Controller
         $pdf->SetFont('Latob', '', 12);
         $pdf->Cell(0, 7, 'LAPORAN PERBAIKAN MESIN', 0, 1, 'C');
         $pdf->SetFont('Latob', '', 10);
-        $pdf->Cell(0, 6, 'BULAN: ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun, 0, 1, 'C');
+        $pdf->Cell(0, 6, 'BULAN: ' . $periode . ' - ' . $tahun, 0, 1, 'C');
         $pdf->Ln(8);
 
 
@@ -710,7 +760,7 @@ class Downtime_mesin extends CI_Controller
         $pdf->Cell($widths['downtime_hari'], 8, format_downtime($total_downtime), 1, 1, 'R', true);
 
         // Output PDF
-        $pdf->Output('I', 'Laporan_Downtime_Mesin_' . get_nama_bulan($bulan) . '_' . $tahun . '.pdf');
+        $pdf->Output('I', 'Laporan_Perbaikan Mesin' . get_nama_bulan($bulan) . '_' . $tahun . '.pdf');
     }
 
 
@@ -720,8 +770,19 @@ class Downtime_mesin extends CI_Controller
         $dept_id = $this->input->get('dept_id');
         $bulan = $this->input->get('bulan');
         $tahun = $this->input->get('tahun');
+        $semester = $this->input->get('semester');
 
-        $detail = $this->Downtime_mesin_model->getExport_Pengerjaan($dept_id, $bulan, $tahun);
+        $detail = $this->Downtime_mesin_model->getExport_Pengerjaan($dept_id, $bulan, $tahun, $semester);
+
+
+        if ($semester == '1') {
+            $periode = 'SEMESTER 1 (JAN-JUN)';
+        } elseif ($semester == '2') {
+            $periode = 'SEMESTER 2 (JUL-DES)';
+        } else {
+            $periode = 'BULAN: ' . strtoupper(get_nama_bulan($bulan));
+        }
+
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -729,7 +790,7 @@ class Downtime_mesin extends CI_Controller
 
 
         $sheet->setCellValue('C1', 'LAPORAN DOWNTIME MESIN');
-        $sheet->setCellValue('C2', 'Bulan: ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun);
+        $sheet->setCellValue('C2', $periode . ' - ' . $tahun);
         $sheet->mergeCells('C1:G1');
         $sheet->mergeCells('C2:G2');
 
@@ -819,7 +880,7 @@ class Downtime_mesin extends CI_Controller
         $sheet->getStyle('C5:C' . $rowNum)->getAlignment()->setHorizontal('center');
 
         // Export
-        $filename = 'Laporan_Downtime_Mesin_' . get_nama_bulan($bulan) . '_' . $tahun . '.xlsx';
+        $filename = 'Laporan_Perbaikan_Mesin' . get_nama_bulan($bulan) . '_' . $tahun . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment;filename=\"$filename\"");
         header('Cache-Control: max-age=0');

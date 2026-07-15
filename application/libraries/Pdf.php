@@ -4,69 +4,7 @@ include_once APPPATH . '/third_party/fpdf/fpdf.php';
 
 class Pdf extends FPDF
 {
-    // function __construct() {
-    // }
 
-    // function Header()
-    // {
-
-    //     $this->Image(base_url() . 'assets/image/logodepanK.png', 0, 5, 55);
-
-
-    //     $this->SetFont('Arial', 'I', 8);
-    //     $this->Cell(0, 10, 'DATA BC MASUK', 0, 1, 'C');
-    //     $this->Ln(8);
-
-    //     $this->SetFont('Arial', 'I', 8); // Font untuk nomor halaman
-    //     $this->SetY(14); // Atur kembali posisi Y
-    //     $this->Cell(0, 10, 'Halaman: ' . $this->PageNo(), 0, 0, 'C'); // Nomor halaman di kanan atas
-    //     $this->Ln(15);
-
-    //     // sett lebar kolom
-    //     $col_no = 10;
-    //     $col_jenis = 12;
-    //     $col_dokumen = 39;
-    //     $col_penerimaan = 58;
-    //     $col_pemasok = 80;
-    //     $col_sat = 10;
-    //     $col_jumlah = 21;
-    //     $nilai_barang = 50;
-
-
-    //     $this->Cell($col_no, 13, 'NO', 1, 0, 'C');
-    //     $this->Cell($col_jenis, 13, 'JENIS', 1, 0, 'C');
-    //     $this->Cell($col_dokumen, 6, 'DOKUMEN PABEAN', 1, 0, 'C');
-    //     $this->Cell($col_penerimaan, 6, 'BUKTI PENERIMAAN BRG', 1, 0, 'C');
-    //     $this->Cell($col_pemasok, 13, 'PEMASOK/PENGIRIM', 1, 0, 'C');
-    //     $this->Cell($col_sat, 13, 'SAT', 1, 0, 'C');
-    //     $this->Cell($col_jumlah, 13, 'JUMLAH', 1, 0, 'C');
-    //     $this->Cell($nilai_barang, 6, 'NILAI BARANG', 1, 0, 'C');
-
-    //     // Sub-header
-    //     $this->SetXY(32, 35);
-    //     $this->Cell(16, 7, 'NOMOR', 1, 0, 'C');
-    //     $this->Cell(23, 7, 'TANGGAL', 1, 0, 'C');
-    //     $this->Cell(35, 7, 'NOMOR', 1, 0, 'C');
-    //     $this->Cell(23, 7, 'TANGGAL', 1, 0, 'C');
-    //     $this->SetXY(240, 35);
-    //     $this->Cell(27, 7, 'IDR', 1, 0, 'C');
-    //     $this->Cell(23, 7, 'USD', 1, 0, 'C');
-    //     $this->Ln(7);
-    // }
-
-
-    function Footer()
-    {
-        // //atur posisi 1.5 cm dari bawah
-        // $this->SetY(-15);
-        // //buat garis horizontal
-        // $this->Line(10,$this->GetY(),200,$this->GetY());
-        // //Arial italic 9
-        // $this->SetFont('Arial','I',9);
-        // //nomor halaman
-        // // $this->Cell(0,10, $this->Image(base_url().'assets/images/sab/logoitalic1.png',10,$this->GetY()+2,15),0,0);
-        // $this->Cell(0,10,'Halaman '.$this->PageNo().' dari {nb}',0,0,'R');
-    }
     function WordWrap(&$text, $maxwidth)
     {
         $text = trim($text);
@@ -168,5 +106,56 @@ class Pdf extends FPDF
         }
 
         return $nl;
+    }
+
+    protected $widths;
+    protected $aligns;
+
+    public function SetWidths($w)
+    {
+        $this->widths = $w;
+    }
+
+    public function SetAligns($a)
+    {
+        $this->aligns = $a;
+    }
+
+    public function CheckPageBreak($h)
+    {
+        if ($this->GetY() + $h > $this->PageBreakTrigger) {
+            $this->AddPage($this->CurOrientation);
+        }
+    }
+
+    public function Row($data)
+    {
+        $nb = 0;
+
+        for ($i = 0; $i < count($data); $i++) {
+            $nb = max($nb, $this->NbLines($this->widths[$i], $data[$i]));
+        }
+
+        $h = 5 * $nb;
+
+        $this->CheckPageBreak($h);
+
+        for ($i = 0; $i < count($data); $i++) {
+
+            $w = $this->widths[$i];
+
+            $a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+
+            $x = $this->GetX();
+            $y = $this->GetY();
+
+            $this->Rect($x, $y, $w, $h);
+
+            $this->MultiCell($w, 5, $data[$i], 0, $a);
+
+            $this->SetXY($x + $w, $y);
+        }
+
+        $this->Ln($h);
     }
 }

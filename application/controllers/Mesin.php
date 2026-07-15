@@ -1,5 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+require_once APPPATH . '../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Mesin extends CI_Controller
 {
@@ -8,8 +12,13 @@ class Mesin extends CI_Controller
         parent::__construct();
         $this->load->model('Mesin_model');
 
+
         is_logged_in();
         cek_akses_pi();
+        $this->load->library('Pdf');
+        // // $this->load->library('Codeqr');
+        include_once APPPATH . '/third_party/phpqrcode/qrlib.php';
+        // include_once APPPATH . '/third_party/fpdf/fpdf.php';
     }
 
     public function index()
@@ -977,7 +986,7 @@ class Mesin extends CI_Controller
 
     public function report_perbaikan()
     {
-        $data['title'] = 'Laporan Perbaikan Mesin';
+        $data['title'] = ' Daftar Mesin Dengan Kerusakan Berkala Berdasarkan Data Downtime';
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
@@ -1223,5 +1232,307 @@ class Mesin extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('mesin/detail_report', $data);
         $this->load->view('templates/footer');
+    }
+
+    public function export_pdf()
+    {
+        $bulan = $this->input->get('bulan');
+        $tahun = $this->input->get('tahun');
+
+        $detail = $this->Mesin_model->getExport_Pdf($bulan, $tahun);
+
+        // Group per departemen dan ambil 5 terbesar
+        $groupData = [];
+
+        foreach ($detail as $row) {
+
+            $dept = $row['dept_id'];
+
+            if (!isset($groupData[$dept])) {
+                $groupData[$dept] = [];
+            }
+
+            if (count($groupData[$dept]) < 5) {
+                $groupData[$dept][] = $row;
+            }
+        }
+
+        $pdf = new PDF('P', 'mm', 'A4');
+        $pdf->AliasNbPages();
+        $pdf->AddFont('Lato', '', 'Lato-Regular.php');
+        $pdf->AddFont('Latob', '', 'Lato-Bold.php');
+        $pdf->AddPage();
+
+        $pdf->SetMargins(10, 10, 10);
+
+        // ================= HEADER ===================
+        $pdf->SetFont('Latob', '', 12);
+        $pdf->Cell(0, 7, 'LAPORAN DOWNTIME MESIN', 0, 1, 'C');
+
+        $pdf->SetFont('Latob', '', 10);
+        $pdf->Cell(0, 6, 'BULAN : ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun, 0, 1, 'C');
+        $pdf->Ln(5);
+
+        // Lebar kolom
+        $wNo    = 10;
+        $wDept  = 30;
+        $wMesin = 20;
+        $wKet   = 85;
+        $wMenit = 25;
+        $wHari  = 30;
+
+        $marginLeft = (210 - ($wNo + $wDept + $wMesin + $wKet + $wMenit + $wHari)) / 2;
+
+        $total_downtime = 0;
+
+        foreach ($groupData as $dept => $rows) {
+
+            $namaDept = $rows[0]['departemen'];
+
+            if ($namaDept == 'FINISHED GOODS') {
+                $namaDept = 'GUDANG';
+            }
+
+            // Header Departemen
+            $pdf->SetFont('Latob', '', 10);
+            $pdf->SetFillColor(220, 220, 220);
+
+            $pdf->SetX($marginLeft);
+            $pdf->Cell(
+                $wNo + $wDept + $wMesin + $wKet + $wMenit + $wHari,
+                8,
+                'DEPARTEMEN : ' . $namaDept,
+                1,
+                1,
+                'L',
+                true
+            );
+
+            // Header tabel
+            $pdf->SetFont('Lato', '', 8);
+
+            // Set lebar dan alignment untuk Row()
+            $pdf->SetWidths([
+                $wNo,
+                $wDept,
+                $wMesin,
+                $wKet,
+                $wMenit,
+                $wHari
+            ]);
+
+            $pdf->SetAligns([
+                'C',
+                'L',
+                'L',
+                'L',
+                'R',
+                'R'
+            ]);
+
+            $no = 1;
+
+            foreach ($rows as $row) {
+
+                $mesin = 'Mesin ' . $row['mach_no'];
+
+                $ket = str_replace(',', ', ', $row['kerusakan']);
+
+                if (strlen($ket) > 120) {
+                    $ket = substr($ket, 0, 120) . '...';
+                }
+
+                $downtime = (int)$row['total_downtime'];
+                $total_downtime += $downtime;
+
+                $pdf->SetX($marginLeft);
+
+                $pdf->Row([
+                    $no++,
+                    $namaDept,
+                    $mesin,
+                    $ket,
+                    format_menit($downtime),
+                    format_downtime($downtime)
+                ]);
+            }
+
+            $pdf->Ln(4);
+        }
+
+        // ================= TOTAL =====================
+
+
+
+        $pdf->Output(
+            'I',
+            'Laporan_Downtime_Mesin_' . $bulan . '_' . $tahun . '.pdf'
+        );
+    }
+    public function export_excel()
+    {
+        $bulan = $this->input->get('bulan');
+        $tahun = $this->input->get('tahun');
+
+        $detail = $this->Mesin_model->getExport_Pdf($bulan, $tahun);
+
+        // Group per departemen (Top 5)
+        $groupData = [];
+
+        foreach ($detail as $row) {
+
+            $dept = $row['dept_id'];
+
+            if (!isset($groupData[$dept])) {
+                $groupData[$dept] = [];
+            }
+
+            if (count($groupData[$dept]) < 5) {
+                $groupData[$dept][] = $row;
+            }
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $row = 1;
+
+        // ===================== JUDUL =====================
+        $sheet->mergeCells('A1:F1');
+        $sheet->setCellValue('A1', 'LAPORAN DOWNTIME MESIN');
+
+        $sheet->mergeCells('A2:F2');
+        $sheet->setCellValue(
+            'A2',
+            'BULAN : ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun
+        );
+
+        $sheet->getStyle('A1:A2')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
+
+        $row = 4;
+
+        $totalDowntime = 0;
+
+        foreach ($groupData as $dept => $rows) {
+
+            $namaDept = $rows[0]['dept_id'];
+
+            if ($namaDept == 'FINISHED GOODS') {
+                $namaDept = 'GUDANG';
+            }
+
+            // ===================== HEADER DEPARTEMEN =====================
+            $sheet->mergeCells("A{$row}:F{$row}");
+            $sheet->setCellValue("A{$row}", "DEPARTEMEN : " . $namaDept);
+
+            $sheet->getStyle("A{$row}:F{$row}")
+                ->getFont()->setBold(true);
+
+            $sheet->getStyle("A{$row}:F{$row}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setARGB('D9D9D9');
+
+            $row++;
+
+            // ===================== HEADER TABEL =====================
+            $sheet->fromArray([
+                [
+                    'No',
+                    'Departemen',
+                    'Mesin',
+                    'Keterangan',
+                    'Downtime / Menit',
+                    'Downtime / Hari'
+                ]
+            ], NULL, 'A' . $row);
+
+            $sheet->getStyle("A{$row}:F{$row}")
+                ->getFont()->setBold(true);
+
+            $sheet->getStyle("A{$row}:F{$row}")
+                ->getAlignment()->setHorizontal('center');
+
+            $sheet->getStyle("A{$row}:F{$row}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setARGB('EFEFEF');
+
+            $row++;
+
+            $no = 1;
+
+            foreach ($rows as $data) {
+                $ket = str_replace(';', ', ', $data['kerusakan']);
+
+                if (strlen($ket) > 120) {
+                    $ket = substr($ket, 0, 120) . '...';
+                }
+
+
+                $sheet->setCellValue("A{$row}", $no++);
+                $sheet->setCellValue("B{$row}", $namaDept);
+                $sheet->setCellValue("C{$row}", 'Mesin ' . $data['mach_no']);
+                $sheet->setCellValue("D{$row}", $ket);
+                $sheet->setCellValue("E{$row}", format_menit($data['total_downtime']));
+                $sheet->setCellValue("F{$row}", format_downtime($data['total_downtime']));
+
+                $sheet->getStyle("D{$row}")
+                    ->getAlignment()
+                    ->setWrapText(true);
+
+                $sheet->getRowDimension($row)->setRowHeight(-1);
+
+                $totalDowntime += $data['total_downtime'];
+
+                $row++;
+            }
+
+            $row++;
+        }
+
+        // ===================== TOTAL =====================
+        $sheet->mergeCells("A{$row}:D{$row}");
+        $sheet->setCellValue("A{$row}", 'TOTAL DOWNTIME');
+        $sheet->setCellValue("E{$row}", format_menit($totalDowntime));
+        $sheet->setCellValue("F{$row}", format_downtime($totalDowntime));
+
+        $sheet->getStyle("A{$row}:F{$row}")
+            ->getFont()->setBold(true);
+
+        // ===================== BORDER =====================
+        $styleBorder = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' =>
+                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ]
+            ]
+        ];
+
+        $sheet->getStyle("A4:F{$row}")
+            ->applyFromArray($styleBorder);
+
+        // ===================== LEBAR KOLOM =====================
+        $sheet->getColumnDimension('A')->setWidth(8);
+        $sheet->getColumnDimension('B')->setWidth(20);
+        $sheet->getColumnDimension('C')->setWidth(15);
+        $sheet->getColumnDimension('D')->setWidth(60);
+        $sheet->getColumnDimension('E')->setWidth(18);
+        $sheet->getColumnDimension('F')->setWidth(22);
+
+        // ===================== OUTPUT =====================
+        $filename = 'Laporan_Downtime_Mesin_' . $bulan . '_' . $tahun . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
     }
 }

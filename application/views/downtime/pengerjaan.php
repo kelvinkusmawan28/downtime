@@ -89,10 +89,13 @@
 
                   </select>
                 </div>
-                <div class=" mt-3 col-lg-3">
-                  <a href="<?= base_url('downtime_mesin/reset_filter') ?>" class="btn btn-primary " style="font-size: 12px;">
-                    <i class="fa-solid fa-rotate me-2"></i> Bersihkan Filter
-                  </a>
+                <div class="col-lg-3">
+                  <label class="font-kecil font-bold text-azure text-primary">Semester</label>
+                  <select name="filter_semester" id="filter_semester" class="form-select font-kecil mt-0">
+                    <option value="all">Semua Semester</option>
+                    <option value="1">Semester 1 (Jan–Jun)</option>
+                    <option value="2">Semester 2 (Jul–Des)</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -179,11 +182,12 @@
     const dept = $('#filter').val();
     const bulan = $('#filter_bulan').val();
     const tahun = $('#filter_tahun').val();
+    const semester = $('#filter_semester').val();
 
-    $('#btn-export-excel').attr('href', `<?= base_url('downtime_mesin/export_excel_pengerjaan') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}`);
-    $('#btn-export-pdf').attr('href', `<?= base_url('downtime_mesin/export_pdf_pengerjaan') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}`);
+    $('#btn-export-excel').attr('href', `<?= base_url('downtime_mesin/export_excel_pengerjaan') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}&semester=${semester}`);
+    $('#btn-export-pdf').attr('href', `<?= base_url('downtime_mesin/export_pdf_pengerjaan') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}&semester=${semester}`);
   }
 
-  $('#filter, #filter_bulan, #filter_tahun').change(updateExportLinks);
+  $('#filter, #filter_bulan, #filter_tahun, #filter_semester').change(updateExportLinks);
   $(document).ready(updateExportLinks); // set awal
 </script>

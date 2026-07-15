@@ -23,7 +23,7 @@ class Downtime_mesin_model extends CI_model
         return $this->db->order_by('dept_id', 'ASC')->get('dept')->result_array();
     }
 
-    public function getExport_Pdf($dept_id, $bulan, $tahun)
+    public function getExport_Pdf($dept_id, $bulan, $tahun, $semester)
     {
         $this->db->select('
         d.nomesin_id,d.ins,
@@ -44,7 +44,16 @@ class Downtime_mesin_model extends CI_model
         }
 
         if ($bulan !== 'all' && !empty($bulan)) {
+
             $this->db->where('MONTH(d.tanggal)', $bulan);
+        } elseif ($semester == '1') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 1);
+            $this->db->where('MONTH(d.tanggal) <=', 6);
+        } elseif ($semester == '2') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 7);
+            $this->db->where('MONTH(d.tanggal) <=', 12);
         }
 
         if ($tahun !== 'all' && !empty($tahun)) {
@@ -56,7 +65,7 @@ class Downtime_mesin_model extends CI_model
 
         return $this->db->get()->result_array();
     }
-    public function getExport_Pengerjaan($dept_id, $bulan, $tahun)
+    public function getExport_Pengerjaan($dept_id, $bulan, $tahun, $semester)
     {
         $this->db->select('
         d.nomesin_id,d.ins,
@@ -78,7 +87,16 @@ class Downtime_mesin_model extends CI_model
         }
 
         if ($bulan !== 'all' && !empty($bulan)) {
+
             $this->db->where('MONTH(d.tanggal)', $bulan);
+        } elseif ($semester == '1') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 1);
+            $this->db->where('MONTH(d.tanggal) <=', 6);
+        } elseif ($semester == '2') {
+
+            $this->db->where('MONTH(d.tanggal) >=', 7);
+            $this->db->where('MONTH(d.tanggal) <=', 12);
         }
 
         if ($tahun !== 'all' && !empty($tahun)) {

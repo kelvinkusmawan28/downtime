@@ -88,6 +88,14 @@
 
                   </select>
                 </div>
+                <div class="col-lg-3">
+                  <label class="font-kecil font-bold text-azure text-primary">Semester</label>
+                  <select name="filter_semester" id="filter_semester" class="form-select font-kecil mt-0">
+                    <option value="all">Semua Semester</option>
+                    <option value="1">Semester 1 (Jan–Jun)</option>
+                    <option value="2">Semester 2 (Jul–Des)</option>
+                  </select>
+                </div>
               </div>
               <div class="row">
                 <div class="col-lg-12" style="text-align: right;">
@@ -145,16 +153,9 @@
           d.dept_id = $('#filter').val();
           d.bulan = $('#filter_bulan').val();
           d.tahun = $('#filter_tahun').val();
+          d.semester = $('#filter_semester').val();
           console.log('bulan:', d.bulan);
           console.log('tahun:', d.tahun);
-        },
-        dataSrc: function(json) {
-
-          // tampilkan total downtime
-          $('#total_downtime').html(json.total_downtime);
-
-          // wajib return data
-          return json.data;
         }
       },
       columns: [{
@@ -178,7 +179,7 @@
       ],
     });
 
-    $('#filter,#filter_bulan,#filter_tahun').change(function() {
+    $('#filter,#filter_bulan,#filter_tahun,#filter_semester').change(function() {
       table.ajax.reload();
     });
   });
@@ -189,11 +190,12 @@
     const dept = $('#filter').val();
     const bulan = $('#filter_bulan').val();
     const tahun = $('#filter_tahun').val();
+    const semester = $('#filter_semester').val();
 
-    $('#btn-export-excel').attr('href', `<?= base_url('downtime_mesin/export_excel') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}`);
-    $('#btn-export-pdf').attr('href', `<?= base_url('downtime_mesin/export_pdf') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}`);
+    $('#btn-export-excel').attr('href', `<?= base_url('downtime_mesin/export_excel') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}&semester=${semester}`);
+    $('#btn-export-pdf').attr('href', `<?= base_url('downtime_mesin/export_pdf') ?>?dept_id=${dept}&bulan=${bulan}&tahun=${tahun}&semester=${semester}`);
   }
 
-  $('#filter, #filter_bulan, #filter_tahun').change(updateExportLinks);
+  $('#filter, #filter_bulan, #filter_tahun,#filter_semester').change(updateExportLinks);
   $(document).ready(updateExportLinks); // set awal
 </script>

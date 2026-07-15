@@ -6,7 +6,13 @@
         <div class="card-header ">
           <div class="row">
             <div class="col-6">
-              <h5 class="mb-1 me-2"><?= $title; ?></h5>
+              <h5 class="mb-1 me-2"><?= $title; ?></h5> <br>
+              <a id="btn-export-pdf" class="btn btn-light btn-sm" target="_blank">
+                <span class=" ml-1 text-dark">Export To Pdf <i class="fa fa-file-pdf text-danger"></i></span>
+              </a>
+              <a id="btn-export-excel" class="btn btn-light btn-sm">
+                <span class="ml-1 text-dark">Export To Excel <i class="fa fa-file-excel text-success"></i></span>
+              </a>
             </div>
             <div class="col-6" style="text-align: right;">
               <a href="<?= base_url('dashboard'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
@@ -155,9 +161,7 @@
               </div>
             </div>
           </div> -->
-          <h5>Total Downtime :
-            <span id="total_downtime"></span>
-          </h5>
+
           <hr>
           <div class="table-responsive">
             <table id="downtimeTable" class="tabel table-bordered">
@@ -447,4 +451,16 @@
       });
     }, 1000);
   });
+</script>
+<script>
+  function updateExportLinks() {
+    const bulan = $('#filter_bulan').val();
+    const tahun = $('#filter_tahun').val();
+
+    $('#btn-export-excel').attr('href', `<?= base_url('mesin/export_excel') ?>?bulan=${bulan}&tahun=${tahun}`);
+    $('#btn-export-pdf').attr('href', `<?= base_url('mesin/export_pdf') ?>?bulan=${bulan}&tahun=${tahun}`);
+  }
+
+  $('#filter_bulan, #filter_tahun').change(updateExportLinks);
+  $(document).ready(updateExportLinks);
 </script>
