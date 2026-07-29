@@ -707,7 +707,7 @@
               </div>
 
               <div class="card-footer bg-transparent border-0 pb-4 pt-0">
-                <div class="d-grid gap-2">
+                <div class="d-flex gap-4">
                   ${row.aksi}
                 </div>
               </div>

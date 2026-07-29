@@ -202,7 +202,7 @@ class Instruksi extends CI_Controller
                 $start_time = strtotime($row['kerusakan_mulai']) * 1000;
 
                 $row['status'] = '
-                    <span class="badge bg-info">PROGRES</span><br>
+                    <span class="text-primary">Progres..</span><br>
                     <small class= "text-dark" style = "font-size :12px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
                     <span class="updateon text-success" data-start="' . $start_time . '  " style = "font-size :10px; " >Loading...</span>
                 ';
@@ -221,7 +221,7 @@ class Instruksi extends CI_Controller
                 // default (kalau tidak punya hak)
                 $aksi = '<a class="btn btn-sm btn-info text-dark lihat-file" 
                         data-files=\'' . $data_files . '\'>
-                      Lihat Instruksi
+                        <i class="fa-regular fa-eye"></i>    Lihat Instruksi
                       </a>';
 
                 if ($cekdowntime == '1') {
@@ -229,7 +229,7 @@ class Instruksi extends CI_Controller
                     $aksi = '
                         <a class="btn btn-sm btn-info text-dark lihat-file" 
                             data-files=\'' . $data_files . '\'>
-                          Instruksi
+                               Instruksi
                         </a>
                 
                         <a class="btn btn-sm btn-danger text-dark hapus"

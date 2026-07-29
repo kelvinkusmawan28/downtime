@@ -1,3 +1,20 @@
+<style>
+  /* Custom CSS untuk efek hover pada card */
+  .card-hover {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* Biar badge status menyesuaikan jika pakai Bootstrap 5.3+ */
+  .bg-primary-subtle {
+    background-color: #e8f2ff !important;
+  }
+</style>
+
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
     <!-- Order Statistics -->
@@ -21,14 +38,13 @@
             </div>
             <div class="col-lg-12">
               <div class="row">
-                <?php
-                if ($this->session->userdata('cekdowntime') == '1') : ?>
-                  <div class="col-lg-6 mb-1">
-                    <a href="#" class="btn btn-outline-primary font-kecil" id="tambahdata">
-                      <i class="fa-solid fa-pen-to-square me-2"> </i>Tambah Data
-                    </a>
-                  </div>
-                <?php endif; ?>
+
+                <div class="col-lg-6 mb-1">
+                  <a href="#" class="btn btn-outline-primary font-kecil" id="tambahdata">
+                    <i class="fa-solid fa-pen-to-square me-2"> </i>Tambah Data
+                  </a>
+                </div>
+
               </div>
             </div>
           </div>
@@ -303,6 +319,18 @@
   </div>
 </div>
 
+<div class="modal fade" id="modalgambar" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">File</h5>
+      </div>
+      <div class="modal-body" id="contentgambar">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <!-- to filter form -->
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
@@ -404,6 +432,32 @@
 
       $('#contentFile').html(html);
       $('#modalFile').modal('show');
+    });
+    $(document).on('click', '.lihat-gambar', function() {
+      console.log("CLICKED");
+      let data = $(this).data('files');
+      let html = '';
+
+      if (data && data.paths && data.paths.length > 0) {
+
+        data.paths.forEach(function(path, i) {
+          let name = data.names && data.names[i] ? data.names[i] : 'File';
+
+          html += `
+            <div style="margin-bottom:10px">
+                <p>${name}</p>
+                <img src="${base_url + path}" 
+                     style="max-width:100%; border:1px solid #ccc; padding:5px;">
+            </div>
+        `;
+        });
+
+      } else {
+        html = '<span style="color:gray">Tidak ada file</span>';
+      }
+
+      $('#contentgambar').html(html);
+      $('#modalgambar').modal('show');
     });
 
 
@@ -515,7 +569,7 @@
         length: limit,
         start: (currentPage - 1) * limit,
 
-        // 🔥 penting (format datatable)
+
         search: {
           value: search
         }
@@ -529,7 +583,7 @@
         let end = start + res.data.length - 1;
         $('#infoData').text(`Showing ${start} to ${end} of ${res.recordsTotal}`);
 
-        // BUTTON PAGINATION
+        // PAGINATION
         $('#prevPage').prop('disabled', currentPage === 1);
         $('#nextPage').prop('disabled', end >= res.recordsTotal);
       }
@@ -548,7 +602,7 @@
       html += `
       <div class="col-md-4 mb-4">
         <div class="card h-100 shadow-sm border-1 rounded-3 hover-shadow transition-all"  >  
-              <div class="card-header border-1 pt-4 pb-1" style = "background-color : #e3f2fd;">
+              <div class="card-header border-1 pt-4 pb-1" style = "background-color : #90CAF9;">
                 <div class="d-flex justify-content-between align-items-start">
                   <div class="d-flex align-items-center">
                     <div class="icon-box bg-light-white rounded-circle p-2 me-3">
@@ -564,23 +618,23 @@
 
               <div class="card-body py-3">
                 <div class="row mb-3 g-2">
-                  <div class="col-6" style = "border-right : solid 1px grey ;"">
+                  <div class="col-7" style = "border-right : solid 1px grey ;"">
                     <label class="text-muted small d-block">Tanggal</label>
-                    <span class="fw-semibold small" style = "font-size: 10px; ><i class="far fa-calendar-alt me-1"></i> ${row.tanggal}</span>
+                    <span class="fw-semibold small" style = "font-size: 10px; ><i class="fas fa-calendar"></i> ${row.tanggal}</span>
                   </div>
-                  <div class="col-6">
+                  <div class="col-5">
                     <label class="text-muted small d-block">Departemen</label>
-                    <span class=" text-dark border fw-medium small" style = "font-size: 10px; background-color : #e3f2fd;">${row.departemen}</span> <br>
-                    <span class="text-dark border fw-medium small" style = "font-size: 10px;">${row.user}</span>
+                    <span class=" text-danger " style = "font-size: 10px;">${row.departemen}</span> <br>
+                    <span class="text-dark " style = "font-size: 10px;"><i class="fa-regular fa-circle-user"></i> Register : ${row.user}</span>
                   </div>
                 </div>
 
-                <div class="p-3 bg-light rounded-2 mb-3">
-                  <label class="text-muted small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Deskripsi </label>
-                  <p class="card-text small mb-0 text-secondary italic">
+                <div class="p-3 border-dashed rounded-2 mb-3" style = "background-color : #FFFAF0 ;">
+                  <label class="text-danger small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Deskripsi </label>
+                  <p class="card-text small mb-0 text-dark italic">
                     "${row.kerusakan}"
                   </p>
-                  <p class="card-text small mb-0 text-secondary  text-uppercase italic">
+                  <p class="card-text small mb-0 text-secondary text-uppercase italic">
                     "${row.instruksi}"
                   </p>
                 </div>
@@ -595,13 +649,13 @@
               </div>
 
               <div class="card-footer bg-transparent border-0 pb-4 pt-0">
-                <div class="d-grid gap-2">
-                  ${row.aksi}
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                    ${row.aksi}
                 </div>
-              </div>
+            </div>
 
             </div>
-        </div>
+         </div>
       `;
     });
 
