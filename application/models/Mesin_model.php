@@ -252,11 +252,12 @@ class Mesin_model extends CI_model
             s.mach_no,
             s.mach_name,
             GROUP_CONCAT(DISTINCT k.remark SEPARATOR '; ') AS kerusakan,
-            SUM(d.downtime_kerusakan) AS total_downtime
+            SUM(t.downtime) AS total_downtime
         ");
 
         $this->db->from('downtime d');
         $this->db->join('downtime_spekmesin s', 's.mach_id = d.nomesin_id', 'left');
+        $this->db->join('downtime_tindakan t', 't.id_downtime = d.id', 'left');
         $this->db->join('downtime_kerusakan k', 'k.rusak_id = d.kerusakan_id', 'left');
         $this->db->join('dept', 'dept.dept_id = d.dept_id', 'left');
 

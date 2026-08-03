@@ -202,9 +202,9 @@ class Instruksi extends CI_Controller
                 $start_time = strtotime($row['kerusakan_mulai']) * 1000;
 
                 $row['status'] = '
-                    <span class="text-primary">Progres..</span><br>
-                    <small class= "text-dark" style = "font-size :12px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
-                    <span class="updateon text-success" data-start="' . $start_time . '  " style = "font-size :10px; " >Loading...</span>
+                    <span class="text-dark">Progres..</span><br>
+                    <small class= "text-dark" style = "font-size :9px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
+                    <span class="updateon text-danger" data-start="' . $start_time . '  " style = "font-size :12px; " >Loading...</span>
                 ';
 
                 $path_files = json_decode($row['path_file'], true);

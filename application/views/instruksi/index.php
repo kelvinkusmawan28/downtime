@@ -1,20 +1,3 @@
-<style>
-  /* Custom CSS untuk efek hover pada card */
-  .card-hover {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
-  }
-
-  /* Biar badge status menyesuaikan jika pakai Bootstrap 5.3+ */
-  .bg-primary-subtle {
-    background-color: #e8f2ff !important;
-  }
-</style>
-
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
     <!-- Order Statistics -->
@@ -53,8 +36,8 @@
             <div class="col-lg-12">
               <div class="row" style="padding:10px;">
 
-                <div class="col-lg-3">
-                  <label class="font-kecil font-bold text-azure text-primary" st>Bulan</label>
+                <div class="col-lg-2">
+                  <label class="font-kecil font-bold text-azure text-dark" st>Bulan</label>
                   <select name="filter_bulan" id="filter_bulan" class="form-select font-kecil mt-0">
                     <option value="all" <?= $filter_bulan == 'all' ? 'selected' : '' ?>>Semua Bulan</option>
                     <?php foreach ($bulan_options as $bl) : ?>
@@ -68,8 +51,8 @@
                   </select>
 
                 </div>
-                <div class="col-lg-3">
-                  <label class="font-kecil font-bold text-azure text-primary">Tahun</label>
+                <div class="col-lg-2">
+                  <label class="font-kecil font-bold text-azure text-dark">Tahun</label>
                   <select name="filter_tahun" id="filter_tahun" class="form-select font-kecil mt-0">
                     <option value="all" <?= $filter_tahun == 'all' ? 'selected' : '' ?>>Semua Tahun</option>
                     <?php foreach ($tahun_options as $th) : ?>
@@ -78,8 +61,8 @@
                     <?php endforeach; ?>
                   </select>
                 </div>
-                <div class="col-lg-3">
-                  <label class="font-kecil font-bold text-azure text-primary">Departemen</label>
+                <div class="col-lg-2">
+                  <label class="font-kecil font-bold text-azure text-dark">Departemen</label>
 
                   <?php
                   $hakdowntime = $this->session->userdata('hakdowntime');
@@ -94,7 +77,7 @@
                   ?>
 
                   <select name="filter" id="filter" class="form-select font-kecil mt-0">
-                    <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
+                    <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua </option>
                     <?php foreach ($dept_options as $option) : ?>
                       <?php if (in_array($option['dept_id'],  $akses_dept_diberi)) : ?>
                         <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : ''  ?>>
@@ -106,7 +89,7 @@
                   </select>
                 </div>
                 <div class="col-lg-2">
-                  <label class="font-kecil font-bold text-azure text-primary">Cek Status</label>
+                  <label class="font-kecil font-bold text-azure text-dark">Cek Status</label>
                   <select name="filter_status" id="filter_status" class="form-select font-kecil mt-0">
                     <option value="all" <?= $filter_status == 'all' ? 'selected' : '' ?>>Semua Status</option>
                     <option class="text-dark" value="2" <?= $filter_status == 2  ? 'selected' : '' ?>>Antrian</option>
@@ -598,64 +581,70 @@
       let borderColor = row.status.includes('PROGRES') ?
         'border-primary' :
         'border-success';
-
       html += `
       <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm border-1 rounded-3 hover-shadow transition-all"  >  
-              <div class="card-header border-1 pt-4 pb-1" style = "background-color : #90CAF9;">
-                <div class="d-flex justify-content-between align-items-start">
-                  <div class="d-flex align-items-center">
-                    <div class="icon-box bg-light-white rounded-circle p-2 me-3">
-                      <i class="fas fa-clipboard-list  text-dark fa-2x"></i> 
-                    </div>
-                    <div>
-                  
-                      <h6 class="card-title fw-bold text-dark mb-0">${row.mesin}</h6>
-                    </div>
-                  </div>
-                </div>
+        <div class="card h-100 shadow-sm border rounded-3 hover-shadow transition-all">  
+          
+          <!-- Card Header Soft Blue -->
+          <div class="card-header border-bottom p-3">
+            <div class="d-flex align-items-center gap-2">
+              <div class=" p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+              <i class="fa-solid fa-barcode fa-2x"></i>
               </div>
-
-              <div class="card-body py-3">
-                <div class="row mb-3 g-2">
-                  <div class="col-7" style = "border-right : solid 1px grey ;"">
-                    <label class="text-muted small d-block">Tanggal</label>
-                    <span class="fw-semibold small" style = "font-size: 10px; ><i class="fas fa-calendar"></i> ${row.tanggal}</span>
-                  </div>
-                  <div class="col-5">
-                    <label class="text-muted small d-block">Departemen</label>
-                    <span class=" text-danger " style = "font-size: 10px;">${row.departemen}</span> <br>
-                    <span class="text-dark " style = "font-size: 10px;"><i class="fa-regular fa-circle-user"></i> Register : ${row.user}</span>
-                  </div>
-                </div>
-
-                <div class="p-3 border-dashed rounded-2 mb-3" style = "background-color : #FFFAF0 ;">
-                  <label class="text-danger small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Deskripsi </label>
-                  <p class="card-text small mb-0 text-dark italic">
-                    "${row.kerusakan}"
-                  </p>
-                  <p class="card-text small mb-0 text-secondary text-uppercase italic">
-                    "${row.instruksi}"
-                  </p>
-                </div>
-                <div class="p-3 bg-grey rounded-2 mt-2">
-                  <label class="text-muted text-center small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Status :</label>
-                  <p class="card-text text-center small mb-0 text-secondary italic">
-                    ${row.status} 
-                  </p>
-                </div>
-
-
+              <div>
+                <h6 class="card-title fw-bold text-dark mb-0">${row.mesin}</h6>
               </div>
+            </div>
+          </div>
 
-              <div class="card-footer bg-transparent border-0 pb-4 pt-0">
-                <div class="d-flex justify-content-center align-items-center gap-2">
-                    ${row.aksi}
-                </div>
+          <!-- Card Body -->
+          <div class="card-body py-3">
+            <!-- Tanggal & Departemen Info -->
+            <div class="row mb-3 g-2 align-items-center">
+              <div class="col-7 border-end pe-2">
+                <label class="text-muted d-block" style="font-size: 11px;">Tanggal</label>
+                <span class="fw-semibold text-dark" style="font-size: 11px;">
+                  <i class="fas fa-calendar me-1"></i>${row.tanggal}
+                </span>
+              </div>
+              <div class="col-5 ps-2">
+                <label class="text-muted d-block" style="font-size: 11px;">Departemen</label>
+                <span class="text-danger fw-bold d-block text-truncate" style="font-size: 11px;">${row.departemen}</span>
+                <span class="text-dark d-block text-truncate" style="font-size: 10px;">
+                  <i class="fa-regular fa-circle-user me-1"></i>Register: ${row.user}
+                </span>
+              </div>
             </div>
 
+            <!-- Box Deskripsi & Instruksi -->
+            <div class="p-3 border-dashed rounded-2 mb-3" style="background-color: #FFFAF0;">
+              <label class="text-danger small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Deskripsi</label>
+              <p class="card-text small mb-1 text-dark fst-italic">
+                "${row.kerusakan}"
+              </p>
+              <p class="card-text small mb-0 text-secondary text-uppercase fst-italic">
+                "${row.instruksi}"
+              </p>
             </div>
-         </div>
+
+            <!-- Box Status -->
+            <div class="p-2 rounded-2 text-center" style="background-color: #F0F0F0;">
+              <label class="text-dark small d-block fw-bold mb-0 text-uppercase" style="font-size: 0.7rem;">Status :</label>
+              <p class="card-text small mb-0 text-secondary fst-italic fw-semibold">
+                ${row.status} 
+              </p>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div class="card-footer bg-transparent border-0 pb-3 pt-0">
+            <div class="d-flex justify-content-center align-items-center gap-2">
+              ${row.aksi}
+            </div>
+          </div>
+
+        </div>
+      </div>
       `;
     });
 
@@ -664,7 +653,7 @@
 
     simpanTimestamp();
   }
-  // Simpan semua elemen dan start time-nya
+
   let timerData = [];
 
   function simpanTimestamp() {
@@ -703,7 +692,7 @@
       );
     });
   }, 1000);
-  // READY
+
   $(document).ready(function() {
 
     loadData();
@@ -714,26 +703,25 @@
 
   });
 
-  // SEARCH (ketik langsung jalan)
   $('#search').on('keyup', function() {
     currentPage = 1;
     loadData();
   });
 
-  // ENTRIES
+
   $('#entries').on('change', function() {
     limit = parseInt($(this).val());
     currentPage = 1;
     loadData();
   });
 
-  // NEXT
+
   $('#nextPage').on('click', function() {
     currentPage++;
     loadData();
   });
 
-  // PREV
+
   $('#prevPage').on('click', function() {
     if (currentPage > 1) {
       currentPage--;

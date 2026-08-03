@@ -1,30 +1,4 @@
-<style>
-  .transition-all {
-    transition: all 0.3s ease;
-  }
-
-  .hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-  }
-
-  .bg-light-primary {
-    background-color: #e7f1ff;
-  }
-
-  /* .card {
-    border-top: 4px solid #0d6efd !important;
-
-  } */
-
-  .card-title {
-    letter-spacing: -0.5px;
-  }
-
-  label {
-    font-size: 0.75rem;
-  }
-</style>
+<!-- Content -->
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
     <!-- Order Statistics -->
@@ -33,28 +7,31 @@
         <div class="card-header ">
           <div class="row">
             <div class="col-6">
-              <h6><?= $title; ?></h6>
+              <h5 class="mb-1 me-2"><?= $title; ?></h5>
             </div>
             <div class="col-6" style="text-align: right;">
               <a href="<?= base_url('dashboard'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
             </div>
           </div>
 
-
-
         </div>
         <div class="card-body font-kecil ">
           <div class=" mt-2 row">
-            <div class="col-lg-8">
+            <div class="col-lg-6">
               <?= $this->session->flashdata('message'); ?>
             </div>
             <div class="col-lg-12">
               <div class="row">
                 <div class="col-lg-6 mb-1">
-                  <a href="#" class="btn btn-outline-primary font-kecil" id="tambahdata">
+                  <a href="#" class="btn btn-outline-info font-kecil" id="tambahdata">
                     <i class="fa-solid fa-pen-to-square me-2"> </i>Tambah Data
                   </a>
                 </div>
+                <!-- <div class="col-lg-6 mb-2" style="text-align: right;">
+                  <a href="<?= base_url('mesin/reset_filter') ?>" class="btn btn-secondary " style="font-size: 12px;">
+                    <i class="fa-solid fa-rotate me-2"></i> Bersihkan Filter
+                  </a>
+                </div> -->
               </div>
             </div>
           </div>
@@ -62,8 +39,8 @@
 
           <div class="col-lg-12">
             <div class="row" style="padding:10px;">
-              <div class="col-lg-3">
-                <label class="font-kecil font-bold text-azure text-primary" st>Bulan</label>
+              <div class="col-lg-2">
+                <label class="font-kecil font-bold text-azure text-dark" st>Bulan</label>
                 <select name="filter_bulan" id="filter_bulan" class="form-select font-kecil mt-0">
                   <option value="all" <?= $filter_bulan == 'all' ? 'selected' : '' ?>>Semua Bulan</option>
                   <?php foreach ($bulan_options as $bl) : ?>
@@ -77,8 +54,8 @@
                 </select>
 
               </div>
-              <div class="col-lg-3">
-                <label class="font-kecil font-bold text-azure text-primary">Tahun</label>
+              <div class="col-lg-2">
+                <label class="font-kecil font-bold text-azure text-dark">Tahun</label>
                 <select name="filter_tahun" id="filter_tahun" class="form-select font-kecil mt-0">
                   <option value="all" <?= $filter_tahun == 'all' ? 'selected' : '' ?>>Semua Tahun</option>
                   <?php foreach ($tahun_options as $th) : ?>
@@ -87,8 +64,8 @@
                   <?php endforeach; ?>
                 </select>
               </div>
-              <div class="col-lg-3">
-                <label class="font-kecil font-bold text-azure text-primary">Departemen</label>
+              <div class="col-lg-2">
+                <label class="font-kecil font-bold text-azure text-dark">Departemen</label>
 
                 <?php
                 $hakdowntime = $this->session->userdata('hakdowntime');
@@ -115,33 +92,35 @@
                 </select>
               </div>
               <div class="col-lg-2">
-                <label class="font-kecil font-bold text-azure text-primary">Cek status</label>
+                <label class="font-kecil font-bold text-azure text-dark">Status Downtime</label>
                 <select name="filter_status" id="filter_status" class="form-select font-kecil mt-0">
                   <option value="all" <?= $filter_status == 'all' ? 'selected' : '' ?>>Semua Status</option>
-                  <option class="text-dark" value="2" <?= $filter_status == 2  ? 'selected' : '' ?>>Antrian</option>
+                  <option class="text-dark" value="2" <?= $filter_status == 2  ? 'selected' : '' ?>>Antiran</option>
                   <option class="text-dark" value="0" <?= $filter_status == 0  ? 'selected' : '' ?>>Progres</option>
                   <!-- <option class="text-dark" value="1" <?= $filter_status == 1  ? 'selected' : '' ?>>Close</option> -->
-
-
                 </select>
               </div>
             </div>
           </div>
+
           <div class="row mt-3">
             <div class="col-12" style="text-align: right; ">
               <a href="<?= base_url('riwayat'); ?>" style="text-decoration: underline; color: black ;"> <i class="fa fa-clock-rotate-left text-danger me-2"></i> <span style="font-size: 14px;;"> History <?= $this->session->userdata('name'); ?> </span> </a>
             </div>
           </div>
+
           <hr>
+
           <!-- <div class="table-responsive">
-            <table id="downtimeTable" class="tabel table-bordered">
+            <table id="downtimeTable" class="table table-bordered">
               <thead>
-                <tr>
+                <tr style="color: black;">
                   <th>No</th>
                   <th>Tanggal</th>
                   <th>Departemen</th>
                   <th>Mesin</th>
                   <th>Kerusakan</th>
+              
                   <th>Status</th>
                   <th>Aksi</th>
                 </tr>
@@ -155,7 +134,7 @@
           <div class="row mt-3">
             <div class="col-3 col-md-2">
               <select id="entries" class="form-control">
-                <option value="10">10</option>
+                <!-- <option value="10">10</option> -->
                 <option value="25">25</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
@@ -168,7 +147,7 @@
 
 
           </div>
-          <div class="row mt-3" id="cardContainer"><!-- Card akan muncul di sini --> </div>
+          <div class="row mt-3" id="cardContainer"></div>
           <div class="d-flex justify-content-between align-items-center mt-3">
             <button id="prevPage" class="btn btn-secondary btn-sm">Prev </button> <small id="infoData"></small>
             <button id="nextPage" class="btn btn-secondary btn-sm">Next</button>
@@ -338,7 +317,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade" id="basicModal-kesimpulan" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -356,7 +334,6 @@
   </div>
 </div>
 
-
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <!-- to filter form -->
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
@@ -368,6 +345,7 @@
 
 
       const filter_dept = $('#filter').val();
+      // cek filter
       if (filter_dept === 'all') {
         e.preventDefault();
         alert("Silakan pilih departemen terlebih dahulu.");
@@ -448,10 +426,6 @@
       $("#loadforminput-file").html(content);
       $("#basicModal-file").modal("show");
     });
-
-
-
-
 
     $(document).on('click', '.edit', function() {
       var data = $(this).data("id");
@@ -619,8 +593,8 @@
   $(document).ready(function() {
 
     let currentPage = 1;
-    let limit = 10;
-    let search = ''; // 🔥 FIX
+    let limit = 25;
+    let search = '';
 
     function loadData() {
       $.ajax({
@@ -664,7 +638,7 @@
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-1 rounded-3 hover-shadow transition-all"  >
               
-              <div class="card-header border-1 pt-4 pb-1" style = "background-color : #f7ff8a;">
+              <div class="card-header border-1 pt-4 pb-1">
                 <div class="d-flex justify-content-between align-items-start">
                   <div class="d-flex align-items-center">
                     <div class="icon-box bg-light-white rounded-circle p-2 me-3">
@@ -679,24 +653,27 @@
               </div>
 
               <div class="card-body py-3">
-                <div class="row mb-3 g-2">
-                  <div class="col-6" style = "border-right : solid 1px grey ;"">
+               <div class="row mb-3 g-2 align-items-center">
+                 <div class="col-6 border-end pe-2">
                     <label class="text-muted small d-block">Tanggal</label>
-                    <span class="fw-semibold small" style = "font-size: 10px; ><i class="far fa-calendar-alt me-1"></i> ${row.tanggal}</span>
+                    <span class="fw-semibold text-dark" style="font-size: 11px;">
+                    <i class="fas fa-calendar me-1"></i>${row.tanggal}
+                   </span>
                   </div>
+             
                   <div class="col-6">
-                    <label class="text-muted small d-block">Departemen :</label>
-                    <span class="badge bg-info text-dark border fw-medium small" style = "font-size: 10px;">${row.departemen}</span>
+                    <label class="text-muted small d-block">Departemen</label>
+                    <span class="text-danger border fw-medium small" style = "font-size: 10px;">${row.departemen}</span>
                   </div>
                 </div>
 
-                <div class="p-3 bg-light rounded-2 mb-3">
-                  <label class="text-muted small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Deskripsi Kerusakan</label>
-                  <p class="card-text small mb-0 text-secondary italic">
-                    "${row.kerusakan}"
-                  </p>
+                <div class="p-3 border-dashed rounded-2 mb-3" style = "background-color: #FFFAF0;">
+                  <label class="text-danger small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Deskripsi Kerusakan</label>
+                  <p class="card-text small mb-1 text-dark fst-italic">
+                "${row.kerusakan}"
+               </p>
                 </div>
-                <div class="p-3 bg-grey rounded-2 mt-2">
+                <div class="p-3  rounded-2 mt-2" style="background-color: #F0F0F0;">
                   <label class="text-muted text-center small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Status Perbaikan :</label>
                   <p class="card-text text-center small mb-0 text-secondary italic">
                     ${row.status} 
@@ -707,7 +684,7 @@
               </div>
 
               <div class="card-footer bg-transparent border-0 pb-4 pt-0">
-                <div class="d-flex gap-4">
+              <div class="d-flex justify-content-center align-items-center gap-2">
                   ${row.aksi}
                 </div>
               </div>
@@ -761,7 +738,7 @@
       });
     }, 1000);
 
-    // LOAD AWAL
+
     loadData();
 
     $('#filter,#filter_status,#filter_bulan,#filter_tahun').change(function() {
@@ -769,27 +746,27 @@
       loadData();
     });
 
-    // SEARCH
+
     $('#search').on('keyup', function() {
-      search = $(this).val(); // 🔥 FIX
+      search = $(this).val();
       currentPage = 1;
       loadData();
     });
 
-    // ENTRIES
+
     $('#entries').on('change', function() {
       limit = parseInt($(this).val());
       currentPage = 1;
       loadData();
     });
 
-    // NEXT
+
     $('#nextPage').on('click', function() {
       currentPage++;
       loadData();
     });
 
-    // PREV
+
     $('#prevPage').on('click', function() {
       if (currentPage > 1) {
         currentPage--;
