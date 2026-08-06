@@ -8,7 +8,7 @@
   }
 
   .card-header-status {
-    background: #f7ff8a;
+    background: #FEF2A0;
     padding: 15px 25px;
     border-bottom: 1px solid #eee;
     display: flex;
@@ -44,12 +44,12 @@
 
   .value-highlight {
     color: #e53e3e;
-    /* Red for damage info */
+
   }
 
   .status-badge {
     padding: 6px 16px;
-    border-radius: 50px;
+    border-radius: 5px;
     font-size: 0.75rem;
     font-weight: 800;
   }
@@ -76,102 +76,25 @@
       <a href="<?= base_url('mesin'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
     </div>
   </div>
-  <!-- <div class="row mt-3">
-    <div class="col-lg-12">
-      <div class="card" style="border: 1px solid darkgray;">
-        <div class="card-body font-kecil p-1">
-          <div class="row mb-1">
-            <div class="col-md-4 mb-0 border-bottom pb-2">
-              <div class="text-muted fw-semibold">📅 Tanggal</div>
-              <div><?= format_tanggal_indonesia($detail['tanggal']); ?></div>
-            </div>
-            <div class="col-md-4 mb-0 border-bottom pb-2">
-              <div class="text-muted fw-semibold">🏢 Departemen</div>
-              <div><?= $detail['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $detail['departemen']; ?></div>
-            </div>
-            <div class="col-md-4 mb-0 border-bottom pb-2">
-              <div class="text-muted fw-semibold">🎰 Mesin</div>
-              <div><?= $detail['mach_no']; ?></div>
-            </div>
-            <div class="col-md-4 mb-0 border-bottom pb-2">
-              <div class="text-muted fw-semibold">⚓ Spek Mesin</div>
-              <div><?= $detail['mach_name']; ?></div>
-            </div>
-            <div class="col-md-4  mb-0 border-bottom ">
-              <div class="text-muted fw-semibold">🔍 Jenis Kerusakan</div>
-              <div style="color: red;"><?= $detail['remark']; ?></div>
-            </div>
-            <div class="col-md-4  mb-0 border-bottom ">
-              <div class="text-muted fw-semibold">⚙️ Status Pengerjaan </div>
-              <div> <?php if ($detail['status'] == 0) : ?>
-                  <span class="badge bg-primary">PROGRES</span>
-                <?php else : ?>
-                  <span class="badge bg-success">CLOSE</span>
-                <?php endif; ?>
-              </div>
-            </div>
-            <div class="col-md-4  mb-0 border-bottom ">
-              <div class="text-muted fw-semibold">👨 User</div>
-              <div class="font-bold"><?= $detail['user']; ?></div>
-            </div>
-            <div class="col-md-4  mb-0 border-bottom ">
-              <div class="text-muted fw-semibold">📄 Keterangan Detail</div>
-              <div style="color: red;"><?= $detail['keterangan']; ?></div>
-            </div>
-            <div class="col-md-4  mb-0 border-bottom ">
-              <div class="text-muted fw-semibold">🌐 link Gambar </div>
-              <?php
-              $path_files = json_decode($detail['path_file'], true);
-              $file_names = json_decode($detail['file'], true);
-
-              if (!empty($path_files)) {
-                foreach ($path_files as $index => $path) {
-                  $filename = isset($file_names[$index]) ? $file_names[$index] : basename($path);
-                  echo '<a href="' . base_url($path) . '" target="_blank" style="text-decoration: underline;">' . $filename . '</a><br>';
-                }
-              } else {
-                echo '<span style="color: gray;">Tidak ada file</span>';
-              }
-              ?>
-
-            </div>
-            <div class="col-md-4 mt-3  mb-0 border-bottom ">
-              <div class="text-muted fw-semibold">
-                <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
-                  <a href="#" data-id="<?= $detail['id']; ?>" class=" font-kecil kesimpulan text-primary" title="Kesimpulan" style="margin-left: 10px; text-decoration: underline; "> 📌 Kesimpulan</a>
-                <?php else : ?>
-                  📌 Kesimpulan
-                <?php endif; ?>
-              </div>
-              <div class="font-bold">
-                <textarea class="form-control font-kecil" style="color: red;" rows="3" disabled><?= htmlspecialchars($detail['kesimpulan']); ?></textarea>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
   <div class="row mt-4">
     <div class="col-lg-12">
       <div class="card modern-card">
 
         <div class="card-header-status">
           <div class="d-flex align-items-center">
-            <span class="me-3" style="font-size: 1.2rem;">🎰</span>
+            <span class="me-5" style="font-size: 1.2rem;"> <i class="fa-solid fa-screwdriver-wrench fs-2 text-dark"></i></span>
             <div>
-              <h6 class="mb-0 text-dark">Mesin <?= $detail['mach_no']; ?></h6>
+              <h5 class="mb-0 text-dark">Mesin <?= $detail['mach_no']; ?></h5>
               <small class="text-dark"><?= $detail['mach_name']; ?></small>
             </div>
           </div>
           <div>
             <?php if ($detail['status'] == 0) : ?>
-              <span class="badge status-badge bg-warning shadow-sm text-dark">PROGRESS..</span>
+              <span class="badge status-badge bg-light shadow-sm text-dark">PROGRESS..</span>
             <?php elseif ($detail['status'] == 2) : ?>
-              <span class="badge status-badge bg-info shadow-sm text-dark">ANTRIAN..</span>
+              <span class="badge status-badge bg-light shadow-sm text-dark">ANTRIAN..</span>
             <?php else : ?>
-              <span class="badge status-badge bg-danger shadow-sm text-dark">CLOSE</span>
+              <span class="badge status-badge bg-light shadow-sm text-danger">CLOSE</span>
             <?php endif; ?>
           </div>
         </div>
@@ -243,81 +166,70 @@
               </div>
             </div>
           </div>
-        </div>
+          <div class="row mt-4 " style="border-top: 1px dashed grey;">
+            <div class="col-lg-6">
+              <h5 class="me-2 mt-4"><?= $title; ?></h5>
+              <?php if ($detail['status'] == 0) : ?>
+                <a href="#" class="btn btn-outline-primary font-kecil " id="tambahdata" data-bs-toggle="modal" data-bs-target="#basicModal">
+                  Tambah Data
+                </a>
+              <?php endif; ?>
+            </div>
+            <div class="card-body font-kecil ">
+              <div class="table-responsive">
+                <!-- <table class="tabel datatable"> -->
+                <table class="table  table-bordered">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Tanggal</th>
+                      <th>Jam Mulai</th>
+                      <th>Jam Selesai</th>
+                      <th>Waktu Perbaikan</th>
+                      <th>User</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php $no = 0;
+                    foreach ($tindakan as $data) : $no++; ?>
+                      <tr>
+                        <td><?= $no; ?></td>
+                        <td><a href="#" data-id="<?= $data['id']; ?>" class="view" title="view Data" style="color: blueviolet; margin-left:10px; text-decoration: underline;">
+                            <?= format_tanggal_indonesia($data['tanggal']); ?>
+                          </a>
+                        </td>
+                        <td><?= $data['jam_start']; ?></td>
+                        <td><?= $data['jam_end']; ?></td>
+                        <td><?= format_downtime($data['downtime']);  ?></td>
+                        <td><?= $data['user']; ?></td>
+                        <td>
+                          <?php if ($data['user'] == $this->session->userdata('name')) : ?>
+                            <?php if ($detail['status'] == 0) : ?>
+                              <div class="dropdown" class="font-kecil">
+                                <a class="btn btn-secondary dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Aksi
+                                </a>
+                                <ul class="dropdown-menu">
+                                  <li><a class=" btn btn-outline-success font-kecil edit-tindakan" data-id="<?= $data['id']; ?>" href="#"> <i class="fa-solid fa-pencil me-2"></i> Edit Data</a></li>
+                                  <li><a class=" btn btn-outline-danger font-kecil hapus-tindakan" data-id="<?= $data['id']; ?>" data-url="<?= base_url(); ?>mesin/hapus_tindakan/<?= $data['id']; ?>/<?= $id_halaman; ?>" href="#"> <i class="fa fa-trash me-2"></i> Hapus Data</a></li>
+                                </ul>
+                              </div>
+                            <?php else : ?>
+                              <p style="color:blue; padding-top:15px;">Data Sudah Close</p>
+                            <?php endif; ?>
+                          <?php endif; ?>
 
-      </div>
-    </div>
-  </div>
-  <div class="row ">
-    <div class="col-lg-12 ">
-      <div class="card h-100">
-        <div class="card-header ">
-          <div class="card-title mb-0">
-            <h5 class="mb-1 me-2"><?= $title; ?></h5>
-          </div>
-        </div>
-        <div class="card-body font-kecil ">
-          <?php if ($detail['status'] == 0) : ?>
-            <a href="#" class="btn btn-outline-primary font-kecil " id="tambahdata" data-bs-toggle="modal" data-bs-target="#basicModal">
-              Tambah Data
-            </a>
-          <?php endif; ?>
-          <div class=" mt-2 row">
-            <div class="col-lg-5">
-              <?= $this->session->flashdata('message'); ?>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-          <div class="table-responsive">
-            <table class="tabel datatable">
-              <!-- <table class="table table-striped table-bordered"> -->
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Tanggal</th>
-                  <th>Jam Mulai</th>
-                  <th>Jam Selesai</th>
-                  <th>Waktu Perbaikan</th>
-                  <th>User</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php $no = 0;
-                foreach ($tindakan as $data) : $no++; ?>
-                  <tr>
-                    <td><?= $no; ?></td>
-                    <td><a href="#" data-id="<?= $data['id']; ?>" class="view" title="view Data" style="color: blueviolet; margin-left:10px; text-decoration: underline;">
-                        <?= format_tanggal_indonesia($data['tanggal']); ?>
-                      </a>
-                    </td>
-                    <td><?= $data['jam_start']; ?></td>
-                    <td><?= $data['jam_end']; ?></td>
-                    <td><?= format_downtime($data['downtime']);  ?></td>
-                    <td><?= $data['user']; ?></td>
-                    <td>
-                      <?php if ($data['user'] == $this->session->userdata('name')) : ?>
-                        <?php if ($detail['status'] == 0) : ?>
-                          <div class="dropdown" class="font-kecil">
-                            <a class="btn btn-secondary dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              Aksi
-                            </a>
-                            <ul class="dropdown-menu">
-                              <li><a class=" btn btn-outline-success font-kecil edit-tindakan" data-id="<?= $data['id']; ?>" href="#"> <i class="fa-solid fa-pencil me-2"></i> Edit Data</a></li>
-                              <li><a class=" btn btn-outline-danger font-kecil hapus-tindakan" data-id="<?= $data['id']; ?>" data-url="<?= base_url(); ?>mesin/hapus_tindakan/<?= $data['id']; ?>/<?= $id_halaman; ?>" href="#"> <i class="fa fa-trash me-2"></i> Hapus Data</a></li>
-                            </ul>
-                          </div>
-                        <?php else : ?>
-                          <p style="color:blue; padding-top:15px;">Data Sudah Close</p>
-                        <?php endif; ?>
-                      <?php endif; ?>
-
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
-          </div>
         </div>
+
       </div>
     </div>
   </div>

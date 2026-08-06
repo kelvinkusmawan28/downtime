@@ -19,7 +19,7 @@
                 <div class="card h-100 shadow-sm custom-card" style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f4f8);">
                   <div class="card-body p-4 d-flex flex-column align-items-center text-center">
 
-                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background: linear-gradient(45deg, #0d6efd, #0046af); border-radius: 18px;">
+                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background:gold; border-radius: 18px;">
                       <i class="fa-solid fa-screwdriver-wrench fs-2 text-white"></i>
                     </div>
 
@@ -27,7 +27,7 @@
                     <p class="text-muted small mb-4">Akses Modul laporan kerusakan.</p>
 
                     <div class="mt-auto w-100">
-                      <span class="btn btn-outline-primary w-100 btn-custom">
+                      <span class="btn btn-outline-warning w-100 btn-custom">
                         Buka Menu <i class="fa-solid fa-arrow-right ms-2"></i>
                       </span>
                     </div>
@@ -43,7 +43,7 @@
                 <div class="card h-100 shadow-sm custom-card" style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #eefcfe);">
                   <div class="card-body p-4 d-flex flex-column align-items-center text-center">
 
-                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background: linear-gradient(45deg, #0dcaf0, #0aa2c0); border-radius: 18px;">
+                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background:#0d6efd; border-radius: 18px;">
                       <i class="fa-solid fa-clipboard-list fs-2 text-white"></i>
                     </div>
 

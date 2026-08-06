@@ -638,7 +638,7 @@
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-1 rounded-3 hover-shadow transition-all"  >
               
-              <div class="card-header border-1 pt-4 pb-1">
+              <div class="card-header border-1 pt-4 pb-1" >
                 <div class="d-flex justify-content-between align-items-start">
                   <div class="d-flex align-items-center">
                     <div class="icon-box bg-light-white rounded-circle p-2 me-3">
