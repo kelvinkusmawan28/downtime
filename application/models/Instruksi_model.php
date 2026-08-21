@@ -388,4 +388,84 @@ class Instruksi_model extends CI_model
 
         return $this->db->get()->result_array();
     }
+
+
+    public function get_gi($dept, $bulan, $tahun)
+    {
+        $this->db->select("downtime.*, dept.departemen,
+        downtime_kerusakan.remark as instruksi,
+        downtime_kerusakan.ins_kode,
+        downtime_spekmesin.mach_name,
+        downtime_spekmesin.mach_no");
+
+        $this->db->from('downtime');
+        $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+
+        $this->db->where('downtime_kerusakan.ins_kode', 'GI');
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+        $this->db->where('downtime.dept_id', $dept);
+        $this->db->where('downtime.ins', 1);
+
+        return $this->db->get()->result_array();
+    }
+    public function get_gm($dept, $bulan, $tahun)
+    {
+        $this->db->select("downtime.*, dept.departemen,
+        downtime_kerusakan.remark as instruksi,
+        downtime_kerusakan.ins_kode,
+        downtime_spekmesin.mach_name,
+        downtime_spekmesin.mach_no");
+
+        $this->db->from('downtime');
+        $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+
+        $this->db->where('downtime_kerusakan.ins_kode', 'GM');
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+        $this->db->where('downtime.dept_id', $dept);
+        $this->db->where('downtime.ins', 1);
+
+        return $this->db->get()->result_array();
+    }
+    public function get_gb($dept, $bulan, $tahun)
+    {
+        $this->db->select("downtime.*, dept.departemen,
+        downtime_kerusakan.remark as instruksi,
+        downtime_kerusakan.ins_kode,
+        downtime_spekmesin.mach_name,
+        downtime_spekmesin.mach_no");
+
+        $this->db->from('downtime');
+        $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+
+        $this->db->where('downtime_kerusakan.ins_kode', 'GB');
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+        $this->db->where('downtime.dept_id', $dept);
+        $this->db->where('downtime.ins', 1);
+
+        return $this->db->get()->result_array();
+    }
 }

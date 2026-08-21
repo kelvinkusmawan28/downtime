@@ -1069,9 +1069,7 @@ class Instruksi extends CI_Controller
             }
         }
 
-        // =========================
-        // QUERY UTAMA (ANTI DUPLICATE)
-        // =========================
+
         $this->db->select("
             downtime_tindakan_user.user AS nama,
     
@@ -1086,7 +1084,7 @@ class Instruksi extends CI_Controller
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
         $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
 
-        // filter dept
+
         if ($dept_id !== 'all' && !empty($dept_id)) {
             $this->db->where('downtime.dept_id', $dept_id);
         } else {
@@ -1097,7 +1095,6 @@ class Instruksi extends CI_Controller
             }
         }
 
-        // filter bulan & tahun
         if ($bulan !== 'all' && !empty($bulan)) {
             $this->db->where('MONTH(downtime.tanggal)', $bulan);
         }
@@ -1106,7 +1103,7 @@ class Instruksi extends CI_Controller
             $this->db->where('YEAR(downtime.tanggal)', $tahun);
         }
 
-        // search
+
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('downtime_tindakan_user.user', $search);
@@ -1116,16 +1113,13 @@ class Instruksi extends CI_Controller
         $this->db->where('downtime.ins', 1);
         $this->db->where('downtime_tindakan_user.user IS NOT NULL', null, false);
 
-        // IMPORTANT FIX: group per user
+
         $this->db->group_by('downtime_tindakan_user.user');
 
         $this->db->limit($limit, $start);
 
         $data = $this->db->get()->result_array();
 
-        // =========================
-        // FORMAT OUTPUT
-        // =========================
         $no = $start + 1;
         foreach ($data as &$row) {
             $row['no'] = $no++;
@@ -1137,13 +1131,8 @@ class Instruksi extends CI_Controller
 
             $row['total'] = $row['gm'] + $row['gb'] + $row['gi'];
         }
-        // usort($data, function ($a, $b) {
-        //     return $b['total'] <=> $a['total']; // DESC (terbesar ke terkecil)
-        // });
 
-        // =========================
-        // FILTERED COUNT (FIX)
-        // =========================
+
         $this->db->select("COUNT(DISTINCT downtime_tindakan_user.user) AS total");
         $this->db->from('downtime');
         $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
@@ -1167,9 +1156,7 @@ class Instruksi extends CI_Controller
 
         $recordsFiltered = $this->db->get()->row()->total;
 
-        // =========================
-        // TOTAL COUNT (FIX)
-        // =========================
+
         $this->db->select("COUNT(DISTINCT downtime_tindakan_user.user) AS total");
         $this->db->from('downtime');
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
@@ -1180,14 +1167,77 @@ class Instruksi extends CI_Controller
 
         $recordsTotal = $this->db->get()->row()->total;
 
-        // =========================
-        // RESPONSE
-        // =========================
+
+        $this->db->select("
+            COUNT(DISTINCT CASE 
+                WHEN downtime_kerusakan.ins_kode = 'GM' 
+                THEN downtime.id 
+            END) AS total_gm,
+
+            COUNT(DISTINCT CASE 
+                WHEN downtime_kerusakan.ins_kode = 'GB' 
+                THEN downtime.id 
+            END) AS total_gb,
+
+            COUNT(DISTINCT CASE 
+                WHEN downtime_kerusakan.ins_kode = 'GI' 
+                THEN downtime.id 
+            END) AS total_gi
+            ");
+
+        $this->db->from('downtime');
+
+        $this->db->join(
+            'downtime_kerusakan',
+            'downtime_kerusakan.rusak_id = downtime.kerusakan_id',
+            'left'
+        );
+
+
+
+        if ($dept_id !== 'all' && !empty($dept_id)) {
+
+            $this->db->where('downtime.dept_id', $dept_id);
+        } else {
+
+            if (!empty($akses_dept)) {
+                $this->db->where_in('downtime.dept_id', $akses_dept);
+            } else {
+                $this->db->where('1=0');
+            }
+        }
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+
+
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        $this->db->where('downtime.ins', 1);
+
+
+        $total_ins = $this->db->get()->row_array();
+        $total_gm = (int) $total_ins['total_gm'];
+        $total_gb = (int) $total_ins['total_gb'];
+        $total_gi = (int) $total_ins['total_gi'];
+
+        $total_semua = $total_gm + $total_gb + $total_gi;
+
+
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
             'data' => $data,
+
+
+            'total_gm' => $total_gm,
+            'total_gb' => $total_gb,
+            'total_gi' => $total_gi,
+            'total_semua' => $total_semua
         ]);
     }
     public function gi_terbanyak()
@@ -1250,5 +1300,36 @@ class Instruksi extends CI_Controller
 
         $result = $this->db->get()->result_array();
         echo json_encode($result);
+    }
+
+    public function detail_gi()
+    {
+        $dept = $this->input->post('dept_id');
+        $bulan = $this->input->post('bulan');
+        $tahun = $this->input->post('tahun');
+
+        $data['header'] = $this->db->get_where('dept', ['dept_id' => $dept])->row_array();
+        $data['detail'] = $this->Instruksi_model->get_gi($dept, $bulan, $tahun);
+        $this->load->view('instruksi/detail_gi', $data);
+    }
+    public function detail_gm()
+    {
+        $dept = $this->input->post('dept_id');
+        $bulan = $this->input->post('bulan');
+        $tahun = $this->input->post('tahun');
+
+        $data['header'] = $this->db->get_where('dept', ['dept_id' => $dept])->row_array();
+        $data['detail'] = $this->Instruksi_model->get_gm($dept, $bulan, $tahun);
+        $this->load->view('instruksi/detail_gm', $data);
+    }
+    public function detail_gb()
+    {
+        $dept = $this->input->post('dept_id');
+        $bulan = $this->input->post('bulan');
+        $tahun = $this->input->post('tahun');
+
+        $data['header'] = $this->db->get_where('dept', ['dept_id' => $dept])->row_array();
+        $data['detail'] = $this->Instruksi_model->get_gb($dept, $bulan, $tahun);
+        $this->load->view('instruksi/detail_gb', $data);
     }
 }
