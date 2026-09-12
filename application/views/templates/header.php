@@ -11,10 +11,7 @@
   <meta name="description" content="" />
 
   <!-- Favicon -->
-
   <link rel="icon" type="image/x-icon" href="<?= base_url(); ?>/assets/img/favicon/favicon.ico" />
-
-
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -85,28 +82,17 @@
       <!-- Menu -->
 
       <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-        <!-- <div class="app-brand demo">
-          <a href="index.html" class="app-brand-link">
-            <span class="app-brand-text demo menu-text fw-bold ms-2">Downtime</span>
-            <img src="<?= base_url(); ?>/assets/img/elements/user3.jpeg" style="width: 105px; margin-left: -20px;">
+        <div class="mt-1" class="app-brand demo">
+          <a href="<?= base_url('dashboard'); ?>" class="app-brand-link">
+            <div style="display: flex; align-items: center; padding :10px;">
+
+              <!-- <span class="app-brand-text demo menu-text fw-bold">Downtime</span> -->
+              <img src="<?= base_url(); ?>/assets/img/elements/tes4.png" style="width: 195px; ">
+            </div>
           </a>
-
-          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-            <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
-          </a>
-        </div> -->
-
-        <div class="app-brand demo">
-          <div class="mt-3" style="display: flex; align-items: center; padding :10px;">
-
-            <!-- <span class="app-brand-text demo menu-text fw-bold">Downtime</span> -->
-            <img src="<?= base_url(); ?>/assets/img/elements/tes4.png" style="width: 195px; ">
-          </div>
         </div>
 
 
-
-        <div class="menu-divider mt-3"></div>
 
         <div class="menu-inner-shadow"></div>
 
@@ -120,35 +106,42 @@
           </li>
 
           <!-- Layouts -->
-          <!-- <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-              <i class="fa fa-file me-2"></i>
-              <div class="text-truncate" data-i18n="Layouts">Document</div>
-            </a>
+          <!-- <?php if ($this->session->userdata('id_dept') == 'IT') :  ?>
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="fa fa-file me-2"></i>
+                <div class="text-truncate" data-i18n="Layouts">Document</div>
+              </a>
 
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="<?= base_url('mesin'); ?>" class="menu-link">
-                  <div class="text-truncate" data-i18n="Without menu">Perbaikan Mesin</div>
-                </a>
-              </li>
-            </ul>
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="<?= base_url('cheklist'); ?>" class="menu-link">
-                  <div class="text-truncate" data-i18n="Without menu">Preventif Maintenance</div>
-                </a>
-              </li>
-            </ul>
-            <ul class="menu-sub">
-              <li class="menu-item">
-                <a href="<?= base_url('mesin_of'); ?>" class="menu-link">
-                  <div class="text-truncate" data-i18n="Without menu">Mesin OF</div>
-                </a>
-              </li>
-            </ul>
-          </li> -->
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?= base_url('mesin'); ?>" class="menu-link">
+                    <div class="text-truncate" data-i18n="Without menu">Perbaikan Mesin</div>
+                  </a>
+                </li>
+              </ul>
 
+
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?= base_url('cheklist'); ?>" class="menu-link">
+                    <div class="text-truncate" data-i18n="Without menu">Preventif Maintenance</div>
+                  </a>
+                </li>
+              </ul>
+
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?= base_url('mesin_of'); ?>" class="menu-link">
+                    <div class="text-truncate" data-i18n="Without menu">Mesin STOP</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          <?php endif; ?> -->
+          <?php
+          $current_url = uri_string();
+          ?>
           <?php
           if ($this->session->userdata('cekdowntime_master') == '1') :
           ?>
@@ -158,34 +151,36 @@
                 <div class="text-truncate" data-i18n="Layouts">Master Data</div>
               </a>
 
-              <ul class="menu-sub">
-                <li class="menu-item">
+              <ul class="menu-sub <?= in_array($current_url, ['kerusakan', 'spekmesin', 'ketof', 'prefentif']) ? 'active' : '' ?>">
+                <li class="menu-item <?= ($current_url == 'kerusakan') ? 'active' : '' ?>">
                   <a href="<?= base_url('kerusakan'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Kerusakan</div>
+                    <div class="text-truncate" data-i18n="Without menu">Data Kerusakan</div>
                   </a>
                 </li>
               </ul>
               <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item <?= ($current_url == 'spekmesin') ? 'active' : '' ?>">
                   <a href="<?= base_url('spekmesin'); ?>" class="menu-link">
                     <div class="text-truncate" data-i18n="Without menu">Data Mesin</div>
                   </a>
                 </li>
               </ul>
               <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="<?= base_url('preventif'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Master Preventif</div>
-                  </a>
-                </li>
-              </ul>
-              <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item <?= ($current_url == 'ketof') ? 'active' : '' ?>">
                   <a href="<?= base_url('ketof'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Mesin Stop</div>
+                    <div class="text-truncate" data-i18n="Without menu">Keterangan Mesin Off</div>
                   </a>
                 </li>
               </ul>
+              <?php if ($this->session->userdata('id_dept') == 'IT') : ?>
+                <ul class="menu-sub">
+                  <li class="menu-item <?= ($current_url == 'preventif') ? 'active' : '' ?>">
+                    <a href="<?= base_url('preventif'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Master Preventif</div>
+                    </a>
+                  </li>
+                </ul>
+              <?php endif; ?>
             </li>
           <?php endif; ?>
           <?php
@@ -196,30 +191,39 @@
                 <i class="fa-solid fa-list me-2"></i>
                 <div class="text-truncate" data-i18n="Layouts">Report </div>
               </a>
+              <?php if ($this->session->userdata('cekdowntime_pi') == 1) : ?>
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('report'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu"> Laporan Perbaikan</div>
+                    </a>
+                  </li>
+                </ul>
+                <!-- <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('mesin/report_perbaikan'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Laporan Perbaikan</div>
+                    </a>
+                  </li>
+                </ul> -->
+                <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('downtime_mesin'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Downtime Mesin</div>
+                    </a>
+                  </li>
+                </ul>
+                <!-- <ul class="menu-sub">
+                  <li class="menu-item">
+                    <a href="<?= base_url('downtime_mesin/pengerjaan'); ?>" class="menu-link">
+                      <div class="text-truncate" data-i18n="Without menu">Downtime Pengerjaan</div>
+                    </a>
+                  </li>
+                </ul> -->
+              <?php endif; ?>
 
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="<?= base_url('report'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu"> Perbaikan Teknisi</div>
-                  </a>
-                </li>
-              </ul>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="<?= base_url('downtime_mesin'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Downtime Perbaikan</div>
-                  </a>
-                </li>
-              </ul>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="<?= base_url('downtime_mesin/pengerjaan'); ?>" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Rekap Pengerjaan</div>
-                  </a>
-                </li>
-              </ul>
+              <?php if ($this->session->userdata('cekdowntime_gi') == 1) : ?>
 
-              <?php if ($this->session->userdata('cekdowntime_gi') == '1') : ?>
                 <ul class="menu-sub">
                   <li class="menu-item">
                     <a href="<?= base_url('instruksi/report'); ?>" class="menu-link">
@@ -227,33 +231,24 @@
                     </a>
                   </li>
                 </ul>
-                <ul class="menu-sub">
+                <!-- <ul class="menu-sub">
                   <li class="menu-item">
                     <a href="<?= base_url('instruksi/petugas'); ?>" class="menu-link">
-                      <div class="text-truncate" data-i18n="Without menu">Petugas GI</div>
+                      <div class="text-truncate" data-i18n="Without menu">Petugas Ganti Instruksi</div>
                     </a>
                   </li>
-                </ul>
-              <?php endif; ?>
-              <?php if ($this->session->userdata('cekdowntime_pi') == '1') : ?>
-                <ul class="menu-sub">
-                  <li class="menu-item">
-                    <a href="<?= base_url('mesin/report_perbaikan'); ?>" class="menu-link">
-                      <div class="text-truncate" data-i18n="Without menu">Laporan Perbaikan</div>
-                    </a>
-                  </li>
-                </ul>
+                </ul> -->
               <?php endif; ?>
             </li>
           <?php endif; ?>
-
-
           <li class="menu-item">
             <a href="<?= base_url('monitoring'); ?>" class="menu-link">
               <i class="fa-solid fa-gear me-2"></i>
               <div class="text-truncate" data-i18n="Email">Monitoring </div>
             </a>
           </li>
+
+
 
           <!-- Forms & Tables -->
           <!-- <li class="menu-header small text-uppercase"><span class="menu-header-text">Forms &amp; Tables</span></li> -->

@@ -12,6 +12,13 @@ class Preventif_model extends CI_model
         return $this->db->get('downtime_spekmesin')->result_array();
     }
 
+    public function getRecord()
+    {
+        $this->db->select("COUNT(id) as total");
+        $this->db->from('downtime_preventif');
+        return $this->db->get()->row_array();
+    }
+
     public function getFilter()
     {
         return $this->db->order_by('dept_id', 'ASC')->get('dept')->result_array();

@@ -719,6 +719,7 @@ class Instruksi extends CI_Controller
         $this->session->set_userdata('filter_status', $status);
         $this->session->set_userdata('filter_dept', $dept_id);
         $tanggal_aktif = !empty($tanggal) ? $tanggal : date('Y-m-d');
+
         $total = $this->Instruksi_model->getTotal($dept_id);
 
         $limit = $this->input->post('length');

@@ -14,17 +14,14 @@ class Preventif extends CI_Controller
     public function index()
     {
         $data['title'] = 'Master Data Item Preventif';
-        $data['header'] = $this->db->get('downtime_preventif')->result_array();
+        $data['header'] = $this->db->order_by('kode')->get('downtime_preventif')->result_array();
+        $data['record'] = $this->Preventif_model->getRecord();
         $this->load->view('templates/header', $data);
         $this->load->view('preventif/index', $data);
         $this->load->view('templates/footer');
     }
 
-    public function reset_filter()
-    {
-        $this->session->unset_userdata('filter_dept');
-        redirect('spekmesin');
-    }
+
 
     public function item()
     {
@@ -37,22 +34,6 @@ class Preventif extends CI_Controller
         $draw = $this->input->post('draw');
         $search = $this->input->post('search')['value'];
 
-
-        $this->db->from('downtime_preventif_item');
-
-        if ($kategori !== 'all' && $kategori !== null && $kategori !== '') {
-            $this->db->where('downtime_preventif_item.kategori', $kategori);
-        }
-        if (!empty($search)) {
-            $this->db->group_start();
-            $this->db->like('downtime_preventif_item.standar', $search);
-            $this->db->or_like('downtime_preventif_item.nama_item', $search);
-            $this->db->group_end();
-        }
-
-        $recordsFiltered = $this->db->count_all_results();
-
-        //  2. Ambil data untuk ditampilkan
         $this->db->from('downtime_preventif_item');
 
         if ($kategori !== 'all' && $kategori !== null && $kategori !== '') {
@@ -71,7 +52,7 @@ class Preventif extends CI_Controller
 
         $data = $this->db->get()->result_array();
 
-        // Format kolom-kolom hasil
+
         $no = $start + 1;
         foreach ($data as &$row) {
             $row['no'] = $no++;
@@ -86,11 +67,25 @@ class Preventif extends CI_Controller
                             </a>';
         }
 
-        // ========== 3. Hitung total semua data tanpa filter ========== //
+        $this->db->from('downtime_preventif_item');
+
+        if ($kategori !== 'all' && $kategori !== null && $kategori !== '') {
+            $this->db->where('downtime_preventif_item.kategori', $kategori);
+        }
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('downtime_preventif_item.standar', $search);
+            $this->db->or_like('downtime_preventif_item.nama_item', $search);
+            $this->db->group_end();
+        }
+
+        $recordsFiltered = $this->db->count_all_results();
+
+
         $this->db->from('downtime_preventif_item');
         $recordsTotal = $this->db->count_all_results();
 
-        // ========== 4. Kirim respon ke DataTables ========== //
+
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,

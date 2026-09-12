@@ -82,4 +82,27 @@ class Report_model extends CI_model
         $this->db->order_by('downtime.tanggal', 'DESC');
         return $this->db->get()->result_array();
     }
+    public function getExport_excel_all($bulan, $tahun, $dept_id)
+    {
+        $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, 
+        downtime_tindakan.*, downtime_tindakan_user.user');
+        $this->db->from('downtime');
+        $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+        $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+        $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+        $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+        $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
+
+        if ($bulan !== 'all' && !empty($bulan)) {
+            $this->db->where('MONTH(downtime.tanggal)', $bulan);
+        }
+        if ($tahun !== 'all' && !empty($tahun)) {
+            $this->db->where('YEAR(downtime.tanggal)', $tahun);
+        }
+
+        $this->db->where('downtime.dept_id', $dept_id);
+        $this->db->where('downtime.status', 1);
+        $this->db->order_by('downtime.tanggal', 'DESC');
+        return $this->db->get()->result_array();
+    }
 }

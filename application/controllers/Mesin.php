@@ -12,7 +12,6 @@ class Mesin extends CI_Controller
         parent::__construct();
         $this->load->model('Mesin_model');
 
-
         is_logged_in();
         cek_akses_pi();
         $this->load->library('Pdf');
@@ -23,7 +22,7 @@ class Mesin extends CI_Controller
 
     public function index()
     {
-        $data['title'] = 'Perbaikan Mesin';
+        $data['title'] = 'Downtime Mesin';
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
@@ -64,8 +63,237 @@ class Mesin extends CI_Controller
         redirect('mesin');
     }
 
+    // public function filter_downtime()
+    // {
+    //     $dept_id = $this->input->post('dept_id');
+    //     $status = $this->input->post('status');
+    //     $bulan = $this->input->post('bulan');
+    //     $tahun = $this->input->post('tahun');
+
+    //     $this->session->set_userdata('filter_status', $status);
+    //     $this->session->set_userdata('filter_bulan', $bulan);
+    //     $this->session->set_userdata('filter_tahun', $tahun);
+    //     $this->session->set_userdata('filter_dept', $dept_id);
+
+    //     $limit = $this->input->post('length');
+    //     $start = $this->input->post('start');
+    //     $draw = $this->input->post('draw');
+    //     $search = $this->input->post('search')['value'];
 
 
+    //     $hakdowntime = $this->session->userdata('hakdowntime');
+
+    //     $hak_dept_downtime = [
+    //         1 => 'FN',
+    //         2 => 'NT',
+    //         3 => 'RR',
+    //         4 => 'SP',
+    //         5 => 'UT',
+    //         6 => 'GF',
+    //         7 => 'AR',
+    //     ];
+
+    //     $akses_dept = [];
+
+
+    //     foreach ($hak_dept_downtime as $index => $dept_code) {
+    //         $start_pos = ($index * 2) - 2;
+    //         if (substr($hakdowntime, $start_pos, 2) === '10') {
+    //             $akses_dept[] = $dept_code;
+    //         }
+    //     }
+
+    //     $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
+    //     $this->db->from('downtime');
+    //     $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+    //     $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+    //     $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+    //     $this->db->join('user', 'user.id = downtime.status_by', 'left');
+    //     $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+
+    //     if ($dept_id !== 'all' && !empty($dept_id)) {
+
+    //         $this->db->where('downtime.dept_id', $dept_id);
+    //     } else {
+
+    //         if (!empty($akses_dept)) {
+    //             $this->db->where_in('downtime.dept_id', $akses_dept);
+    //         } else {
+
+    //             $this->db->where('1=0');
+    //         }
+    //     }
+
+    //     if ($status !== 'all' && $status !== null && $status !== '') {
+    //         $this->db->where('downtime.status', $status);
+    //     }
+
+
+    //     if ($bulan !== 'all' && !empty($bulan)) {
+    //         $this->db->where('MONTH(downtime.tanggal)', $bulan);
+    //     }
+    //     if ($tahun !== 'all' && !empty($tahun)) {
+    //         $this->db->where('YEAR(downtime.tanggal)', $tahun);
+    //     }
+
+    //     if (!empty($search)) {
+    //         $this->db->group_start();
+    //         $this->db->like('downtime_spekmesin.mach_no', $search);
+    //         $this->db->or_like('downtime_kerusakan.remark', $search);
+    //         $this->db->group_end();
+    //     }
+    //     $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+    //     $this->db->group_by('downtime.id');
+    //     $this->db->order_by('downtime.id', 'DESC');
+    //     $this->db->limit($limit, $start);
+    //     $data = $this->db->get()->result_array();
+
+    //     //  view
+    //     $no = $start + 1;
+    //     foreach ($data as &$row) {
+    //         $row['no'] = '<span style="color:black;">' . $no++ . '</span>';
+    //         $row['tanggal'] = '<span style="color:black;">' . format_tanggal_indonesia($row['tanggal']) . '</span>';
+    //         $row['departemen'] = '<span style="color:black;">' .
+    //             ($row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen']) .
+    //             '</span>';
+    //         $row['mesin'] = '<span style="color:black;">' . 'Mesin '  . $row['mach_no'] . '</span>' . '<br><span style="color:black;">' . $row['mach_name'] . '</span>';
+
+    //         $row['kerusakan'] = '<a href="' . base_url() . 'mesin/view/' . $row['id'] . '" style="text-decoration: underline; color:red ;" title="Views Data">' . $row['remark'] . '</a>';
+    //         $id = $row['id'];
+    //         $status_value = $row['status'];
+    //         if ($status_value == 0) {
+
+    //             $start_time = strtotime($row['kerusakan_mulai']) * 1000;
+
+    //             $row['status'] = '
+    //                     <span class="badge bg-success">PROGRES</span><br>
+    //                     <small class="font-bold text-dark" style="font-size: 12px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
+    //                     <span class="font-bold text-success updateon" data-start="' . $start_time . '">Loading...</span>
+    //                 ';
+
+    //             $dropdown = '';
+
+
+    //             if (!empty($row['id_downtime'])) {
+    //                 if (!empty($row['kesimpulan'])) {
+    //                     $dropdown .= '
+    //                     <li>
+    //                         <a class="btn btn-outline-primary font-kecil status" 
+    //                            data-id="' . $id . '" 
+    //                            data-url="' . base_url() . 'mesin/status_ok/' . $id . '" 
+    //                            href="#">
+    //                            <i class="fa fa-lock me-2"></i> Kunci Data
+    //                         </a>
+    //                     </li>';
+    //                 } else {
+    //                     $dropdown .= '<span  style="font-size : 14px ; color:red; margin-left:10px ;" >Isi Kesimpulan !</span> <br>';
+    //                 }
+    //             } else {
+    //                 $dropdown .= '<span  style="font-size : 14px ; color:red; margin-left:10px ;" >Belum Ada Tindakan !</span> <br>';
+    //             }
+
+
+    //             $dropdown .= '
+    //             <li><a class="btn btn-outline-danger font-kecil hapus" style="margin-top : 5px ;"  data-id="' . $id . '" data-url="' . base_url() . 'mesin/hapus/' . $id . '" href="#"><i class="fa fa-trash me-2" ></i> Hapus Data</a></li>
+    //              ';
+
+
+    //             $row['aksi'] = '';
+    //             $cekdowntime = $this->session->userdata('cekdowntime');
+    //             if ($cekdowntime == '1') {
+    //                 $row['aksi'] = '
+    //                     <div class="dropdown font-kecil">
+    //                         <a class="btn btn-secondary dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    //                             Aksi
+    //                         </a>
+    //                         <ul class="dropdown-menu">' . $dropdown . '</ul>
+    //                     </div>';
+    //             }
+    //         } else {
+
+    //             $row['status'] = '
+    //                 <span class="badge bg-danger">CLOSE</span><br>
+    //                 <small class="font-bold" style="font-size:9px; color:black;">' .
+    //                 $row['name'] . '<br>' .
+    //                 format_tanggal_indonesia_waktu($row['status_on']) .
+    //                 '</small><br>
+    //                 <small class="font-bold" style="font-size:14px; color:red;">' .
+    //                 'Downtime ' . format_downtime($row['downtime_kerusakan'])  .
+    //                 '</small>';
+
+    //             $dropdown = '
+    //                 <li><a class="btn btn-outline-warning font-kecil status_cansel" data-id="' . $id . '" data-url="' . base_url() . 'mesin/status_cansel/' . $id . '" href="#"><i class="fa fa-key me-2"></i> Buka Data</a></li>
+
+    //             ';
+
+    //             $row['aksi'] = '';
+    //             $cekdowntime = $this->session->userdata('cekdowntime');
+    //             if ($cekdowntime == '1') {
+
+    //                 $row['aksi'] = '
+    //                     <div class="dropdown font-kecil">
+    //                         <a class="btn btn-info dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    //                             Aksi
+    //                         </a>
+    //                         <ul class="dropdown-menu">' . $dropdown . '</ul>
+    //                     </div>';
+    //             }
+    //         }
+    //     }
+
+    //     // Penghitungan data yang difilter
+    //     $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
+    //     $this->db->from('downtime');
+    //     $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
+    //     $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
+    //     $this->db->join('downtime_kerusakan', 'downtime_kerusakan.rusak_id = downtime.kerusakan_id', 'left');
+    //     $this->db->join('user', 'user.id = downtime.status_by', 'left');
+    //     $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
+
+    //     if ($dept_id !== 'all' && !empty($dept_id)) {
+
+    //         $this->db->where('downtime.dept_id', $dept_id);
+    //     } else {
+
+    //         if (!empty($akses_dept)) {
+    //             $this->db->where_in('downtime.dept_id', $akses_dept);
+    //         } else {
+
+    //             $this->db->where('1=0');
+    //         }
+    //     }
+
+    //     if ($status !== 'all' && $status !== null && $status !== '') {
+    //         $this->db->where('downtime.status', $status);
+    //     }
+
+    //     if ($bulan !== 'all' && !empty($bulan)) {
+    //         $this->db->where('MONTH(downtime.tanggal)', $bulan);
+    //     }
+    //     if ($tahun !== 'all' && !empty($tahun)) {
+    //         $this->db->where('YEAR(downtime.tanggal)', $tahun);
+    //     }
+
+    //     if (!empty($search)) {
+    //         $this->db->group_start();
+    //         $this->db->like('downtime_spekmesin.mach_no', $search);
+    //         $this->db->or_like('downtime_kerusakan.remark', $search);
+    //         $this->db->group_end();
+    //     }
+
+    //     $recordsFiltered = $this->db->count_all_results();
+
+    //     // Penghitungan data total
+    //     $this->db->from('downtime');
+    //     $recordsTotal = $this->db->count_all_results();
+
+    //     echo json_encode([
+    //         'draw' => intval($draw),
+    //         'recordsTotal' => $recordsTotal,
+    //         'recordsFiltered' => $recordsFiltered,
+    //         'data' => $data
+    //     ]);
+    // }
 
     public function filter_downtime()
     {
@@ -86,7 +314,7 @@ class Mesin extends CI_Controller
         $searchPost = $this->input->post('search');
         $search = isset($searchPost['value']) ? $searchPost['value'] : '';
 
-        // ================== HAK AKSES ==================
+
         $hakdowntime = $this->session->userdata('hakdowntime');
 
         $hak_dept_downtime = [
@@ -102,7 +330,7 @@ class Mesin extends CI_Controller
             }
         }
 
-        // ================== QUERY DATA ==================
+
         $this->db->select('downtime.*, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.name, downtime_tindakan.id_downtime');
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
@@ -111,9 +339,9 @@ class Mesin extends CI_Controller
         $this->db->join('user', 'user.id = downtime.status_by', 'left');
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
 
-        // ================== FILTER ==================
 
-        // DEPT
+
+
         if ($dept_id !== 'all' && !empty($dept_id)) {
             $this->db->where('downtime.dept_id', $dept_id);
         } else {
@@ -124,22 +352,21 @@ class Mesin extends CI_Controller
             }
         }
 
-        // STATUS
         if ($status !== 'all' && $status !== null && $status !== '') {
             $this->db->where('downtime.status', $status);
         }
 
-        // BULAN
+
         if ($bulan !== 'all' && !empty($bulan)) {
             $this->db->where('MONTH(downtime.tanggal)', $bulan);
         }
 
-        // TAHUN
+
         if ($tahun !== 'all' && !empty($tahun)) {
             $this->db->where('YEAR(downtime.tanggal)', $tahun);
         }
 
-        // SEARCH (DIRAPIKAN)
+
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('downtime.keterangan', $search);
@@ -150,7 +377,6 @@ class Mesin extends CI_Controller
         $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
         $this->db->where_in('status', ['0', '2']);
 
-        // 🔥 PENTING: hindari duplicate
         $this->db->group_by('downtime.id');
 
         $this->db->order_by('downtime.id', 'DESC');
@@ -158,7 +384,7 @@ class Mesin extends CI_Controller
 
         $data = $this->db->get()->result_array();
 
-        // ================== FORMAT DATA ==================
+
         foreach ($data as &$row) {
 
             $status_asli = $row['status'];
@@ -171,27 +397,28 @@ class Mesin extends CI_Controller
 
             $row['mesin'] = 'Mesin ' . $row['mach_no'] . '<br>' . $row['mach_name'];
 
-            $row['kerusakan'] = '<a href="' . base_url() . 'mesin/view/' . $row['id'] . '" style="color:red;">' . ($row['remark'] ?? '') . '</a>';
+            $row['kerusakan'] = '<a href="' . base_url() . 'mesin/view/' . $row['id'] . '" style="color:black;">' . ($row['remark'] ?? '') . '</a>';
 
             if ($status_asli == 2) {
 
                 $row['status'] = '
-                <span class="badge bg-light text-danger">Dalam Antrian</span>
+                <span class="text-danger">Antrian Perbaikan..</span>
                 ';
             } elseif ($status_asli == 0) {
 
                 $start_time = strtotime($row['kerusakan_mulai']) * 1000;
 
                 $row['status'] = '
-                    <span class="badge bg-success">PROGRES</span><br>
+                    <span class="text-dark"> PROGRES..</span><br>
+                    <i class ="fa fa-spinner fa-spin me-2"></i> <br>
                     <small style="font-size:10px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
-                    <span class="updateon text-success" data-start="' . $start_time . '">Loading...</span>
+                    <span class="updateon text-danger" data-start="' . $start_time . '">Loading...</span>
                 ';
             } else {
 
                 $row['status'] = '
-                    <span class="badge bg-danger">CLOSE</span><br>
-                    <small>' . $row['name'] . '</small><br>
+                    <span class="text-danger"><i class="fa fa-check-circle"></i> SELESAI</span><br>
+                    <small>' . 'Pemeriksa : ' . $row['name'] . '</small><br>
                     <small style="font-size:10px;color:red;">DOWNTIME STOP</small><br>
                     <small style="font-size:14px;color:red;">' . format_downtime($row['downtime_kerusakan']) . '</small>
                 ';
@@ -291,11 +518,11 @@ class Mesin extends CI_Controller
             $row['aksi'] = $aksi;
         }
 
-        // ================== COUNT FILTERED ==================
+
         $this->db->from('downtime');
         $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
 
-        // FILTER ULANG (SAMA PERSIS)
+
         if ($dept_id !== 'all' && !empty($dept_id)) {
             $this->db->where('downtime.dept_id', $dept_id);
         } else {
@@ -331,10 +558,10 @@ class Mesin extends CI_Controller
 
         $recordsFiltered = $this->db->count_all_results();
 
-        // ================== COUNT TOTAL ==================
+
         $this->db->from('downtime');
-        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
         $this->db->where_in('status', ['0', '2']);
+        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
         $recordsTotal = $this->db->count_all_results();
 
         header('Content-Type: application/json');
@@ -346,6 +573,7 @@ class Mesin extends CI_Controller
             'data' => $data
         ]);
     }
+
     public function tambahdata($filter_dept = null)
     {
         $data['tgl_sekarang'] = date('Y-m-d');
@@ -416,6 +644,7 @@ class Mesin extends CI_Controller
 
         $post = $this->input->post();
 
+
         $mesin = $post['mach_id'];
         $cek_mesin = $this->Mesin_model->CekMesin($mesin);
 
@@ -431,7 +660,7 @@ class Mesin extends CI_Controller
                 Mohon lakukan pengecekan terlebih dahulu atau sudah ada dalam data antiran. Terimkakasih</p>
                 <hr />
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            </div>>
             
             ');
             redirect('mesin');
@@ -462,6 +691,7 @@ class Mesin extends CI_Controller
 
         redirect('mesin');
     }
+
     public function update($id)
     {
         $config['upload_path'] = './assets/img/upload/';
@@ -549,14 +779,17 @@ class Mesin extends CI_Controller
 
         redirect('mesin');
     }
-
+    public function edit($id)
+    {
+        $data['detail'] = $this->db->get_where('downtime', ['id' => $id])->row_array();
+        $this->load->view('mesin/edit', $data);
+    }
     public function kesimpulan($id)
     {
         $data['detail'] = $this->Mesin_model->getdataByid($id);
         $data['id_halaman'] = $id;
         $this->load->view('mesin/kesimpulan', $data);
     }
-
     public function update_kesimpulan()
     {
         $query = $this->Mesin_model->UpdateData_kesimpulan();
@@ -582,10 +815,9 @@ class Mesin extends CI_Controller
         $data['id_halaman'] = $id;
         $this->load->view('mesin/keterangan_detail', $data);
     }
-
-    public function update_kesimpulan_detail($id_halaman)
+    public function update_keterangan_detail($id_halaman)
     {
-        $query = $this->Mesin_model->UpdateData_kesimpulan();
+        $query = $this->Mesin_model->UpdateData_keterangan();
         if ($query) {
             $this->session->set_flashdata('message', '
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -596,9 +828,10 @@ class Mesin extends CI_Controller
         }
         redirect('mesin/view/' . $id_halaman);
     }
-    public function update_keterangan_detail($id_halaman)
+
+    public function update_kesimpulan_detail($id_halaman)
     {
-        $query = $this->Mesin_model->UpdateData_keterangan();
+        $query = $this->Mesin_model->UpdateData_kesimpulan();
         if ($query) {
             $this->session->set_flashdata('message', '
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -663,7 +896,6 @@ class Mesin extends CI_Controller
         $this->load->view('mesin/detail', $data);
         $this->load->view('templates/footer');
     }
-
 
 
     public function tambah_tindakan($id_halaman)
@@ -776,11 +1008,7 @@ class Mesin extends CI_Controller
 
         redirect('mesin/view/' . $id);
     }
-    public function edit($id)
-    {
-        $data['detail'] = $this->db->get_where('downtime', ['id' => $id])->row_array();
-        $this->load->view('mesin/edit', $data);
-    }
+
     public function edit_tindakan($id, $id_halaman)
     {
 
@@ -799,16 +1027,16 @@ class Mesin extends CI_Controller
         $config['max_size'] = 20240; // 20 MB
         $this->load->library('upload', $config);
 
-        // Ambil data lama dari database
+
         $detail = $this->Mesin_model->getdataByid_tindakan($id);
         $old_files = !empty($detail['file']) ? json_decode($detail['file'], true) : [];
         $old_file_paths = !empty($detail['path_file']) ? json_decode($detail['path_file'], true) : [];
         $old_file_types = !empty($detail['file_type']) ? json_decode($detail['file_type'], true) : [];
 
-        //  File yang user ingin hapus
+
         $hapus_file = $this->input->post('hapus_file') ?? [];
 
-        // dihapus dari array lama
+
         $filtered_old_files = [];
         $filtered_file_paths = [];
         $filtered_file_types = [];
@@ -821,7 +1049,7 @@ class Mesin extends CI_Controller
             }
         }
 
-        // Hapus file dari folder
+
         foreach ($hapus_file as $file) {
             $path = 'assets/img/upload/' . $file;
             if (file_exists($path)) {
@@ -829,7 +1057,7 @@ class Mesin extends CI_Controller
             }
         }
 
-        // rename
+
         $rename_files = $this->input->post('rename_file');
         $nama_file_asli = $this->input->post('nama_file_asli');
 
@@ -892,7 +1120,7 @@ class Mesin extends CI_Controller
             }
         }
 
-        // Gabungkan semua file
+
         $all_files = array_merge($filtered_old_files, $new_files);
         $all_file_paths = array_merge($filtered_file_paths, $new_file_paths);
         $all_file_types = array_merge($filtered_file_types, $new_file_types);
@@ -926,7 +1154,7 @@ class Mesin extends CI_Controller
 
         $this->db->where('id', $id);
         $this->db->update('downtime_tindakan', $data);
-        // hapus teknisi
+
         $this->db->where('id_tindakan', $id);
         $this->db->delete('downtime_tindakan_user');
 
@@ -986,7 +1214,7 @@ class Mesin extends CI_Controller
 
     public function report_perbaikan()
     {
-        $data['title'] = ' Daftar Mesin Dengan Kerusakan Berkala Berdasarkan Data Downtime';
+        $data['title'] = 'Laporan Perbaikan Mesin';
         $data['tgl_sekarang'] = date('Y-m-d');
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
@@ -1056,7 +1284,7 @@ class Mesin extends CI_Controller
             }
         }
 
-        $this->db->select('downtime.*,SUM(downtime.downtime_kerusakan) as total , dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
+        $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
         $this->db->join('downtime_spekmesin', 'downtime_spekmesin.mach_id = downtime.nomesin_id', 'left');
@@ -1137,7 +1365,6 @@ class Mesin extends CI_Controller
             }
         }
 
-        // Penghitungan data yang difilter
         $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, user.username, user.name, downtime_tindakan.id_downtime');
         $this->db->from('downtime');
         $this->db->join('dept', 'dept.dept_id = downtime.dept_id', 'left');
@@ -1179,45 +1406,14 @@ class Mesin extends CI_Controller
 
         $recordsFiltered = $this->db->count_all_results();
 
-        // Penghitungan data total
+
         $this->db->from('downtime');
         $recordsTotal = $this->db->count_all_results();
-
-        // TOTAL DOWNTIME
-        $this->db->select('SUM(downtime.downtime_kerusakan) as total_downtime');
-        $this->db->from('downtime');
-
-        if ($dept_id !== 'all' && !empty($dept_id)) {
-            $this->db->where('downtime.dept_id', $dept_id);
-        } else {
-            if (!empty($akses_dept)) {
-                $this->db->where_in('downtime.dept_id', $akses_dept);
-            } else {
-                $this->db->where('1=0');
-            }
-        }
-
-        if ($status !== 'all' && $status !== null && $status !== '') {
-            $this->db->where('downtime.status', $status);
-        }
-
-        if ($bulan !== 'all' && !empty($bulan)) {
-            $this->db->where('MONTH(downtime.tanggal)', $bulan);
-        }
-
-        if ($tahun !== 'all' && !empty($tahun)) {
-            $this->db->where('YEAR(downtime.tanggal)', $tahun);
-        }
-
-        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
-
-        $total_downtime = $this->db->get()->row_array();
 
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
-            'total_downtime' => format_menit($total_downtime['total_downtime']),
             'data' => $data
         ]);
     }
@@ -1241,7 +1437,7 @@ class Mesin extends CI_Controller
 
         $detail = $this->Mesin_model->getExport_Pdf($bulan, $tahun);
 
-        // Group per departemen dan ambil 5 terbesar
+
         $groupData = [];
 
         foreach ($detail as $row) {
@@ -1265,7 +1461,7 @@ class Mesin extends CI_Controller
 
         $pdf->SetMargins(10, 10, 10);
 
-        // ================= HEADER ===================
+
         $pdf->SetFont('Latob', '', 12);
         $pdf->Cell(0, 7, 'LAPORAN DOWNTIME MESIN', 0, 1, 'C');
 
@@ -1273,7 +1469,7 @@ class Mesin extends CI_Controller
         $pdf->Cell(0, 6, 'BULAN : ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun, 0, 1, 'C');
         $pdf->Ln(5);
 
-        // Lebar kolom
+
         $wNo    = 10;
         $wDept  = 30;
         $wMesin = 20;
@@ -1293,7 +1489,7 @@ class Mesin extends CI_Controller
                 $namaDept = 'GUDANG';
             }
 
-            // Header Departemen
+
             $pdf->SetFont('Latob', '', 10);
             $pdf->SetFillColor(220, 220, 220);
 
@@ -1308,10 +1504,10 @@ class Mesin extends CI_Controller
                 true
             );
 
-            // Header tabel
+
             $pdf->SetFont('Lato', '', 8);
 
-            // Set lebar dan alignment untuk Row()
+
             $pdf->SetWidths([
                 $wNo,
                 $wDept,
@@ -1360,7 +1556,7 @@ class Mesin extends CI_Controller
             $pdf->Ln(4);
         }
 
-        // ================= TOTAL =====================
+
 
 
 
@@ -1376,7 +1572,7 @@ class Mesin extends CI_Controller
 
         $detail = $this->Mesin_model->getExport_Pdf($bulan, $tahun);
 
-        // Group per departemen (Top 5)
+
         $groupData = [];
 
         foreach ($detail as $row) {
@@ -1397,7 +1593,7 @@ class Mesin extends CI_Controller
 
         $row = 1;
 
-        // ===================== JUDUL =====================
+
         $sheet->mergeCells('A1:F1');
         $sheet->setCellValue('A1', 'LAPORAN DOWNTIME MESIN');
 
@@ -1422,7 +1618,7 @@ class Mesin extends CI_Controller
                 $namaDept = 'GUDANG';
             }
 
-            // ===================== HEADER DEPARTEMEN =====================
+
             $sheet->mergeCells("A{$row}:F{$row}");
             $sheet->setCellValue("A{$row}", "DEPARTEMEN : " . $namaDept);
 
@@ -1437,7 +1633,7 @@ class Mesin extends CI_Controller
 
             $row++;
 
-            // ===================== HEADER TABEL =====================
+
             $sheet->fromArray([
                 [
                     'No',
@@ -1494,7 +1690,6 @@ class Mesin extends CI_Controller
             $row++;
         }
 
-        // ===================== TOTAL =====================
         $sheet->mergeCells("A{$row}:D{$row}");
         $sheet->setCellValue("A{$row}", 'TOTAL DOWNTIME');
         $sheet->setCellValue("E{$row}", format_menit($totalDowntime));
@@ -1503,7 +1698,7 @@ class Mesin extends CI_Controller
         $sheet->getStyle("A{$row}:F{$row}")
             ->getFont()->setBold(true);
 
-        // ===================== BORDER =====================
+
         $styleBorder = [
             'borders' => [
                 'allBorders' => [
@@ -1516,7 +1711,7 @@ class Mesin extends CI_Controller
         $sheet->getStyle("A4:F{$row}")
             ->applyFromArray($styleBorder);
 
-        // ===================== LEBAR KOLOM =====================
+
         $sheet->getColumnDimension('A')->setWidth(8);
         $sheet->getColumnDimension('B')->setWidth(20);
         $sheet->getColumnDimension('C')->setWidth(15);
@@ -1524,7 +1719,7 @@ class Mesin extends CI_Controller
         $sheet->getColumnDimension('E')->setWidth(18);
         $sheet->getColumnDimension('F')->setWidth(22);
 
-        // ===================== OUTPUT =====================
+
         $filename = 'Laporan_Downtime_Mesin_' . $bulan . '_' . $tahun . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
