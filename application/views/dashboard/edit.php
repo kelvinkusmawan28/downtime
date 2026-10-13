@@ -41,7 +41,7 @@
     <div class="mb-5" style="border-bottom: 1px solid darkslateblue; padding :5px ;">
         <span style="color: red; font-size : 16px;">INFO MESIN STOP</span> <br>
         <span style="color: black; font-size : 14px ;">Mesin : <?= $title['mach_no']; ?></span> <br>
-        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> <br>
+        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> | <span class="text-info"> <?= $title['lokasi'] ?? '';  ?> </span><br>
         <span style="color: black; font-size : 14px ;">Departemen : <?= $title['departemen']; ?></span>
     </div>
     <div class="nav-align-top">
@@ -407,7 +407,7 @@
     <div class="mb-5" style="border-bottom: 1px solid darkslateblue; padding :5px ;">
         <span style="color: red; font-size : 16px;">INFO MESIN STOP</span> <br>
         <span style="color: black; font-size : 14px ;">Mesin : <?= $title['mach_no']; ?></span> <br>
-        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> <br>
+        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> | <span class="text-info"> <?= $title['lokasi'] ?? '';  ?> </span> <br>
         <span style="color: black; font-size : 14px ;">Departemen : <?= $title['departemen']; ?></span>
     </div>
 

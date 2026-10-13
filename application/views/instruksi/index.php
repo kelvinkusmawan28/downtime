@@ -315,6 +315,8 @@
 </div>
 
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
+<script src="<?= base_url(); ?>/assets/js/html5-qrcode.min.js"></script>
+
 <!-- to filter form -->
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
 
@@ -444,44 +446,200 @@
     });
 
 
+    // $(document).on('click', '.edit', function() {
+    //   var data = $(this).data("id");
+
+    //   if (data) {
+
+    //     $("#basicModal-edit").modal("show");
+    //     $("#loadforminput-edit").load("<?= base_url(); ?>instruksi/edit/" + encodeURIComponent(data));
+    //   } else {
+    //     alert("Data tidak valid!");
+    //   }
+    // });
+
+
     $(document).on('click', '.edit', function() {
-      var data = $(this).data("id");
+      var data = $(this).data('id');
 
-      if (data) {
+      if (!data) {
+        alert('Data tidak valid!');
+        return;
+      }
 
-        $("#basicModal-edit").modal("show");
-        $("#loadforminput-edit").load("<?= base_url(); ?>instruksi/edit/" + encodeURIComponent(data), function() {
-          $("#kerusakan").autocomplete({
-            source: function(request, response) {
-              $.ajax({
-                url: "<?= base_url('instruksi/kerusakan_mesin'); ?>",
-                dataType: "json",
-                data: {
-                  kerusakan: request.term,
-                  filter: $('#filter').val()
-                },
-                success: function(data) {
-                  response($.map(data, function(key) {
-                    return {
-                      label: key.remark + " - " + key.ins_kode,
-                      value: key.remark + " - " + key.ins_kode,
-                      rusak_id: key.rusak_id
-                    };
-                  }));
-                }
-              });
-            },
-            select: function(event, ui) {
-              $("#rusak_id").val(ui.item.rusak_id);
-            },
-            minLength: 1
+      $('#loadforminput-edit').load(
+        "<?= base_url('instruksi/edit/'); ?>" + encodeURIComponent(data),
+        function(response, status, xhr) {
+          if (status === 'error') {
+            alert('Gagal memuat form Edit: ' + xhr.status);
+            return;
+          }
+
+          $('#basicModal-edit').modal('show');
+        }
+      );
+    });
+
+    let editScanner = null;
+    let scannerRunning = false;
+    let scanBusy = false;
+
+    async function mulaiScannerEdit() {
+      if (!document.getElementById('reader')) return;
+      if (scannerRunning || scanBusy) return;
+
+      if (typeof Html5Qrcode === 'undefined') {
+        console.error('Library html5-qrcode belum dimuat!');
+        return;
+      }
+
+      try {
+        const cameras = await Html5Qrcode.getCameras();
+
+        if (!cameras.length) {
+          alert('Kamera tidak ditemukan.');
+          return;
+        }
+
+        if (!editScanner) {
+          editScanner = new Html5Qrcode('reader', {
+            formatsToSupport: [
+              Html5QrcodeSupportedFormats.CODE_128,
+              Html5QrcodeSupportedFormats.CODE_39,
+              Html5QrcodeSupportedFormats.EAN_13,
+              Html5QrcodeSupportedFormats.EAN_8,
+              Html5QrcodeSupportedFormats.UPC_A,
+              Html5QrcodeSupportedFormats.UPC_E,
+              Html5QrcodeSupportedFormats.QR_CODE
+            ]
           });
+        }
 
-        });
-      } else {
-        alert("Data tidak valid!");
+        const kameraBelakang = cameras.find(c =>
+          /back|rear|environment|belakang/i.test(c.label)
+        );
+
+        const cameraId = kameraBelakang ?
+          kameraBelakang.id :
+          cameras[cameras.length - 1].id;
+
+        await editScanner.start(
+          cameraId, {
+            fps: 10,
+            qrbox: {
+              width: 250,
+              height: 120
+            }
+          },
+          async function(decodedText) {
+              if (scanBusy) return;
+
+              scanBusy = true;
+
+              $('#hasil').text(decodedText);
+              $('#keterangan').val(decodedText);
+
+              try {
+                await editScanner.stop();
+              } catch (e) {
+                console.error(e);
+              }
+
+              scannerRunning = false;
+            },
+            function() {}
+        );
+
+        scannerRunning = true;
+
+      } catch (error) {
+        console.error('Scanner gagal:', error);
+
+        alert(
+          'Error scanner: ' +
+          (error.message || error)
+        );
+      }
+    }
+
+    $('#basicModal-edit')
+      .off('shown.bs.modal.barcode')
+      .on('shown.bs.modal.barcode', function() {
+        mulaiScannerEdit();
+      });
+
+
+    $(document).on('click', '#btnScanUlang', async function() {
+      const btn = $(this);
+
+      // Cegah tombol ditekan berkali-kali
+      if (btn.prop('disabled')) return;
+
+      btn.prop('disabled', true);
+
+      try {
+        // Hentikan scanner lama jika masih berjalan
+        if (editScanner && scannerRunning) {
+          await editScanner.stop();
+          scannerRunning = false;
+        }
+
+        // Bersihkan instance scanner lama
+        if (editScanner) {
+          await editScanner.clear();
+          editScanner = null;
+        }
+
+        // Reset status agar bisa scan ulang
+        scannerRunning = false;
+        scanBusy = false;
+
+        // Reset tampilan hasil
+        $('#hasil').text('-');
+        $('#keterangan').val('');
+
+        // Tunggu sebentar agar elemen reader siap
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Jalankan scanner kembali
+        await mulaiScannerEdit();
+
+      } catch (error) {
+        console.error('Gagal scan ulang:', error);
+        alert('Gagal memulai scan ulang: ' + error.message);
+      } finally {
+        btn.prop('disabled', false);
       }
     });
+
+
+    $('#basicModal-edit')
+      .off('hidden.bs.modal.barcode')
+      .on('hidden.bs.modal.barcode', async function() {
+        if (editScanner && scannerRunning) {
+          try {
+            await editScanner.stop();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        scannerRunning = false;
+        scanBusy = false;
+
+        if (editScanner) {
+          try {
+            await editScanner.clear();
+          } catch (e) {
+            console.error(e);
+          }
+
+          editScanner = null;
+        }
+      });
+
+
+
 
     $(document).on('click', '.hapus', function() {
       var url = $(this).data("url");

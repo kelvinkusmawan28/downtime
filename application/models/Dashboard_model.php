@@ -283,6 +283,7 @@ class Dashboard_model extends CI_model
             m.mach_no,
             m.mach_name,
             m.preventif_kode,
+            m.lokasi,
     
             bl.jenis as jenis_left,
             br.jenis as jenis_right,

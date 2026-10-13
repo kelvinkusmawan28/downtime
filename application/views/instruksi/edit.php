@@ -1,4 +1,14 @@
 <form action="<?php echo base_url('instruksi/update/' . $detail['id']); ?>" method="post" enctype="multipart/form-data">
+    <div class="col-12 mb-3">
+        <label class="form-label">Scan Barcode</label>
+
+        <div id="reader" style="width:100%; max-width:600px;"></div>
+
+        <p>Hasil scan: <span id="hasil">-</span></p>
+
+
+    </div>
+
     <div class="col-12">
         <label for="keterangan" class="form-label font-kecil">No Instruksi </label>
         <input type="text" name="keterangan" id="keterangan" class="form-control font-kecil" placeholder="No Instruksi" required>
@@ -9,8 +19,16 @@
     </div>
 
     <br>
-    <div class="col-4">
-        <button class="btn btn-primary w-100" type="submit">MULAI</button>
+    <div class="row">
+        <div class="col-4">
+            <button class="btn btn-primary w-100" type="submit">MULAI</button>
+
+        </div>
+        <div class="col-8">
+            <button type="button" id="btnScanUlang" class="btn btn-warning w-100">
+                SCAN ULANG
+            </button>
+        </div>
     </div>
 </form>
 

@@ -43,9 +43,6 @@
                                                 <span class="ml-1 text-dark">Export To Excel <i class="fa fa-file-excel text-success"></i></span>
                                             </a>
                                         </div>
-                                        <div class="col-6" style="text-align: right;">
-                                            <a href="<?= base_url('dashboard'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-body font-kecil ">
@@ -247,7 +244,7 @@
                                                 </div>
                                                 <div class="tab-pane fade" id="navs-pills-justified-messages" role="tabpanel">
                                                     <div class="col-12" style="text-align: right;">
-                                                        <a id="btn-export-excel" class="btn btn-success btn-sm">
+                                                        <a id="btn-export-excel_all" class="btn btn-success btn-sm">
                                                             <i class="fa fa-file-excel me-2 text-dark"></i><span class="ml-1" style="color: black;">Export All To Excel</span>
                                                         </a>
                                                     </div>
@@ -515,17 +512,20 @@
 </script>
 
 <script>
-    function updateExportLinks() {
-        const dept_id = $('#dept').val();
-        const bulan = $('#bulan').val();
-        const tahun = $('#tahun').val();
+    $(document).ready(function() {
+        function updateExportLinks() {
+            const dept_id = $('#dept').val();
+            const bulan = $('#bulan').val();
+            const tahun = $('#tahun').val();
 
-        $('#btn-export-excel').attr('href', `<?= base_url('report/export_excel_all') ?>?dept_id=${dept_id}&bulan=${bulan}&tahun=${tahun}`);
+            $('#btn-export-excel_all').attr('href', `<?= base_url('report/export_excel_all') ?>?dept_id=${dept_id}&bulan=${bulan}&tahun=${tahun}`);
 
-    }
+        }
 
-    $('#dept, #bulan, #tahun').change(updateExportLinks);
-    $(document).ready(updateExportLinks);
+        $('#dept, #bulan, #tahun').change(updateExportLinks);
+        $(document).ready(updateExportLinks);
+
+    });
 </script>
 
 <!-- perbaikan -->
