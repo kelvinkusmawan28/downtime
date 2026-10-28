@@ -9,7 +9,6 @@ class Instruksi extends CI_Controller
         $this->load->model('Instruksi_model');
 
         is_logged_in();
-
         cek_akses_gi();
     }
 
@@ -202,9 +201,10 @@ class Instruksi extends CI_Controller
                 $start_time = strtotime($row['kerusakan_mulai']) * 1000;
 
                 $row['status'] = '
-                    <span class="text-dark">Progres..</span><br>
-                    <small class= "text-dark" style = "font-size :9px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
-                    <span class="updateon text-danger" data-start="' . $start_time . '  " style = "font-size :12px; " >Loading...</span>
+                    <span class="text-dark">PROGRES..</span><br>
+                    <i class ="fa fa-spinner fa-spin me-2"></i> <br>
+                    <small class= "text-dark" style = "font-size :12px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
+                    <span class="updateon text-danger" data-start="' . $start_time . '  " style = "font-size :10px; " >Loading...</span>
                 ';
 
                 $path_files = json_decode($row['path_file'], true);
@@ -218,29 +218,28 @@ class Instruksi extends CI_Controller
 
                 $cekdowntime = $this->session->userdata('cekdowntime');
 
-                // default (kalau tidak punya hak)
-                $aksi = '<a class="btn btn-sm btn-info text-dark lihat-file" 
+
+                $aksi = '<a class="btn btn-sm btn-light text-dark lihat-file" 
                         data-files=\'' . $data_files . '\'>
-                        <i class="fa-regular fa-eye"></i>    Lihat Instruksi
+                      Lihat Instruksi
                       </a>';
 
                 if ($cekdowntime == '1') {
 
                     $aksi = '
-                        <a class="btn btn-sm btn-info text-dark lihat-file" 
+                        <a class="btn btn-sm btn-light text-dark lihat-file" 
                             data-files=\'' . $data_files . '\'>
-                               Instruksi
+                          Instruksi
                         </a>
-                
                         <a class="btn btn-sm btn-danger text-dark hapus"
                             data-id="' . $row['id'] . '"
                             data-url="' . base_url() . 'instruksi/hapus/' . $row['id'] . '" 
                             href="#">
                             Hapus
-                        </a>
+                         </a>
+                
                     ';
 
-                    // tombol selesai hanya kalau ada downtime
                     if (!empty($row['id_downtime'])) {
                         $aksi .= '
                             <a class="btn btn-sm btn-success font-kecil status text-dark" 
@@ -261,15 +260,16 @@ class Instruksi extends CI_Controller
                 $downtime = $row['downtime_kerusakan'] ?? 0;
 
                 $row['status'] = '
-                    <span class="badge bg-danger" style = "font-size :10px;">CLOSE</span><br>
-                    <small class ="text-dark" style = "font-size :10px;">' . $name .
+                    <span class="text-danger"><i class="fa fa-check-circle me-1"></i> Selesai</span><br>
+                    <small class ="text-dark" style = "font-size :12px;">' . 'Pemeriksa :' . $name . '<br>' .
+                    ($status_on ? format_tanggal_indonesia_waktu($status_on) : '-') .
                     '</small><br>
-                    <small class ="text-danger" style = "font-size :10px ;">Downtime ' . format_downtime($downtime) . '</small>
+                    <small class ="text-danger" style = "font-size :12px ;">Downtime ' . format_downtime($downtime) . '</small>
 
                 ';
 
 
-                // ================= AKSI SAAT STATUS = 1 =================
+
                 $path_files = json_decode($row['path_file'], true);
                 $file_names = json_decode($row['file'], true);
 
@@ -469,7 +469,6 @@ class Instruksi extends CI_Controller
         }
 
         $post = $this->input->post();
-
         $mesin = $post['mach_id'];
         $cek_mesin = $this->Instruksi_model->CekMesin_update($mesin);
 
@@ -481,7 +480,7 @@ class Instruksi extends CI_Controller
                 <span class="alert-icon rounded-circle"><i class="icon-base bx bx-error"></i></span>Error!!
                 </h4>
                 <p><b>DATA TIDAK DAPAT DISIMPAN !</b> 
-                instruksi sebelumnya di mesin ini sedang progress . 
+                instruksi sebelumnya di mesin ini sedang progress. 
                 Mohon lakukan pengecekan terlebih dahulu. Terimkakasih</p>
                 <hr />
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -549,6 +548,7 @@ class Instruksi extends CI_Controller
         }
         redirect('instruksi');
     }
+
     public function hapus_tindakan($id)
     {
         $hasil = $this->Instruksi_model->hapus_tindakan_gi($id);
@@ -568,7 +568,7 @@ class Instruksi extends CI_Controller
         if ($query) {
             $this->session->set_flashdata('message', '
                         <div class="alert alert-info alert-dismissible fade show" role="alert">
-                            Status Perbaikan Berhasil Di Close!
+                            Status Berhasil Di Close!
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                      </div>
                     ');
@@ -582,7 +582,7 @@ class Instruksi extends CI_Controller
         if ($query) {
             $this->session->set_flashdata('message', '
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            Status Data Kembali Di Buka!
+                            Status Data Kembali Progres!
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                      </div>
                     ');
@@ -598,10 +598,10 @@ class Instruksi extends CI_Controller
 
         $cek_all = $this->Instruksi_model->GetTindakan($id);
 
-        // ambil 1 baris pertama (untuk form)
+
         $data['cek'] = !empty($cek_all) ? $cek_all[0] : [];
         $data['sudah_ada'] = !empty($data['cek']);
-        // untuk checkbox
+
         $checked = array_column($cek_all, 'id_tindakan');
         $data['checked'] = $checked;
         $data['tindakan'] = $this->Instruksi_model->getKategoriDenganTindakan();
@@ -619,10 +619,10 @@ class Instruksi extends CI_Controller
         $post = $this->input->post();
         $tindakan = isset($post['tindakan']) ? $post['tindakan'] : [];
 
-        // 🔥 tampung semua ID hasil insert
+
         $insert_ids = [];
 
-        // ✅ 1. Simpan checklist ke downtime_tindakan
+
         if (!empty($tindakan)) {
             foreach ($tindakan as $t) {
                 $data = [
@@ -638,23 +638,23 @@ class Instruksi extends CI_Controller
 
                 $this->db->insert('downtime_tindakan', $data);
 
-                // 🔥 simpan semua ID (INI KUNCI NYA)
+
                 $insert_ids[] = $this->db->insert_id();
             }
         }
 
-        // ✅ 2. Ambil teknisi
+
         $users_json = $this->input->post('teknisi');
         $users = json_decode($users_json, true);
 
-        // ✅ 3. Simpan teknisi ke setiap tindakan
+
         if (!empty($users) && !empty($insert_ids)) {
             $data_users = [];
 
             foreach ($insert_ids as $dt_id) {
                 foreach ($users as $user) {
                     $data_users[] = [
-                        'id_tindakan' => $dt_id, // 🔥 relasi ke hasil insert
+                        'id_tindakan' => $dt_id,
                         'user' => isset($user['value']) ? $user['value'] : $user
                     ];
                 }
@@ -663,7 +663,7 @@ class Instruksi extends CI_Controller
             $this->db->insert_batch('downtime_tindakan_user', $data_users);
         }
 
-        // ✅ notifikasi
+
         $this->session->set_flashdata('message', '
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 Kerusakan Berhasil Di Tambahkan!
@@ -693,6 +693,16 @@ class Instruksi extends CI_Controller
         $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
         $data['filter_tanggal'] = $this->session->userdata('filter_tanggal');
 
+        $data['bln_sekarang'] = date('m');
+        $data['thn_sekarang'] = date('Y');
+        $data['bulan_options'] = $this->Instruksi_model->getBulan();
+        $data['tahun_options'] = $this->Instruksi_model->getTahun();
+
+        $data['filter_bulan'] = $this->session->userdata('filter_bulan') ?? 'all';
+        $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
+        $data['filter_departemen'] = $this->session->userdata('filter_departemen') ?? 'all';
+
+
         $data['downtime_dept_map'] = [
             // 1 => 'FN',
             2 => 'NT',
@@ -719,7 +729,6 @@ class Instruksi extends CI_Controller
         $this->session->set_userdata('filter_status', $status);
         $this->session->set_userdata('filter_dept', $dept_id);
         $tanggal_aktif = !empty($tanggal) ? $tanggal : date('Y-m-d');
-
         $total = $this->Instruksi_model->getTotal($dept_id);
 
         $limit = $this->input->post('length');
@@ -810,9 +819,7 @@ class Instruksi extends CI_Controller
                 'names' => $file_names
             ]), ENT_QUOTES, 'UTF-8');
 
-
-
-            $row['no'] = ' <a class=" status_cansel text-dark"
+            $row['no'] = ' <a class=" status_cansel text-danger"
                                 data-id="' . $row['id'] . '"
                                 data-url="' . base_url() . 'instruksi/status_cansel/' . $row['id'] . '"
                                 href="#">' . $no++ . '</a>';
@@ -832,8 +839,7 @@ class Instruksi extends CI_Controller
                     : ''
                 )
                 . '</span>';
-
-            $row['selesai'] =  '<span style="color:black;">' .
+            $row['selesai'] = '<span style="color:black;">' .
                 (!empty($row['kerusakan_selesai'])
                     ? date('H:i', strtotime($row['kerusakan_selesai']))
                     : ''
@@ -850,7 +856,7 @@ class Instruksi extends CI_Controller
                 $start_time = strtotime($row['kerusakan_mulai']) * 1000;
 
                 $row['status'] = '
-                        <span class= "text-dark" >Progres ..</span><br>
+                        <span class= "text-dark" >Progres ..  <i class ="fa fa-spinner fa-spin me-2"></i> </span><br>
                         <small class="font-bold text-dark" style="font-size: 10px;">' . format_tanggal_indonesia_waktu($row['kerusakan_mulai']) . '</small><br>
                         <span class="font-bold text-success updateon" style="font-size: 10px;" data-start="' . $start_time . '">Loading...</span>
                     ';
@@ -990,7 +996,6 @@ class Instruksi extends CI_Controller
             'tanggal_aktif' => format_tanggal_indonesia($tanggal_aktif)
         ]);
     }
-
     public function detail_waiting()
     {
         $dept = $this->input->post('dept_id');
@@ -1008,11 +1013,9 @@ class Instruksi extends CI_Controller
         $this->load->view('instruksi/progres', $data);
     }
 
-
-
     public function petugas()
     {
-        $data['title'] = 'Laporan  Ganti Instruksi';
+        $data['title'] = 'Laporan Petugas Ganti Instruksi';
         $data['dept_options'] = $this->Instruksi_model->getFilter();
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
@@ -1050,7 +1053,7 @@ class Instruksi extends CI_Controller
         $draw  = $this->input->post('draw');
         $search = $this->input->post('search')['value'];
 
-        $this->session->set_userdata('filter_dept', $dept_id);
+        $this->session->set_userdata('filter_departemen', $dept_id);
         $this->session->set_userdata('filter_bulan', $bulan);
         $this->session->set_userdata('filter_tahun', $tahun);
 
@@ -1295,14 +1298,13 @@ class Instruksi extends CI_Controller
             $this->db->where('YEAR(downtime.tanggal)', $tahun);
         }
 
-        $this->db->group_by('downtime_tindakan_user.user'); // ✅ INI YANG BENAR
+        $this->db->group_by('downtime_tindakan_user.user');
         $this->db->order_by('total', 'DESC');
         // $this->db->limit(15);
 
         $result = $this->db->get()->result_array();
         echo json_encode($result);
     }
-
     public function detail_gi()
     {
         $dept = $this->input->post('dept_id');

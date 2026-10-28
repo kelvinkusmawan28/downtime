@@ -13,6 +13,7 @@ class Dashboard_model extends CI_model
             4 => 'SP',
             5 => 'UT',
             6 => 'GF',
+            7 => 'AR',
         ];
 
         $akses_departemen = [];
@@ -166,6 +167,7 @@ class Dashboard_model extends CI_model
         $this->db->order_by('tahun', 'DESC');
         return $this->db->get()->result_array();
     }
+
     public function getTahun()
     {
         $this->db->select('YEAR(tanggal) as tahun');
@@ -208,6 +210,7 @@ class Dashboard_model extends CI_model
         $query = $this->db->get('tb_benang');
         return $query->result_array();
     }
+
     public function GetRR()
     {
         $this->db->select('*');
@@ -216,6 +219,16 @@ class Dashboard_model extends CI_model
         $this->db->group_by('preventif_kode');
         $this->db->order_by('preventif_kode', 'asc');
 
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+    public function GetNT()
+    {
+        $this->db->select('*');
+        $this->db->from('downtime_spekmesin');
+        $this->db->where('dept_kode', 'NT');
+        $this->db->group_by('preventif_kode');
+        $this->db->order_by('preventif_kode', 'asc');
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -237,16 +250,7 @@ class Dashboard_model extends CI_model
         $this->db->where('dept_kode', 'FN');
         $this->db->group_by('preventif_kode');
         $this->db->order_by('preventif_kode', 'asc');
-        $query = $this->db->get();
-        return $query->result_array();
-    }
-    public function GetNT()
-    {
-        $this->db->select('*');
-        $this->db->from('downtime_spekmesin');
-        $this->db->where('dept_kode', 'NT');
-        $this->db->group_by('preventif_kode');
-        $this->db->order_by('preventif_kode', 'asc');
+
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -259,16 +263,7 @@ class Dashboard_model extends CI_model
 
         return $this->db->get('downtime_spekmesin')->result();
     }
-    public function cekData($tanggal, $dept, $mesin, $shift)
-    {
-        $this->db->from('downtime_mesinof');
-        $this->db->where('tanggal', $tanggal);
-        $this->db->where('dept_id', $dept);
-        $this->db->where('nomesin_id', $mesin);
-        $this->db->where('shift', $shift);
 
-        return $this->db->count_all_results();
-    }
     public function getdataByid($id)
     {
         $this->db->select("
@@ -324,103 +319,6 @@ class Dashboard_model extends CI_model
         if ($shift == 2) return 1;
         if ($shift == 3) return 2;
     }
-    //MINGGU DI CEK
-    // public function Cari($id, $nomesin_id, $dept, $ket_id, $ket_idr, $shift)
-    // {
-    //     // ambil data berdasarkan mesin & dept
-    //     $this->db->where('dept_id', $dept);
-    //     $this->db->where('nomesin_id', $nomesin_id);
-    //     $this->db->order_by('ket_on', 'DESC');
-
-    //     $data = $this->db->get('downtime_mesinof')->result_array();
-    //     $expected_shift = $shift;
-    //     $count_left  = 0;
-    //     $count_right = 0;
-
-    //     // anggap "0" / kosong = tidak aktif
-    //     $aktif_kiri  = ($ket_id !== null && $ket_id !== '' && $ket_id !== '0');
-    //     $aktif_kanan = ($ket_idr !== null && $ket_idr !== '' && $ket_idr !== '0');
-
-    //     $start = false;
-    //     $prev_date = null;
-    //     foreach ($data as $row) {
-
-    //         // ======================
-    //         // TITIK AWAL (DATA SEKARANG)
-    //         // ======================
-
-
-    //         if (!$start) {
-    //             if ($row['id'] == $id) {
-    //                 $start = true;
-
-    //                 if ($aktif_kiri)  $count_left  = 1;
-    //                 if ($aktif_kanan) $count_right = 1;
-
-    //                 // shift berikutnya yang diharapkan
-    //                 $expected_shift = $this->getPrevShift($row['shift']);
-    //             }
-    //             continue;
-    //         }
-
-    //         // 🔥 CEK URUTAN SHIFT
-    //         if ($row['shift'] != $expected_shift) {
-    //             break; // STOP kalau tidak sesuai urutan
-    //         }
-    //         $current_date = date('Y-m-d', strtotime($row['ket_on']));
-
-    //         if ($prev_date !== null) {
-    //             $expected_prev_date = date('Y-m-d', strtotime($prev_date . ' -1 day'));
-
-    //             // ❌ kalau bukan hari yang sama & bukan mundur 1 hari → STOP
-    //             if ($current_date != $prev_date && $current_date != $expected_prev_date) {
-    //                 break;
-    //             }
-
-
-    //         }
-
-    //         // update prev_date
-    //         $prev_date = $current_date;
-    //         // update expected shift berikutnya
-    //         $expected_shift = $this->getPrevShift($row['shift']);
-
-    //         // ======================
-    //         // CEK KIRI
-    //         // ======================
-    //         if ($aktif_kiri) {
-    //             if ($row['ket_id'] == $ket_id) {
-    //                 $count_left++;
-    //             } else {
-    //                 $aktif_kiri = false;
-    //             }
-    //         }
-
-    //         // ======================
-    //         // CEK KANAN
-    //         // ======================
-    //         if ($aktif_kanan) {
-    //             if ($row['ket_idr'] == $ket_idr) {
-    //                 $count_right++;
-    //             } else {
-    //                 $aktif_kanan = false;
-    //             }
-    //         }
-
-    //         // ======================
-    //         // STOP kalau dua-duanya selesai
-    //         // ======================
-    //         if (!$aktif_kiri && !$aktif_kanan) {
-    //             break;
-    //         }
-    //     }
-
-    //     return [
-    //         'left'  => $count_left,
-    //         'right' => $count_right
-    //     ];
-    // }
-
     private function getDeptColumn($dept_id)
     {
         $dept_id = strtoupper(trim($dept_id));
@@ -468,9 +366,7 @@ class Dashboard_model extends CI_model
 
         foreach ($data as $row) {
 
-            // ======================
-            // TITIK AWAL
-            // ======================
+
             if (!$start) {
                 if ($row['id'] == $id) {
                     $start = true;
@@ -479,31 +375,23 @@ class Dashboard_model extends CI_model
                     if ($aktif_kanan) $count_right = 1;
 
                     $expected_shift = $this->getPrevShift($row['shift']);
+                    // $prev_date = date('Y-m-d', strtotime($row['ket_on']));
                     $prev_date = $row['tanggal'];
                 }
                 continue;
             }
 
-            // $current_date = date('Y-m-d', strtotime($row['ket_on']));
             $current_date = $row['tanggal'];
 
-            // ======================
-            // 🔥 SKIP LIBUR (DARI TABEL)
-            // ======================
+
             // if ($this->isLibur($current_date, $dept)) {
             //     continue;
             // }
-
-            // ======================
-            // 🔥 CEK URUTAN SHIFT
-            // ======================
             if ($row['shift'] != $expected_shift) {
                 break;
             }
 
-            // ======================
-            // 🔥 CEK URUTAN TANGGAL
-            // ======================
+
             if ($prev_date !== null) {
 
                 $expected_prev_date = date('Y-m-d', strtotime($prev_date . ' -1 day'));
@@ -512,16 +400,17 @@ class Dashboard_model extends CI_model
 
                     $diff = (strtotime($prev_date) - strtotime($current_date)) / (60 * 60 * 24);
 
+                    $diff = (strtotime($prev_date) - strtotime($current_date)) / (60 * 60 * 24);
+
                     if ($diff > 1) {
 
                         $valid = true;
 
-                        // cek semua tanggal di antara prev_date dan current_date
+
                         for ($i = 1; $i < $diff; $i++) {
 
                             $check_date = date('Y-m-d', strtotime($prev_date . " -$i day"));
 
-                            // kalau ada 1 saja yang bukan libur → STOP
                             if (!$this->isLibur($check_date, $dept)) {
                                 $valid = false;
                                 break;
@@ -535,15 +424,11 @@ class Dashboard_model extends CI_model
                 }
             }
 
-            // ======================
-            // UPDATE UNTUK ITERASI BERIKUTNYA
-            // ======================
+
             $prev_date = $current_date;
             $expected_shift = $this->getPrevShift($row['shift']);
 
-            // ======================
-            // CEK KIRI
-            // ======================
+
             if ($aktif_kiri) {
                 if ($row['ket_id'] == $ket_id) {
                     $count_left++;
@@ -552,9 +437,7 @@ class Dashboard_model extends CI_model
                 }
             }
 
-            // ======================
-            // CEK KANAN
-            // ======================
+
             if ($aktif_kanan) {
                 if ($row['ket_idr'] == $ket_idr) {
                     $count_right++;
@@ -563,9 +446,7 @@ class Dashboard_model extends CI_model
                 }
             }
 
-            // ======================
-            // STOP kalau dua-duanya selesai
-            // ======================
+
             if (!$aktif_kiri && !$aktif_kanan) {
                 break;
             }
@@ -614,23 +495,20 @@ class Dashboard_model extends CI_model
         $expected_shift = null;
         $prev_date = null;
 
-        // 🔥 tambahan untuk range tanggal
+
         $first_date = null;
         $last_date  = null;
 
         foreach ($data as $row) {
 
-            // ======================
-            // TITIK AWAL
-            // ======================
+
             if (!$start) {
                 if ($row['id'] == $id) {
                     $start = true;
 
-                    // set range
+
                     $first_date = $row['ket_on'];
                     $last_date  = $row['ket_on'];
-
 
                     if (!empty($row['reason_left'])) {
                         if (!isset($group_kiri[$row['reason_left']])) {
@@ -670,26 +548,19 @@ class Dashboard_model extends CI_model
             }
 
 
-            // cek tangal akahlibur atau tidak 
+
             $current_date = $row['tanggal'];
 
-            // cek apakah datanya 0 atau nul 
             if (empty($row['ket_id']) || $row['ket_id'] < 1) {
                 break;
             }
 
-            // ======================
-            // 🔥 CEK URUTAN SHIFT
-            // ======================
+
             if ($row['shift'] != $expected_shift) {
                 break;
             }
 
 
-
-            // ======================
-            // 🔥 CEK URUTAN TANGGAL
-            // ======================
             if ($prev_date !== null) {
 
                 $expected_prev_date = date('Y-m-d', strtotime($prev_date . ' -1 day'));
@@ -704,12 +575,12 @@ class Dashboard_model extends CI_model
 
                         $valid = true;
 
-                        // cek semua tanggal di antara prev_date dan current_date
+
                         for ($i = 1; $i < $diff; $i++) {
 
                             $check_date = date('Y-m-d', strtotime($prev_date . " -$i day"));
 
-                            // kalau ada 1 saja yang bukan libur → STOP
+
                             if (!$this->isLibur($check_date, $dept)) {
                                 $valid = false;
                                 break;
@@ -723,9 +594,7 @@ class Dashboard_model extends CI_model
                 }
             }
 
-            // ======================
-            // HITUNG
-            // ======================
+
             if (!empty($row['reason_left'])) {
                 if (!isset($group_kiri[$row['reason_left']])) {
                     $group_kiri[$row['reason_left']] = [
@@ -746,12 +615,12 @@ class Dashboard_model extends CI_model
                 $group_kanan[$row['reason_right']]['jumlah']++;
             }
 
-            // update range
+
             $last_date = $row['ket_on'];
             // echo $row['ket_on'];
             // die;
 
-            // masuk timeline
+
             $timeline[] = [
                 'tanggal' => $row['ket_on'],
                 'shift'   => $row['shift'],
@@ -763,7 +632,7 @@ class Dashboard_model extends CI_model
                 'clr_right' => $row['clr_right']
             ];
 
-            // update tracking
+
             $prev_date = $current_date;
             $expected_shift = $this->getPrevShift($row['shift']);
         }
@@ -773,180 +642,20 @@ class Dashboard_model extends CI_model
             'kanan' => $group_kanan,
             'timeline' => $timeline,
             'range' => [
-                'start' => $last_date,   // paling lama
-                'end'   => $first_date   // paling baru
+                'start' => $last_date,
+                'end'   => $first_date
             ]
         ];
     }
-    // public function CariRiwayat($id, $nomesin_id, $dept)
-    // {
-    //     $this->db->select('d.*,
-    // kl.reason as alasan_kiri,
-    // kr.reason as alasan_kanan');
-    //     $this->db->from('downtime_mesinof d');
-
-    //     $this->db->join(
-    //         'downtime_ketof kl',
-    //         'd.ket_id = kl.id',
-    //         'left'
-    //     );
-
-    //     $this->db->join(
-    //         'downtime_ketof kr',
-    //         'd.ket_idr = kr.id',
-    //         'left'
-    //     );
-
-    //     $this->db->where('d.dept_id', $dept);
-    //     $this->db->where('d.nomesin_id', $nomesin_id);
-    //     $this->db->order_by('d.ket_on', 'DESC');
-
-    //     $data = $this->db->get()->result_array();
-
-    //     $group_kiri  = [];
-    //     $group_kanan = [];
-    //     $timeline    = [];
-
-    //     $mulai = false;
-    //     $shift_diharapkan = null;
-    //     $tanggal_sebelumnya = null;
-
-    //     // range tanggal
-    //     $tanggal_awal = null;
-    //     $tanggal_akhir = null;
-
-    //     foreach ($data as $row) {
-
-    //         // ======================
-    //         // TITIK AWAL
-    //         // ======================
-    //         if (!$mulai) {
-    //             if ($row['id'] == $id) {
-    //                 $mulai = true;
-
-    //                 // set range
-    //                 $tanggal_awal  = $row['ket_on'];
-    //                 $tanggal_akhir = $row['ket_on'];
-
-    //                 // hitung awal
-    //                 if (!empty($row['alasan_kiri'])) {
-    //                     $group_kiri[$row['alasan_kiri']] = ($group_kiri[$row['alasan_kiri']] ?? 0) + 1;
-    //                 }
-
-    //                 if (!empty($row['alasan_kanan'])) {
-    //                     $group_kanan[$row['alasan_kanan']] = ($group_kanan[$row['alasan_kanan']] ?? 0) + 1;
-    //                 }
-
-    //                 // simpan timeline
-    //                 $timeline[] = [
-    //                     'tanggal' => $row['ket_on'],
-    //                     'shift'   => $row['shift'],
-    //                     'ket_id'  => $row['ket_id'],
-    //                     'ket_idr' => $row['ket_idr'],
-    //                     'alasan_kiri'  => $row['alasan_kiri'],
-    //                     'alasan_kanan' => $row['alasan_kanan']
-    //                 ];
-
-    //                 // set tracking
-    //                 $shift_diharapkan = $this->getPrevShift($row['shift']);
-    //                 $tanggal_sebelumnya = date('Y-m-d', strtotime($row['ket_on']));
-    //             }
-    //             continue;
-    //         }
-
-    //         $tanggal_sekarang = date('Y-m-d', strtotime($row['ket_on']));
-
-    //         // ======================
-    //         // 🔥 SKIP LIBUR
-    //         // ======================
-    //         if ($this->isLibur($tanggal_sekarang, $dept)) {
-    //             continue;
-    //         }
-
-    //         // ======================
-    //         // 🔥 CEK URUTAN SHIFT
-    //         // ======================
-    //         if ($row['shift'] != $shift_diharapkan) {
-    //             break;
-    //         }
-
-    //         // ======================
-    //         // 🔥 CEK URUTAN TANGGAL
-    //         // ======================
-    //         if ($tanggal_sebelumnya !== null) {
-
-    //             $tanggal_harusnya = date('Y-m-d', strtotime($tanggal_sebelumnya . ' -1 day'));
-
-    //             if ($tanggal_sekarang != $tanggal_sebelumnya && $tanggal_sekarang != $tanggal_harusnya) {
-
-    //                 $selisih = (int) ((strtotime($tanggal_sebelumnya) - strtotime($tanggal_sekarang)) / 86400);
-
-    //                 if ($selisih > 1) {
-
-    //                     $valid = true;
-
-    //                     // cek semua tanggal yang dilompati
-    //                     for ($i = 1; $i < $selisih; $i++) {
-
-    //                         $tanggal_cek = date('Y-m-d', strtotime($tanggal_sebelumnya . " -$i day"));
-
-    //                         if (!$this->isLibur($tanggal_cek, $dept)) {
-    //                             $valid = false;
-    //                             break;
-    //                         }
-    //                     }
-
-    //                     if (!$valid) {
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         // ======================
-    //         // HITUNG
-    //         // ======================
-    //         if (!empty($row['alasan_kiri'])) {
-    //             $group_kiri[$row['alasan_kiri']] = ($group_kiri[$row['alasan_kiri']] ?? 0) + 1;
-    //         }
-
-    //         if (!empty($row['alasan_kanan'])) {
-    //             $group_kanan[$row['alasan_kanan']] = ($group_kanan[$row['alasan_kanan']] ?? 0) + 1;
-    //         }
-
-    //         // update range
-    //         $tanggal_akhir = $row['ket_on'];
-
-    //         // simpan timeline
-    //         $timeline[] = [
-    //             'tanggal' => $row['ket_on'],
-    //             'shift'   => $row['shift'],
-    //             'ket_id'  => $row['ket_id'],
-    //             'ket_idr' => $row['ket_idr'],
-    //             'alasan_kiri'  => $row['alasan_kiri'],
-    //             'alasan_kanan' => $row['alasan_kanan']
-    //         ];
-
-    //         // update tracking
-    //         $tanggal_sebelumnya = $tanggal_sekarang;
-    //         $shift_diharapkan = $this->getPrevShift($row['shift']);
-    //     }
-
-    //     return [
-    //         'kiri'  => $group_kiri,
-    //         'kanan' => $group_kanan,
-    //         'timeline' => $timeline,
-    //         'range' => [
-    //             'start' => $tanggal_akhir,
-    //             'end'   => $tanggal_awal
-    //         ]
-    //     ];
-    // }
-    public function update_ppic()
+    public function cekData($tanggal, $dept, $mesin, $shift)
     {
-        $data = $_POST;
-        $this->db->where('id', $data['id']);
-        return $this->db->update('downtime_mesinof', $data);
+        $this->db->from('downtime_mesinof');
+        $this->db->where('tanggal', $tanggal);
+        $this->db->where('dept_id', $dept);
+        $this->db->where('nomesin_id', $mesin);
+        $this->db->where('shift', $shift);
+
+        return $this->db->count_all_results();
     }
     // public function update()
     // {
@@ -955,13 +664,11 @@ class Dashboard_model extends CI_model
     //     $left  = $this->input->post('left') ? 1 : 0;
     //     $right = $this->input->post('right') ? 1 : 0;
     //     $ket_id = isset($post['ket_id']) ? $post['ket_id'] : '';
-    //     $ket_id_old = isset($post['ket_id_old']) ? $post['ket_id_old'] : '';
     //     $id_benang = isset($post['id_benang']) ? $post['id_benang'] : '';
     //     $id_id_r = isset($post['ket_id_r']) ? $post['ket_id_r'] : '';
     //     $id_benang_r = isset($post['id_benang_r']) ? $post['id_benang_r'] : '';
     //     $ket_bb = isset($post['id_bobin']) ? $post['id_bobin'] : '';
     //     $ket_bbr = isset($post['id_bobin_r']) ?  $post['id_bobin_r'] : '';
-
 
     //     $data = [
     //         'user_by' => $this->session->userdata('id'),
@@ -979,30 +686,10 @@ class Dashboard_model extends CI_model
     //         'keterangan' => $post['keterangan']
 
     //     ];
-    //     $this->db->trans_start();
+
     //     $this->db->where('id', $post['id']);
-    //     $this->db->update('downtime_mesinof', $data);
-
-    //     if ($ket_id_old == 5) {
-    //         $cek = $this->db->get_where('downtime', [
-    //             'dept_id' => $post['dept_id'],
-    //             'nomesin_id' => $post['mach_id'],
-    //             'status' => 2
-    //         ]);
-    //         if ($cek->num_rows() > 1) {
-
-    //             $this->db->where('ins', 1);
-    //             $this->db->where('status', 2);
-    //             $this->db->where('mach_id', $post['mach_id']);
-    //             $this->db->where('dept_id', $post['dept_id']);
-    //             $this->db->delete('downtime');
-    //         }
-    //     }
-    //     $this->db->trans_complete();
-
-    //     return $this->db->trans_status();
+    //     return $this->db->update('downtime_mesinof', $data);
     // }
-
     public function update()
     {
         $post = $this->input->post();
@@ -1028,11 +715,11 @@ class Dashboard_model extends CI_model
 
         $this->db->trans_start();
 
-        // update utama
+
         $this->db->where('id', $post['id']);
         $this->db->update('downtime_mesinof', $data);
 
-        // cek & delete downtime
+
         if ($post['ket_id_old'] == 5) {
 
             $this->db->where('dept_id', $post['dept_id']);
@@ -1065,6 +752,7 @@ class Dashboard_model extends CI_model
                 $this->db->delete('downtime');
             }
         }
+
 
 
         if ($post['ket_id'] == 5 && ($post['dept_id'] == 'NT' || $post['dept_id'] == 'AR')) {
@@ -1144,6 +832,48 @@ class Dashboard_model extends CI_model
 
         return $this->db->trans_status();
     }
+
+    public function update_ppic()
+    {
+        $data = $_POST;
+        $this->db->where('id', $data['id']);
+        return $this->db->update('downtime_mesinof', $data);
+    }
+
+    // public function simpan()
+    // {
+    //     $post = $this->input->post();
+    //     $left  = $this->input->post('left') ? 1 : 0;
+    //     $right = $this->input->post('right') ? 1 : 0;
+    //     $id_benang = isset($post['id_benang']) ? $post['id_benang'] : '';
+    //     $id_benang_r = isset($post['id_benang_r']) ? $post['id_benang_r'] : '';
+    //     $id_ketof = isset($post['id']) ? $post['id'] : '';
+    //     $id_ketof_r = isset($post['id_r']) ? $post['id_r'] : '';
+    //     $ket_bb = isset($post['id_bobin']) ? $post['id_bobin'] : '';
+    //     $ket_bbr = isset($post['id_bobin_r']) ? $post['id_bobin_r'] : '';
+
+
+
+
+    //     $data = [
+    //         'tanggal' => $post['tanggal'],
+    //         'dept_id' => $post['dept_id'],
+    //         'nomesin_id' => $post['mach_id'],
+    //         'ket_id' =>   $id_ketof,
+    //         'ket_tb' =>   $id_benang,
+    //         'ket_idr' =>   $id_ketof_r,
+    //         'ket_tbr' =>   $id_benang_r,
+    //         'ket_bb' =>   $ket_bb,
+    //         'ket_bbr' =>   $ket_bbr,
+    //         'left' =>   $left,
+    //         'right' =>   $right,
+    //         'keterangan' =>   $post['keterangan'],
+    //         'shift' => $post['shift'],
+    //         'ket_on' => date('Y-m-d H:i'),
+    //         'user_by' => $this->session->userdata('id'),
+    //     ];
+    //     return $this->db->insert('downtime_mesinof', $data);
+    // }
 
     public function simpan()
     {
@@ -1254,8 +984,6 @@ class Dashboard_model extends CI_model
 
         return $this->db->trans_status();
     }
-
-
 
 
     public function getMesinDashboard($dept, $tanggal, $shift, $reason, $preventif, $filter_rc, $spinning, $finishing, $netting)
@@ -1379,7 +1107,7 @@ class Dashboard_model extends CI_model
 
         foreach ($data as $row) {
 
-            // handle NULL dari LEFT JOIN
+
             $row->left  = $row->left ?? 0;
             $row->right = $row->right ?? 0;
 
@@ -1401,7 +1129,7 @@ class Dashboard_model extends CI_model
                 $row->right_color = $right_color;
             } else {
 
-                // mesin biasa
+
                 if (!empty($row->clr)) {
                     $row->color = "rgb(" . $row->clr . ")";
                 } else {
@@ -1462,10 +1190,6 @@ class Dashboard_model extends CI_model
 
         return $this->db->get()->result_array();
     }
-
-
-
-
 
     public function getSummaryClr($dept, $tanggal, $shift, $reason, $preventif, $filter_rc, $spinning, $finishing, $netting)
     {
@@ -1573,8 +1297,6 @@ class Dashboard_model extends CI_model
 
         return $this->db->query($sql)->result();
     }
-
-
     public function getLastUpdate($dept, $tanggal, $shift)
     {
         $hakdowntime = $this->session->userdata('hakdowntime');
@@ -1643,7 +1365,6 @@ class Dashboard_model extends CI_model
         $this->db->limit(1);
         return $this->db->get()->row_array();
     }
-
     public function getExport($dept_id, $tanggal, $shift, $reason)
     {
         $this->db->select("downtime_mesinof. *, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, tb_benang.jenis");

@@ -6,14 +6,14 @@
     </div>
     <div class="row mt-3">
         <div class="col-lg-12">
-            <div class="card" style="border: 1px solid darkgray;">
+            <div class="card" style="border: 3px solid grey ; ">
                 <div class="row" style="margin: 10px;">
                     <div class="col-lg-3" style="text-align: left; font: size 14px;">
                         <input type="hidden" id="mesin" value="<?= $user['mach_no']; ?>">
                         <input type="hidden" name="dept" id="dept" value="<?= $dept; ?>">
-                        <span class="card-title text-danger">Departemen : <?= $header_dept['departemen']; ?></span> <br>
-                        <span class="card-title text-danger">Mesin : <?= $user['mach_no']; ?></span> <br>
-                        <span class="card-title text-danger">Spekmesin : <?= $user['mach_name']; ?></span> <br>
+                        <span class="card-title text-primary">Departemen : <?= $header_dept['departemen']; ?></span> <br>
+                        <span class="card-title text-primary">Mesin : <?= $user['mach_no']; ?></span> <br>
+                        <span class="card-title text-primary">Spekmesin : <?= $user['mach_name']; ?></span> <br>
 
                     </div>
                     <div class="col-lg-3">
@@ -62,12 +62,12 @@
             <div class="card h-100">
                 <div class="card-header ">
                     <div class="card-title mb-0">
-                        <h5 class="mb-1 me-2  text-danger"><?= $title; ?></h5>
+                        <h5 class="mb-1 me-2  text-primary"><?= $title; ?></h5>
                     </div>
                 </div>
                 <div class="card-body font-kecil ">
                     <div class="table-responsive">
-                        <table id="kerusakanTable" class="tabel datatable">
+                        <table id="kerusakanTable" class="tabel table-bordered">
                             <thead>
                                 <tr>
                                     <th>No</th>

@@ -480,7 +480,7 @@ class Report extends CI_Controller
 
         $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
         $this->db->where('downtime_tindakan_user.user', $name);
-        $this->db->group_by('downtime.nomesin_id');
+        // $this->db->group_by('downtime.nomesin_id');
         $this->db->order_by('downtime.tanggal', 'DESC');
         $this->db->limit($limit, $start);
         $data = $this->db->get()->result_array();
@@ -497,8 +497,6 @@ class Report extends CI_Controller
             $row['waktu perbaikan'] = format_downtime($row['downtime']);
             $row['tindakan'] = $row['tindakan'];
         }
-
-
 
         $this->db->from('downtime');
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
@@ -522,10 +520,6 @@ class Report extends CI_Controller
         $this->db->where('downtime_tindakan_user.user', $name);
         $recordsFiltered = $this->db->count_all_results();
 
-
-
-
-
         $this->db->from('downtime');
         $this->db->join('downtime_tindakan', 'downtime_tindakan.id_downtime = downtime.id', 'left');
         $this->db->join('downtime_tindakan_user', 'downtime_tindakan_user.id_tindakan = downtime_tindakan.id', 'left');
@@ -533,8 +527,6 @@ class Report extends CI_Controller
 
         $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
         $recordsTotal = $this->db->count_all_results();
-
-
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,

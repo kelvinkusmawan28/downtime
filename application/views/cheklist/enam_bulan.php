@@ -39,6 +39,7 @@
                         <div class="row">
                             <div class="col-lg-9 mt-3">
                                 <?php if (!$sudah_cek) : ?>
+                                    <h5><?= format_tanggal_indonesia($tgl_sekarang); ?></h5>
                                     <button type="button" id="btnAllOk" class="btn btn-sm btn-info text-dark mb-2">
                                         ✔ Semua OK
                                     </button>

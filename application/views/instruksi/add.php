@@ -6,7 +6,7 @@
     </div>
     <div class="col-12">
         <label for="subjek" class="form-label font-kecil">Jenis Instruksi</label>
-        <input type="text" name="kerusakan" id="kerusakan" class="form-control font-kecil" placeholder="Jenis Instruksi" required>
+        <input type="text" name="kerusakan" id="kerusakan" class="form-control font-kecil" placeholder="Ketik Jenis Instruksi" required>
         <input type="hidden" name="rusak_id" id="rusak_id">
     </div>
     <div class="col-12">
@@ -58,6 +58,12 @@
         if (!nomesin || !mach_id) {
             e.preventDefault();
             showError("Silakan Pilih Nomor Mesin Dari Data Yang Telah Di Sediakan.");
+            return false;
+        }
+
+        if (!kerusakan || !rusak_id) {
+            e.preventDefault();
+            showError("Silakan Pilih Jenis Instruksi Dari Data Yang Telah Di Sediakan. GM GB atau GI");
             return false;
         }
     });

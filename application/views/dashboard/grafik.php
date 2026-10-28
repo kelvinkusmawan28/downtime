@@ -84,7 +84,7 @@
 
 
 
-      <div class="row" style="padding: 10px;">
+      <div class="row" style="padding : 10px;">
         <div id="Chart-kelvin"></div>
         <!-- <div id="incomeChart"></div> -->
       </div>
@@ -124,6 +124,27 @@
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <script>
   $(document).ready(function() {
+    // function loadGrafik() {
+    //   const bulan = $('#filter_bulan').val();
+    //   const tahun = $('#filter_tahun').val();
+    //   const dept = $('#filter_dept').val();
+    //   const reason = $('#reason').val();
+
+    //   $.ajax({
+    //     url: "<?= base_url('dashboard/line') ?>",
+    //     type: "POST",
+    //     data: {
+    //       bulan,
+    //       tahun,
+    //       dept,
+    //       reason
+    //     },
+    //     success: function(response) {
+    //       const data = JSON.parse(response);
+    //       renderChart(data);
+    //     }
+    //   });
+    // }
     const base_url = "<?= base_url() ?>";
 
     function loadGrafik() {
@@ -132,8 +153,6 @@
       const dept = $('#filter_dept').val();
       const reason = $('#reason').val();
       console.log(reason);
-      console.log(dept);
-
 
       if (reason == 41) {
         url = 'dashboard/line_mesin_jalan';
@@ -157,127 +176,10 @@
       });
     }
 
+
+
     let chart = null;
 
-    // function renderChart(data) {
-    //   const el = document.querySelector('#Chart-kelvin');
-
-    //   // 🔥 destroy chart lama
-    //   if (chart !== null) {
-    //     chart.destroy();
-    //   }
-
-    //   const options = {
-    //     series: [{
-    //       name: 'jumlah ',
-    //       data: data.jumlah
-    //     }],
-    //     chart: {
-    //       type: 'area',
-    //       height: 250
-    //     },
-    //     stroke: {
-    //       curve: 'smooth',
-    //       width: 3
-    //     },
-    //     dataLabels: {
-    //       enabled: false
-    //     },
-    //     xaxis: {
-    //       categories: data.tanggal,
-    //       title: {
-    //         text: 'Tanggal'
-    //       }
-    //     },
-    //     colors: ['#696cff'],
-    //     yaxis: {
-    //       title: {
-    //         text: 'Jumlah '
-    //       }
-    //     }
-    //   };
-
-    //   chart = new ApexCharts(el, options);
-    //   chart.render();
-    // }
-
-    // pertanggal
-    // function renderChart(data) {
-    //   const el = document.querySelector('#Chart-kelvin');
-
-
-    //   if (chart !== null) {
-    //     chart.destroy();
-    //   }
-
-    //   const options = {
-    //     series: data.series,
-
-    //     chart: {
-    //       type: 'area',
-    //       height: 250,
-    //       toolbar: {
-    //         show: true,
-    //         tools: {
-    //           download: true
-    //         }
-    //       }
-    //     },
-
-    //     stroke: {
-    //       curve: 'smooth',
-    //       width: 3
-    //     },
-
-    //     dataLabels: {
-    //       enabled: false
-    //     },
-
-
-    //     colors: data.colors,
-
-    //     xaxis: {
-    //       categories: data.tanggal,
-    //       title: {
-    //         text: 'Tanggal'
-    //       }
-    //     },
-
-    //     yaxis: {
-    //       title: {
-    //         text: 'Jumlah'
-    //       }
-    //     },
-
-    //     legend: {
-    //       show: true
-    //     },
-
-    //     fill: {
-    //       type: 'gradient',
-    //       gradient: {
-    //         shadeIntensity: 1,
-    //         opacityFrom: 0.4,
-    //         opacityTo: 0.1,
-    //         stops: [0, 100]
-    //       }
-    //     },
-
-    //     tooltip: {
-    //       y: {
-    //         formatter: function(val) {
-    //           return val + " x Stop";
-    //         }
-    //       }
-    //     }
-    //   };
-
-    //   chart = new ApexCharts(el, options);
-    //   chart.render();
-    // }
-
-
-    // sebelum ada kondisi mesin jalan
     // function renderChart(data) {
     //   const el = document.querySelector('#Chart-kelvin');
 
@@ -367,10 +269,10 @@
         chart.destroy();
       }
 
-      // 🔥 KHUSUS MESIN JALAN
+
       if (!data.series) {
 
-        // 🔥 SORT DULU (tanggal + shift)
+
         data.sort((a, b) => {
           if (a.tanggal !== b.tanggal) {
             return a.tanggal.localeCompare(b.tanggal);
@@ -390,10 +292,10 @@
           let shift = row.shift == 0 ? 3 : row.shift;
           let shiftLabel = shift == 1 ? 'P' : (shift == 2 ? 'S' : 'M');
 
-          // 🔥 X-axis jadi angka
+
           categories.push(index + 1);
 
-          // 🔥 simpan label asli untuk tooltip
+
           fullLabel.push(row.tanggal + ' (' + shiftLabel + ')');
 
           values.push(row.jumlah);
@@ -416,9 +318,9 @@
           xaxis: {
             categories: categories,
             labels: {
-              rotate: 0, // 👈 Paksa rotasi ke 0 derajat (lurus)
+              rotate: 0,
               rotateAlways: false,
-              hideOverlappingLabels: true, // 👈 Sembunyikan label jika tetap tabrakan
+              hideOverlappingLabels: true,
               style: {
                 fontSize: '8px'
               },
@@ -431,7 +333,7 @@
           tooltip: {
             x: {
               formatter: function(val, opts) {
-                return fullLabel[opts.dataPointIndex]; // ✅ tampil detail di hover
+                return fullLabel[opts.dataPointIndex];
               }
             },
             y: {
@@ -453,9 +355,7 @@
         return;
       }
 
-      // ===============================
-      // 🔽 CODE LAMA (FIX ERROR)
-      // ===============================
+
 
       const options = {
         series: data.series,
@@ -482,9 +382,9 @@
         xaxis: {
           categories: data.tanggal,
           labels: {
-            rotate: 0, // 👈 Tambahkan ini agar angka tegak lurus
+            rotate: 0,
             rotateAlways: false,
-            tickAmount: 10 // 👈 Sesuaikan angka ini (misal tampilkan tiap 10 data saja)
+
           },
           title: {
             text: 'Tanggal / Shift - Rata-rata: ' + data.rata_rata
@@ -529,11 +429,10 @@
       chart.render();
     }
 
-    // Event filter
     $('#filter_bulan, #filter_tahun, #filter_dept, #reason').on('change', function() {
       loadGrafik();
     });
 
-    loadGrafik(); // load pertama kali
+    loadGrafik();
   });
 </script>

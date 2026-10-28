@@ -11,7 +11,7 @@
             <label>Kode Departemen</label>
             <input type="text" class="form-control font-kecil" name="dept_id" value="<?= $mesinof['dept_id']; ?>" readonly>
 
-            <!-- id data downtime -->
+
             <input type="hidden" name="id" value="<?= $mesinof['id']; ?>">
         </div>
 

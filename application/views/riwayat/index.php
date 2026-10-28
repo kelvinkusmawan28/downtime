@@ -1,15 +1,13 @@
 <div class="container-xxl flex-grow-1 container-p-y">
-
     <div class="row ">
         <div class="col-lg-12 ">
             <div class="card h-100">
-                <div class="row" style="padding: 10px;">
-                    <div class="col-lg-12" style="text-align: right;">
-                        <a href="<?= base_url('mesin'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
-                    </div>
-                </div>
-
                 <div class="card-header ">
+                    <div class="row" style="padding: 10px;">
+                        <div class="col-lg-12" style="text-align: right;">
+                            <a href="<?= base_url('mesin'); ?>" class="btn btn-sm btn-warning"> <i class="fa fa-arrow-left me-2"></i> Kembali</a>
+                        </div>
+                    </div>
                     <div class="row" style="border: 1px solid black; padding :8px ;">
                         <div class="col-lg-2" style="text-align: center;">
                             <img src="<?= base_url(); ?>/assets/img/avatars/user.png" alt style="width: 80px; height: auto;" class="rounded-circle" />
@@ -51,7 +49,7 @@
                 </div>
                 <div class="card-body font-kecil ">
                     <div class="table-responsive">
-                        <table id="riwayatTable" class="tabel table-bordered">
+                        <table id="riwayatTable" class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>No</th>

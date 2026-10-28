@@ -80,7 +80,7 @@
                 ?>
 
                 <select name="filter" id="filter" class="form-select font-kecil mt-0">
-                  <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua Departemen</option>
+                  <option value="all" <?= $filter_dept == '' ? 'selected' : '' ?>>Semua</option>
                   <?php foreach ($dept_options as $option) : ?>
                     <?php if (in_array($option['dept_id'],  $akses_dept_diberi)) : ?>
                       <option value="<?= $option['dept_id']; ?>" <?= $filter_dept == $option['dept_id'] ? 'selected' : ''  ?>>
@@ -105,7 +105,7 @@
 
           <div class="row mt-3">
             <div class="col-12" style="text-align: right; ">
-              <a href="<?= base_url('riwayat'); ?>" style="text-decoration: underline; color: black ;"> <i class="fa fa-clock-rotate-left text-danger me-2"></i> <span style="font-size: 14px;;"> History <?= $this->session->userdata('name'); ?> </span> </a>
+              <a class="btn btn-outline-light font-kecil" href="<?= base_url('riwayat'); ?>"> <span style="font-size: 14px; color:red;"> <i class="fa fa-clock-rotate-left text-danger me-2"></i> History <?= $this->session->userdata('name'); ?> </span> </a>
             </div>
           </div>
 
@@ -638,7 +638,7 @@
           <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm border-1 rounded-3 hover-shadow transition-all"  >
               
-              <div class="card-header border-1 pt-4 pb-1" >
+              <div class="card-header border-1 pt-4 pb-1">
                 <div class="d-flex justify-content-between align-items-start">
                   <div class="d-flex align-items-center">
                     <div class="icon-box bg-light-white rounded-circle p-2 me-3">
@@ -654,20 +654,20 @@
 
               <div class="card-body py-3">
                <div class="row mb-3 g-2 align-items-center">
-                 <div class="col-6 border-end pe-2">
+                 <div class="col-7 border-end pe-2">
                     <label class="text-muted small d-block">Tanggal</label>
                     <span class="fw-semibold text-dark" style="font-size: 11px;">
                     <i class="fas fa-calendar me-1"></i>${row.tanggal}
                    </span>
                   </div>
              
-                  <div class="col-6">
+                  <div class="col-5">
                     <label class="text-muted small d-block">Departemen</label>
                     <span class="text-danger border fw-medium small" style = "font-size: 10px;">${row.departemen}</span>
                   </div>
                 </div>
 
-                <div class="p-3 border-dashed rounded-2 mb-3" style = "background-color: #FFFAF0;">
+                <div class="p-3 border-dashed rounded-2 mb-3" >
                   <label class="text-danger small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem;">Deskripsi Kerusakan</label>
                   <p class="card-text small mb-1 text-dark fst-italic">
                 "${row.kerusakan}"

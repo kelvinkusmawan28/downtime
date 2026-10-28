@@ -194,11 +194,10 @@ class cheklist extends CI_Controller
           ';
         }
 
-        // ================= TOTAL DATA =================
         $this->db->from('downtime_spekmesin');
         $recordsTotal = $this->db->count_all_results();
 
-        // ================= RESPONSE =================
+
         echo json_encode([
             'draw' => intval($draw),
             'recordsTotal' => $recordsTotal,
@@ -271,7 +270,7 @@ class cheklist extends CI_Controller
         $matrix = [];
         foreach ($rekapharian as $row) {
             $item = $row['id_item'];
-            $tgl  = date('d', strtotime($row['tanggal'])); // 01,02,03
+            $tgl  = date('d', strtotime($row['tanggal']));
             $matrix[$item][$tgl] = $row['status'] == 'OK'
                 ? '✔'
                 : ($row['status'] == 'LB' ? '-' : '❌');
@@ -281,7 +280,7 @@ class cheklist extends CI_Controller
         $data['items']  = $this->Cheklist_model->getItemPemeriksaan($mach_id);
 
 
-        // ================== REKAP MINGGUAN ==================
+
         $rekapmingguan = $this->Cheklist_model->getRekapMingguan($mach_id, $bulan, $tahun);
 
         $matrix_mingguan = [];
@@ -289,7 +288,7 @@ class cheklist extends CI_Controller
 
         foreach ($rekapmingguan as $row) {
             $item = $row['id_item'];
-            $tgl  = date('d-M', strtotime($row['tanggal'])); // 07-01
+            $tgl  = date('d-M', strtotime($row['tanggal']));
 
             $matrix_mingguan[$item][$tgl] = $row['status'] == 'OK' ? '✔' : '❌';
 
@@ -301,7 +300,7 @@ class cheklist extends CI_Controller
         $data['matrix_mingguan'] = $matrix_mingguan;
         $data['headerTanggal']   = $headerTanggal;
 
-        // ================== REKAP BULANAN ==================
+
         $rekapbulanan = $this->Cheklist_model->getRekapBulanan($mach_id, $bulan, $tahun);
 
         $matrix_bulanan = [];
@@ -309,7 +308,7 @@ class cheklist extends CI_Controller
 
         foreach ($rekapbulanan as $row) {
             $item = $row['id_item'];
-            $tgl  =  date('m', strtotime($row['tanggal'])); // 07-01
+            $tgl  =  date('m', strtotime($row['tanggal']));
 
             $matrix_bulanan[$item][$tgl] = $row['status'] == 'OK' ? '✔' : '❌';
 
@@ -322,7 +321,7 @@ class cheklist extends CI_Controller
         $data['matrix_bulanan'] = $matrix_bulanan;
         $data['headerBulanan']   = $headerbulanan;
 
-        // ================== REKAP 3 BULAN ==================
+
 
         $rekap_tigabulan = $this->Cheklist_model->getRekap_TigaBulan($mach_id, $bulan, $tahun);
 
@@ -331,7 +330,7 @@ class cheklist extends CI_Controller
 
         foreach ($rekap_tigabulan as $row) {
             $item = $row['id_item'];
-            $tgl  =  date('m', strtotime($row['tanggal'])); // 07-01
+            $tgl  =  date('m', strtotime($row['tanggal']));
 
             $matrix_tigabulan[$item][$tgl] = $row['status'] == 'OK' ? '✔' : '❌';
 
@@ -344,7 +343,7 @@ class cheklist extends CI_Controller
         $data['matrix_tigabulan'] = $matrix_tigabulan;
         $data['header_tigabulan']   = $header_tigabulan;
 
-        // ================== REKAP 6 BULAN ==================
+
 
         $rekap_enambulan = $this->Cheklist_model->getRekap_EnamBulan($mach_id, $bulan, $tahun);
 
@@ -365,7 +364,7 @@ class cheklist extends CI_Controller
         $data['items_enambulan']  = $this->Cheklist_model->getItemPemeriksaan_EnamBulan($mach_id);
         $data['matrix_enambulan'] = $matrix_enambulan;
         $data['header_enambulan']   = $header_enambulan;
-        // ================== REKAP 1 Tahun ==================
+
 
         $rekap_tahunan = $this->Cheklist_model->getRekap_Tahunan($mach_id, $bulan, $tahun);
 
@@ -687,7 +686,7 @@ class cheklist extends CI_Controller
             }
         }
 
-        // 6️⃣ Kirim ke view
+
         $data = [
             'title'          => 'Checklist Preventif Bulanan',
             'tgl_sekarang'   => $tanggal,
@@ -752,7 +751,7 @@ class cheklist extends CI_Controller
         $awal = date('Y-m-d', strtotime("$tahun-" . (($triwulan - 1) * 3 + 1) . "-01"));
         $akhir = date('Y-m-t', strtotime("$awal +2 month"));
 
-        // 1️⃣ Ambil preventif
+
         $preventif = $this->db
             ->get_where('downtime_preventif', ['kode' => $kode])
             ->row_array();
@@ -761,7 +760,7 @@ class cheklist extends CI_Controller
             show_error('Kode preventif tidak ditemukan');
         }
 
-        // 2️⃣ Cek sudah checklist triwulan ini?
+        //  Cek sudah checklist triwulan ini?
         $sudah_cek = $this->db
             ->where('mach_id', $mach_id)
             ->where('kategori', '3 bulan')
@@ -769,7 +768,7 @@ class cheklist extends CI_Controller
             ->where('tanggal <=', $akhir)
             ->count_all_results('downtime_cheklist') > 0;
 
-        // 3️⃣ Info checklist triwulan ini
+        //  Info checklist triwulan ini
         $info_cek = $this->db
             ->where('mach_id', $mach_id)
             ->where('kategori', '3 bulan')
@@ -778,11 +777,11 @@ class cheklist extends CI_Controller
             ->get('downtime_cheklist')
             ->row_array();
 
-        // 4️⃣ Ambil item checklist
+        //  Ambil item checklist
         $items = $this->Cheklist_model
             ->getChecklistTigaBulan($preventif['id'], $mach_id, $tanggal);
 
-        // 5️⃣ Cari triwulan yang terlewat
+        // Cari triwulan yang terlewat
         $rows = $this->db
             ->select('tanggal')
             ->where('mach_id', $mach_id)
@@ -803,7 +802,7 @@ class cheklist extends CI_Controller
             }
         }
 
-        // 6️⃣ Kirim ke view
+        // Kirim ke view
         $data = [
             'title'            => 'Checklist Preventif Per 3 Bulan',
             'tgl_sekarang'     => $tanggal,
@@ -1312,12 +1311,30 @@ class cheklist extends CI_Controller
 
         $this->_tableHeader($pdf);
 
+        // $this->_drawData($pdf, $items_harian,   $matrix_harian,   'HARIAN');
+        // $this->_drawData($pdf, $items_mingguan, $matrix_mingguan, 'MINGGUAN');
+        // $this->_drawData($pdf, $items_bulanan,  $matrix_bulanan,  'BULANAN');
+        // $this->_drawData($pdf, $items_3bulan,   $matrix_3bulan,   '3 BULAN');
+        // $this->_drawData($pdf, $items_6bulan,   $matrix_6bulan,   '6 BULAN');
+        // $this->_drawData($pdf, $items_tahunan,  $matrix_tahunan,  'TAHUNAN');
+
         $this->_drawData($pdf, $items_harian,   $matrix_harian,   'HARIAN');
+        $pdf->Ln(2);
+
         $this->_drawData($pdf, $items_mingguan, $matrix_mingguan, 'MINGGUAN');
+        $pdf->Ln(2);
+
         $this->_drawData($pdf, $items_bulanan,  $matrix_bulanan,  'BULANAN');
+        $pdf->Ln(2);
+
         $this->_drawData($pdf, $items_3bulan,   $matrix_3bulan,   '3 BULAN');
+        $pdf->Ln(2);
+
         $this->_drawData($pdf, $items_6bulan,   $matrix_6bulan,   '6 BULAN');
+        $pdf->Ln(2);
+
         $this->_drawData($pdf, $items_tahunan,  $matrix_tahunan,  'TAHUNAN');
+        $pdf->Ln(2);
 
         $this->_footerInfo($pdf);
 
@@ -1370,8 +1387,11 @@ class cheklist extends CI_Controller
                     $symbol = chr(51); // ✔
                 } elseif ($status === 'NG') {
                     $symbol = chr(55); // ✗
-                } else {
+                } elseif ($status === 'LB') {
                     $symbol = '-';
+                    $pdf->SetFont('Arial', '', 7);
+                } else {
+                    $symbol = '';
                     $pdf->SetFont('Arial', '', 7);
                 }
 
@@ -1428,7 +1448,7 @@ class cheklist extends CI_Controller
             0
         );
 
-        // Kolom kanan (reset X & Y)
+
         $pdf->SetXY($xStart + $subW, $yStart);
         $pdf->MultiCell(
             $subW,

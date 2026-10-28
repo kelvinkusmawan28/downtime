@@ -112,7 +112,7 @@
                 <?php if ($detail['status'] == 0) : ?>
                     <div class="bg-light p-3 rounded-3 mb-3">
                         <p class="small text-secondary mb-1 fw-bold text-uppercase" style="font-size: 10px;">Keterangan:</p>
-                        <p class="mb-0 text-dark" style="font-size: 14px;"><?= $detail['keterangan']; ?></p>
+                        <p class="mb-0 text-dark text-uppercase" style="font-size: 14px;"><?= $detail['keterangan']; ?></p>
                     </div>
 
                     <div class="bg-light p-3 rounded-3 mb-3">

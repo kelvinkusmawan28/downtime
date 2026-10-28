@@ -63,7 +63,7 @@
                     </div>
                     <div class="table-responsive">
 
-                        <table id="kerusakanTable" class="tabel datatable">
+                        <table id="kerusakanTable" class="table-bordered">
                             <thead>
                                 <tr>
                                     <th>No</th>

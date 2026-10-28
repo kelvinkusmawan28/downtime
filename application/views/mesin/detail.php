@@ -196,7 +196,7 @@
                       <tr>
                         <td><?= $no; ?></td>
                         <td><a href="#" data-id="<?= $data['id']; ?>" class="view" title="view Data" style="color: blueviolet; margin-left:10px; text-decoration: underline;">
-                            <?= format_tanggal_indonesia($data['tanggal']); ?>
+                            <?= date('d-m-Y', strtotime($data['tanggal'])); ?>
                           </a>
                         </td>
                         <td><?= $data['jam_start']; ?></td>
@@ -380,6 +380,7 @@
     </div>
   </div>
 </div>
+
 <div class="modal fade" id="basicModal-keterangan" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -585,6 +586,7 @@
         alert("Data tidak valid!");
       }
     });
+
     $(document).on('click', '.keterangan', function() {
       var data = $(this).data("id");
       if (data) {

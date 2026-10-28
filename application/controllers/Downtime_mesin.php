@@ -22,7 +22,7 @@ class Downtime_mesin extends CI_Controller
 
     public function index()
     {
-        $data['title'] = 'Data Downtime Mesin PT INDONEPTUNE NET';
+        $data['title'] = 'Downtime Perbaikan Mesin';
         $data['bln_sekarang'] = date('m');
         $data['thn_sekarang'] = date('Y');
         $data['bulan_options'] = $this->Downtime_mesin_model->getBulan();
@@ -33,6 +33,10 @@ class Downtime_mesin extends CI_Controller
         $data['filter_tahun'] = $this->session->userdata('filter_tahun') ?? 'all';
         $data['filter_dept'] = $this->session->userdata('filter_dept') ?? 'all';
 
+        $data['filter_bulan_pengerjaan'] = $this->session->userdata('filter_bulan_pengerjaan') ?? 'all';
+        $data['filter_tahun_pengerjaan'] = $this->session->userdata('filter_tahun_pengerjaan') ?? 'all';
+        $data['filter_dept_pengerjaan'] = $this->session->userdata('filter_dept_pengerjaan') ?? 'all';
+
         $data['downtime_dept_map'] = [
             1 => 'FN',
             2 => 'NT',
@@ -42,6 +46,8 @@ class Downtime_mesin extends CI_Controller
             6 => 'GF',
             7 => 'AR',
         ];
+
+
         $this->load->view('templates/header', $data);
         $this->load->view('downtime/index', $data);
         $this->load->view('templates/footer');
@@ -218,37 +224,10 @@ class Downtime_mesin extends CI_Controller
         $this->db->where('(ins != 1 OR ins IS NULL)');
         $recordsTotal = $this->db->get()->num_rows();
 
-
-        $this->db->select('SUM(downtime.downtime_kerusakan) as total_downtime');
-        $this->db->from('downtime');
-
-        if ($dept_id !== 'all' && !empty($dept_id)) {
-            $this->db->where('downtime.dept_id', $dept_id);
-        } else {
-            if (!empty($akses_dept)) {
-                $this->db->where_in('downtime.dept_id', $akses_dept);
-            } else {
-                $this->db->where('1=0');
-            }
-        }
-
-        if ($bulan !== 'all' && !empty($bulan)) {
-            $this->db->where('MONTH(downtime.tanggal)', $bulan);
-        }
-
-        if ($tahun !== 'all' && !empty($tahun)) {
-            $this->db->where('YEAR(downtime.tanggal)', $tahun);
-        }
-
-        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
-
-        $total_downtime = $this->db->get()->row_array();
-
         echo json_encode([
             'draw'            => intval($draw),
             'recordsTotal'    => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
-            'total_downtime' => format_menit($total_downtime['total_downtime']),
             'data'            =>  $filtered_data
         ]);
     }
@@ -261,9 +240,16 @@ class Downtime_mesin extends CI_Controller
         $dept_id = $this->input->get('dept_id');
         $bulan   = $this->input->get('bulan');
         $tahun   = $this->input->get('tahun');
-        $semester = $this->input->post('semester');
+        $semester = $this->input->get('semester');
 
         $detail = $this->Downtime_mesin_model->getExport_Pdf($dept_id, $bulan, $tahun, $semester);
+        if ($semester == '1') {
+            $periode = 'SEMESTER 1 (JAN-JUN)';
+        } elseif ($semester == '2') {
+            $periode = 'SEMESTER 2 (JUL-DES)';
+        } else {
+            $periode = 'BULAN: ' . strtoupper(get_nama_bulan($bulan));
+        }
 
         $pdf = new PDF('P', 'mm', 'A4');
         $pdf->AliasNbPages();
@@ -274,18 +260,18 @@ class Downtime_mesin extends CI_Controller
 
 
         $pdf->SetFont('Latob', '', 12);
-        $pdf->Cell(0, 7, 'LAPORAN DOWNTIME MESIN', 0, 1, 'C');
+        $pdf->Cell(0, 7, 'LAPORAN PERBAIKAN MESIN', 0, 1, 'C');
         $pdf->SetFont('Latob', '', 10);
-        $pdf->Cell(0, 6, 'BULAN: ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun, 0, 1, 'C');
+        $pdf->Cell(0, 6, 'BULAN: ' . $periode . ' - ' . $tahun, 0, 1, 'C');
         $pdf->Ln(8);
-
 
         $widths = [
             'no' => 10,
-            'departemen' => 50,
-            'mesin' => 40,
-            'downtime_menit' => 45,
-            'downtime_hari' => 45
+            'departemen' => 35,
+            'mesin' => 10,
+            'spek' => 45,
+            'downtime_menit' => 30,
+            'downtime_hari' => 30
         ];
         $total_table_width = array_sum($widths);
 
@@ -299,7 +285,8 @@ class Downtime_mesin extends CI_Controller
         $pdf->SetX($margin_left);
         $pdf->Cell($widths['no'], 8, 'No', 1, 0, 'C', true);
         $pdf->Cell($widths['departemen'], 8, 'Departemen', 1, 0, 'C', true);
-        $pdf->Cell($widths['mesin'], 8, 'Mesin', 1, 0, 'C', true);
+        $pdf->Cell($widths['mesin'], 8, 'No ', 1, 0, 'C', true);
+        $pdf->Cell($widths['spek'], 8, 'Spek Mesin ', 1, 0, 'C', true);
         $pdf->Cell($widths['downtime_menit'], 8, 'Downtime / Menit', 1, 0, 'C', true);
         $pdf->Cell($widths['downtime_hari'], 8, 'Downtime / Hari', 1, 1, 'C', true);
 
@@ -312,7 +299,8 @@ class Downtime_mesin extends CI_Controller
             if (empty($row['mach_no'])) continue;
 
             $departemen = $row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen'];
-            $mesin = 'Mesin ' . $row['mach_no'];
+            $mesin =  $row['mach_no'];
+            $spek =  $row['mach_name'];
             $downtime = (int)$row['total_downtime'];
             $total_downtime += $downtime;
 
@@ -320,39 +308,32 @@ class Downtime_mesin extends CI_Controller
             $pdf->Cell($widths['no'], 7, $no++, 1, 0, 'C');
             $pdf->Cell($widths['departemen'], 7, $departemen, 1, 0);
             $pdf->Cell($widths['mesin'], 7, $mesin, 1, 0);
+            $pdf->Cell($widths['spek'], 7, $spek, 1, 0);
             $pdf->Cell($widths['downtime_menit'], 7, format_menit($downtime), 1, 0, 'R');
             $pdf->Cell($widths['downtime_hari'], 7, format_downtime($downtime), 1, 1, 'R');
         }
 
 
-        $pdf->SetFont('Latob', '', 9);
-        $pdf->SetFillColor(245, 230, 200);
-        $pdf->SetX($margin_left);
-        $pdf->Cell(
-            $widths['no'] + $widths['departemen'] + $widths['mesin'],
-            8,
-            'TOTAL DOWNTIME',
-            1,
-            0,
-            'R',
-            true
-        );
-        $pdf->Cell($widths['downtime_menit'], 8, format_menit($total_downtime), 1, 0, 'R', true);
-        $pdf->Cell($widths['downtime_hari'], 8, format_downtime($total_downtime), 1, 1, 'R', true);
-
-        // Output PDF
         $pdf->Output('I', 'Laporan_Downtime_Mesin_' . get_nama_bulan($bulan) . '_' . $tahun . '.pdf');
     }
-
-
 
     public function export_excel()
     {
         $dept_id = $this->input->get('dept_id');
         $bulan = $this->input->get('bulan');
         $tahun = $this->input->get('tahun');
+        $semester = $this->input->get('semester');
+
 
         $detail = $this->Downtime_mesin_model->getExport_Pdf($dept_id, $bulan, $tahun, $semester);
+
+        if ($semester == '1') {
+            $periode = 'SEMESTER 1 (JAN-JUN)';
+        } elseif ($semester == '2') {
+            $periode = 'SEMESTER 2 (JUL-DES)';
+        } else {
+            $periode = 'BULAN: ' . strtoupper(get_nama_bulan($bulan));
+        }
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -360,7 +341,7 @@ class Downtime_mesin extends CI_Controller
 
 
         $sheet->setCellValue('C1', 'LAPORAN DOWNTIME MESIN');
-        $sheet->setCellValue('C2', 'Bulan: ' . strtoupper(get_nama_bulan($bulan)) . ' - ' . $tahun);
+        $sheet->setCellValue('C2', $periode . ' - ' . $tahun);
         $sheet->mergeCells('C1:G1');
         $sheet->mergeCells('C2:G2');
 
@@ -699,12 +680,14 @@ class Downtime_mesin extends CI_Controller
         $pdf->Ln(8);
 
 
+
         $widths = [
             'no' => 10,
-            'departemen' => 50,
-            'mesin' => 40,
-            'downtime_menit' => 45,
-            'downtime_hari' => 45
+            'departemen' => 35,
+            'mesin' => 15,
+            'spek' => 45,
+            'downtime_menit' => 30,
+            'downtime_hari' => 30
         ];
         $total_table_width = array_sum($widths);
 
@@ -719,6 +702,7 @@ class Downtime_mesin extends CI_Controller
         $pdf->Cell($widths['no'], 8, 'No', 1, 0, 'C', true);
         $pdf->Cell($widths['departemen'], 8, 'Departemen', 1, 0, 'C', true);
         $pdf->Cell($widths['mesin'], 8, 'Mesin', 1, 0, 'C', true);
+        $pdf->Cell($widths['spek'], 8, 'Spek', 1, 0, 'C', true);
         $pdf->Cell($widths['downtime_menit'], 8, 'Hitunagan Menit', 1, 0, 'C', true);
         $pdf->Cell($widths['downtime_hari'], 8, 'Hitungan Jam/Hari', 1, 1, 'C', true);
 
@@ -732,6 +716,7 @@ class Downtime_mesin extends CI_Controller
 
             $departemen = $row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen'];
             $mesin = 'Mesin ' . $row['mach_no'];
+            $spek = $row['mach_name'];
             $downtime = (int)$row['total_downtime'];
             $total_downtime += $downtime;
 
@@ -739,25 +724,13 @@ class Downtime_mesin extends CI_Controller
             $pdf->Cell($widths['no'], 7, $no++, 1, 0, 'C');
             $pdf->Cell($widths['departemen'], 7, $departemen, 1, 0);
             $pdf->Cell($widths['mesin'], 7, $mesin, 1, 0);
+            $pdf->Cell($widths['spek'], 7, $spek, 1, 0);
             $pdf->Cell($widths['downtime_menit'], 7, format_menit($downtime), 1, 0, 'R');
             $pdf->Cell($widths['downtime_hari'], 7, format_downtime($downtime), 1, 1, 'R');
         }
 
 
-        $pdf->SetFont('Latob', '', 9);
-        $pdf->SetFillColor(245, 230, 200);
-        $pdf->SetX($margin_left);
-        $pdf->Cell(
-            $widths['no'] + $widths['departemen'] + $widths['mesin'],
-            8,
-            'TOTAL DOWNTIME',
-            1,
-            0,
-            'R',
-            true
-        );
-        $pdf->Cell($widths['downtime_menit'], 8, format_menit($total_downtime), 1, 0, 'R', true);
-        $pdf->Cell($widths['downtime_hari'], 8, format_downtime($total_downtime), 1, 1, 'R', true);
+
 
         // Output PDF
         $pdf->Output('I', 'Laporan_Perbaikan Mesin' . get_nama_bulan($bulan) . '_' . $tahun . '.pdf');
@@ -801,8 +774,9 @@ class Downtime_mesin extends CI_Controller
         $sheet->setCellValue('C4', 'No');
         $sheet->setCellValue('D4', 'Departemen');
         $sheet->setCellValue('E4', 'Mesin');
-        $sheet->setCellValue('F4', 'Downtime / Menit');
-        $sheet->setCellValue('G4', 'Downtime / Hari');
+        $sheet->setCellValue('F4', 'Spek');
+        $sheet->setCellValue('G4', 'Downtime / Menit');
+        $sheet->setCellValue('H4', 'Downtime / Hari');
 
 
         $headerStyle = [
@@ -821,7 +795,7 @@ class Downtime_mesin extends CI_Controller
                 'color' => ['argb' => 'FFEFEFEF']
             ]
         ];
-        $sheet->getStyle('C4:G4')->applyFromArray($headerStyle);
+        $sheet->getStyle('C4:H4')->applyFromArray($headerStyle);
 
         $rowNum = 5;
         $no = 1;
@@ -832,48 +806,48 @@ class Downtime_mesin extends CI_Controller
 
             $departemen = $row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen'];
             $mesin = 'Mesin ' . $row['mach_no'];
+            $spek = $row['mach_name'];
             $downtime = (int)$row['total_downtime'];
             $total_downtime += $downtime;
 
             $sheet->setCellValue('C' . $rowNum, $no++);
             $sheet->setCellValue('D' . $rowNum, $departemen);
             $sheet->setCellValue('E' . $rowNum, $mesin);
-            $sheet->setCellValue('F' . $rowNum, format_menit($downtime));
-            $sheet->setCellValue('G' . $rowNum, format_downtime($downtime));
+            $sheet->setCellValue('F' . $rowNum, $spek);
+            $sheet->setCellValue('G' . $rowNum, format_menit($downtime));
+            $sheet->setCellValue('H' . $rowNum, format_downtime($downtime));
 
             $rowNum++;
         }
 
         // Total row
-        $sheet->setCellValue('E' . $rowNum, 'TOTAL DOWNTIME');
-        $sheet->setCellValue('F' . $rowNum, format_menit($total_downtime));
-        $sheet->setCellValue('G' . $rowNum, format_downtime($total_downtime));
 
 
-        $totalStyle = [
-            'font' => ['bold' => true],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ]
-            ],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'color' => ['argb' => 'FFFCE4D6']
-            ]
-        ];
 
-        $sheet->getStyle('C4:G' . $rowNum)->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ]
-            ]
-        ]);
-        $sheet->getStyle('E' . $rowNum . ':G' . $rowNum)->applyFromArray($totalStyle);
+        // $totalStyle = [
+        //     'font' => ['bold' => true],
+        //     'borders' => [
+        //         'allBorders' => [
+        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+        //         ]
+        //     ],
+        //     'fill' => [
+        //         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+        //         'color' => ['argb' => 'FFFCE4D6']
+        //     ]
+        // ];
+
+        // $sheet->getStyle('C4:G' . $rowNum)->applyFromArray([
+        //     'borders' => [
+        //         'allBorders' => [
+        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+        //         ]
+        //     ]
+        // ]);
+        // $sheet->getStyle('E' . $rowNum . ':G' . $rowNum)->applyFromArray($totalStyle);
 
 
-        foreach (range('C', 'G') as $col) {
+        foreach (range('C', 'H') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 

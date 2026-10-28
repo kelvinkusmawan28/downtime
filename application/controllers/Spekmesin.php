@@ -25,7 +25,7 @@ class Spekmesin extends CI_Controller
             4 => 'SP',
             5 => 'UT',
             6 => 'GF',
-            6 => 'AR',
+            7 => 'AR',
         ];
         $this->load->view('templates/header', $data);
         $this->load->view('spekmesin/index', $data);
@@ -118,7 +118,7 @@ class Spekmesin extends CI_Controller
 
 
             $row['aksi'] = '
-            <a class="btn btn-sm btn-success text-dark lihat-file" 
+            <a class="btn btn-sm btn-light text-dark lihat-file" 
                         data-files=\'' . $data_files . '\'>
                         <i class="fa fa-camera"></i>
                       </a>
@@ -194,7 +194,6 @@ class Spekmesin extends CI_Controller
         $data['detail'] = $this->Spekmesin_model->getdataByid($id);
         $this->load->view('spekmesin/edit', $data);
     }
-
     public function update($id)
     {
         $config['upload_path'] = 'assets/img/upload_spek/';
@@ -202,16 +201,15 @@ class Spekmesin extends CI_Controller
         $config['max_size'] = 20240; // 20 MB
         $this->load->library('upload', $config);
 
-        // Ambil data lama dari database
         $detail = $this->Spekmesin_model->getdataByid($id);
         $old_files = !empty($detail['file_spek']) ? json_decode($detail['file_spek'], true) : [];
         $old_file_paths = !empty($detail['path_file_spek']) ? json_decode($detail['path_file_spek'], true) : [];
         $old_file_types = !empty($detail['file_type_spek']) ? json_decode($detail['file_type_spek'], true) : [];
 
-        //  File yang user ingin hapus
+
         $hapus_file = $this->input->post('hapus_file') ?? [];
 
-        // dihapus dari array lama
+
         $filtered_old_files = [];
         $filtered_file_paths = [];
         $filtered_file_types = [];
@@ -224,7 +222,7 @@ class Spekmesin extends CI_Controller
             }
         }
 
-        // Hapus file dari folder
+
         foreach ($hapus_file as $file) {
             $path = 'assets/img/upload_spek/' . $file;
             if (file_exists($path)) {
@@ -232,7 +230,7 @@ class Spekmesin extends CI_Controller
             }
         }
 
-        // === Proses Rename File Lama ===
+
         $rename_files = $this->input->post('rename_file');
         $nama_file_asli = $this->input->post('nama_file_asli');
 
@@ -240,7 +238,7 @@ class Spekmesin extends CI_Controller
             foreach ($rename_files as $i => $rename) {
                 $old_name = $nama_file_asli[$i];
 
-                // Hanya diproses kalau user isi nama baru dan file belum dihapus
+
                 if (!empty($rename) && in_array($old_name, $filtered_old_files)) {
                     $old_path = 'assets/img/upload_spek/' . $old_name;
 
@@ -252,7 +250,7 @@ class Spekmesin extends CI_Controller
                     if (file_exists($old_path)) {
                         rename($old_path, $new_path);
 
-                        // Update di array lama
+
                         $key = array_search($old_name, $filtered_old_files);
                         if ($key !== false) {
                             $filtered_old_files[$key] = $new_name;
@@ -263,7 +261,7 @@ class Spekmesin extends CI_Controller
             }
         }
 
-        // Upload file baru
+
         $files = $_FILES['file_upload'];
         $new_files = [];
         $new_file_paths = [];
@@ -295,7 +293,7 @@ class Spekmesin extends CI_Controller
             }
         }
 
-        // Gabungkan semua file
+
         $all_files = array_merge($filtered_old_files, $new_files);
         $all_file_paths = array_merge($filtered_file_paths, $new_file_paths);
         $all_file_types = array_merge($filtered_file_types, $new_file_types);

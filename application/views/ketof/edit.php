@@ -19,8 +19,9 @@
         </div>
         <div class="col-4">
             <label for="remark" class="form-label font-kecil">Warna </label>
-            <input type="color" id="clr" onchange="convertToRGB(this.value)">
             <input type="text" name="clr_rgb" id="clr_rgb" value="<?= $detail['clr']; ?>">
+            <br>
+            <input type="color" id="clr" onchange="convertToRGB(this.value)" value="<?= 'RGB(' . ($detail['clr']) . ')' ?>" style="width: 100px; height: 100px;">
             <script>
                 function rgbToHex(rgb) {
                     let split = rgb.split(",");
@@ -44,8 +45,22 @@
 
                     document.getElementById("clr_rgb").value = r + "," + g + "," + b;
                 }
+
+                function rgbtohexx(rgb) {
+                    var rgbRegex = /^rgb\(\s*(-?\d+)(%?)\s*,\s*(-?\d+)(%?)\s*,\s*(-?\d+)(%?)\s*\)$/;
+                    var result, r, g, b, hex = "";
+                    if ((result = rgbRegex.exec(rgb))) {
+                        r = componentFromStr(result[1], result[2]);
+                        g = componentFromStr(result[3], result[4]);
+                        b = componentFromStr(result[5], result[6]);
+
+                        hex = "0x" + (0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                    }
+                    return hex;
+                }
             </script>
         </div>
+
 
     </div>
     <div class="row">

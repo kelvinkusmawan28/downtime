@@ -316,7 +316,6 @@
 
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <script src="<?= base_url(); ?>/assets/js/html5-qrcode.min.js"></script>
-
 <!-- to filter form -->
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
 
@@ -458,7 +457,6 @@
     //   }
     // });
 
-
     $(document).on('click', '.edit', function() {
       var data = $(this).data('id');
 
@@ -572,36 +570,36 @@
     $(document).on('click', '#btnScanUlang', async function() {
       const btn = $(this);
 
-      // Cegah tombol ditekan berkali-kali
+
       if (btn.prop('disabled')) return;
 
       btn.prop('disabled', true);
 
       try {
-        // Hentikan scanner lama jika masih berjalan
+
         if (editScanner && scannerRunning) {
           await editScanner.stop();
           scannerRunning = false;
         }
 
-        // Bersihkan instance scanner lama
+
         if (editScanner) {
           await editScanner.clear();
           editScanner = null;
         }
 
-        // Reset status agar bisa scan ulang
+
         scannerRunning = false;
         scanBusy = false;
 
-        // Reset tampilan hasil
+
         $('#hasil').text('-');
         $('#keterangan').val('');
 
-        // Tunggu sebentar agar elemen reader siap
+
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Jalankan scanner kembali
+
         await mulaiScannerEdit();
 
       } catch (error) {
@@ -637,8 +635,6 @@
           editScanner = null;
         }
       });
-
-
 
 
     $(document).on('click', '.hapus', function() {
@@ -743,7 +739,7 @@
       <div class="col-md-4 mb-4">
         <div class="card h-100 shadow-sm border rounded-3 hover-shadow transition-all">  
           
-          <!-- Card Header Soft Blue -->
+      
           <div class="card-header border-bottom p-3">
             <div class="d-flex align-items-center gap-2">
               <div class=" p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
@@ -755,7 +751,7 @@
             </div>
           </div>
 
-          <!-- Card Body -->
+       
           <div class="card-body py-3">
             <!-- Tanggal & Departemen Info -->
             <div class="row mb-3 g-2 align-items-center">
@@ -769,13 +765,13 @@
                 <label class="text-muted d-block" style="font-size: 11px;">Departemen</label>
                 <span class="text-danger fw-bold d-block text-truncate" style="font-size: 11px;">${row.departemen}</span>
                 <span class="text-dark d-block text-truncate" style="font-size: 10px;">
-                  <i class="fa-regular fa-circle-user me-1"></i>Register: ${row.user}
+                  <i class="fa-regular fa-circle-user me-1"></i> : ${row.user}
                 </span>
               </div>
             </div>
 
             <!-- Box Deskripsi & Instruksi -->
-            <div class="p-3 border-dashed rounded-2 mb-3" style="background-color: #FFFAF0;">
+            <div class="p-3 border-dashed rounded-2 mb-3 " >
               <label class="text-danger small d-block fw-bold mb-1 text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">Deskripsi</label>
               <p class="card-text small mb-1 text-dark fst-italic">
                 "${row.kerusakan}"

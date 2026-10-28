@@ -1,10 +1,25 @@
+<!-- <form action="<?php echo base_url('instruksi/update/' . $detail['id']); ?>" method="post" enctype="multipart/form-data">
+    <div class="col-12">
+        <label for="keterangan" class="form-label font-kecil">No Instruksi </label>
+        <input type="text" name="keterangan" id="keterangan" class="form-control font-kecil" placeholder="No Instruksi" required>
+    </div>
+    <div class=" col-12">
+        <label for="file_upload" class="form-label font-kecil">Upload( Foto, Gambar) Instruksi</label>
+        <input type="file" name="file_upload[]" class="form-control font-kecil" id="file_upload" accept=".pdf,.xls,.xlsx,.jpg,.jpeg,.png,.mp4" multiple required>
+    </div>
+    <br>
+    <div class="col-4">
+        <button class="btn btn-primary w-100" type="submit">MULAI</button>
+    </div>
+</form> -->
+
 <form action="<?php echo base_url('instruksi/update/' . $detail['id']); ?>" method="post" enctype="multipart/form-data">
     <div class="col-12 mb-3">
         <label class="form-label">Scan Barcode</label>
 
         <div id="reader" style="width:100%; max-width:600px;"></div>
 
-        <p>Hasil scan: <span id="hasil">-</span></p>
+        <p class="text-danger">Hasil scan: <span class="text-primary" id="hasil">-</span></p>
 
 
     </div>

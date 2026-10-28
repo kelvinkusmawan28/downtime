@@ -43,7 +43,7 @@ class Mesinof_model extends CI_model
         $this->db->group_end();
 
 
-        $this->db->where('dept_kode', $filter_dept);
+        $this->db->where('dept_kode', $filter_dept,);
 
         $query = $this->db->get('downtime_spekmesin');
         return $query->result_array();
@@ -82,8 +82,6 @@ class Mesinof_model extends CI_model
     public function simpan()
     {
         $post = $this->input->post();
-        $left  = $this->input->post('left') ? 1 : 0;
-        $right = $this->input->post('right') ? 1 : 0;
         $id_ketof = $post['id'];
         $id_benang = $post['id_benang'];
 
@@ -94,8 +92,6 @@ class Mesinof_model extends CI_model
             'nomesin_id' => $post['mach_id'],
             'ket_id' =>   $id_ketof,
             'ket_tb' =>   $id_benang,
-            'left' =>   $left,
-            'right' =>   $right,
             'keterangan' =>   $post['keterangan'],
             'shift' => $post['shift'],
             'ket_on' => date('Y-m-d H:i'),

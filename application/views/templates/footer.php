@@ -41,12 +41,10 @@
 <script src="<?= base_url(); ?>/assets/datatabel/datatables.min.js"></script>
 <script src="<?= base_url(); ?>/assets/datatabel/datatables-init.js"></script>
 
-<script src="<?= base_url(); ?>/assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
 
 <!-- Page JS -->
 <script src="<?= base_url(); ?>/assets/js/dashboards-analytics.js"></script>
-
 
 <!-- Place this tag before closing body tag for github widget button. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>

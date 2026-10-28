@@ -13,13 +13,13 @@
     <div class="col-xxl-12 mb-6 order-0">
       <div class="d-flex align-items-start row">
         <div class="row g-4">
-          <?php if ($this->session->userdata('cekdowntime_pi') == 1) : ?>
+          <?php if ($this->session->userdata('cekdowntime_pi') == '1') : ?>
             <div class="col-sm-6 col-lg-3">
               <a href="<?= base_url('mesin'); ?>" class="text-decoration-none">
                 <div class="card h-100 shadow-sm custom-card" style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #f0f4f8);">
                   <div class="card-body p-4 d-flex flex-column align-items-center text-center">
 
-                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background:gold; border-radius: 18px;">
+                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background:darkorange; border-radius: 18px;">
                       <i class="fa-solid fa-screwdriver-wrench fs-2 text-white"></i>
                     </div>
 
@@ -37,13 +37,13 @@
               </a>
             </div>
           <?php endif; ?>
-          <?php if ($this->session->userdata('cekdowntime_gi') == 1) : ?>
+          <?php if ($this->session->userdata('cekdowntime_gi') == '1') : ?>
             <div class="col-sm-6 col-lg-3">
               <a href="<?= base_url('instruksi'); ?>" class="text-decoration-none">
                 <div class="card h-100 shadow-sm custom-card" style="border-radius: 20px; background: linear-gradient(145deg, #ffffff, #eefcfe);">
                   <div class="card-body p-4 d-flex flex-column align-items-center text-center">
 
-                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background:#0d6efd; border-radius: 18px;">
+                    <div class="icon-wrapper mb-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px; background: linear-gradient(45deg, #0dcaf0, #0aa2c0); border-radius: 18px;">
                       <i class="fa-solid fa-clipboard-list fs-2 text-white"></i>
                     </div>
 
@@ -60,7 +60,7 @@
                 </div>
               </a>
             </div>
-          <?php endif ?>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -179,7 +179,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="card" style="background-color: #F5F5F5;  border-bottom : 1px solid black;">
+              <div class="card" style="   border-bottom : 1px solid black;">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="card-body">
@@ -190,7 +190,7 @@
                   <div class="col-md-6">
                     <div class="card-body">
                       <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
-                        <h6> <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-light text-dark"><i class="fa fa-chart-line me-2"></i>Rekapulasi Mesin Stop</a></h6>
+                        <h6> <a href="<?= base_url('dashboard/grafik'); ?>" class="btn btn-sm btn-warning text-dark"><i class="fa fa-chart-line me-2"></i>Rekapulasi Mesin Stop</a></h6>
                       <?php endif ?>
                       <div id="summaryBarChart"></div>
                     </div>
@@ -202,7 +202,6 @@
                       </a>
                     </div>
                   <?php endif ?>
-
                 </div>
               </div>
             </div>
@@ -231,6 +230,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -253,7 +253,6 @@
       </div>
       <div class="modal-body">
         <div id="loadforminput-edit"></div>
-
       </div>
       <div class="modal-footer">
 
@@ -261,7 +260,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade" id="mesinof_detail" tabindex="-1">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -278,7 +276,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade" id="basicModal-detail" tabindex="-1">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -295,6 +292,8 @@
     </div>
   </div>
 </div>
+
+
 <div class="modal fade" id="modalWarning" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -324,7 +323,127 @@
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script>
 <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery-ui.min.js"></script>
 
+<script>
+  function renderChart(data) {
+    const chartElement = document.querySelector('#myCustomChart');
 
+    if (window.statisticsChart) {
+      window.statisticsChart.destroy();
+    }
+
+    const labels = data.map(item => "Mesin " + item.mach_no);
+    const series = data.map(item => parseInt(item.total_downtime));
+
+    const orderChartConfig = {
+      chart: {
+        height: 200,
+        type: 'donut',
+        offsetX: 15
+      },
+      labels: labels,
+      series: series,
+      colors: ['#28C76F', '#00cfe8', '#FF9F43', '#7367F0', '#EA5455'],
+      stroke: {
+        width: 5,
+        colors: ['#fff']
+      },
+      dataLabels: {
+        enabled: false
+      },
+      legend: {
+        show: false
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '75%',
+            labels: {
+              show: true,
+              name: {
+                fontSize: '14px'
+              },
+              value: {
+                fontSize: '18px',
+                formatter: function(val) {
+                  return parseInt(val);
+                }
+              },
+              total: {
+                show: true,
+                label: 'Total',
+                formatter: function(w) {
+                  let total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                  return total + '';
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    window.statisticsChart = new ApexCharts(chartElement, orderChartConfig);
+    window.statisticsChart.render();
+  }
+
+  $(document).ready(function() {
+    function loadKerusakanTerbanyak() {
+      const dept_id = $('#filter').val();
+      const bulan = $('#filter_bulan').val();
+      const tahun = $('#filter_tahun').val();
+
+      $.ajax({
+        url: "<?= base_url('dashboard/getKerusakan_Terbanyak') ?>",
+        type: "POST",
+        data: {
+          dept_id,
+          bulan,
+          tahun
+        },
+        success: function(response) {
+          const data = JSON.parse(response);
+
+
+          let html = '';
+          data.forEach(row => {
+            html += `
+            <li class="d-flex align-items-center mb-4">
+              <div class="avatar flex-shrink-0 me-3">
+              <span class="avatar-initial rounded bg-label-primary 
+                detail"
+                data-mesin="${row.nomesin_id}"
+                data-kerusakan="${row.kerusakan_id}"
+                style="cursor:pointer">
+                <i class="icon-base bx bx-cog"></i>
+              </span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Mesin ${row.mach_no} (${row.mach_name})</h6>
+                  <small>${row.kerusakan} (${row.departemen})</small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="mb-0">${row.total_downtime}x</h6>
+                </div>
+              </div>
+            </li>`;
+          });
+          $('#list-mesin-terbanyak').html(html);
+
+
+
+          renderChart(data);
+        }
+      });
+    }
+
+    $('#filter, #filter_bulan, #filter_tahun').on('change', function() {
+      loadKerusakanTerbanyak();
+    });
+
+    loadKerusakanTerbanyak();
+  });
+</script>
 
 <script>
   $(document).ready(function() {
@@ -332,8 +451,8 @@
       let dept = $("#filter").val();
 
       $("#filter_rr_box").toggle(dept == "RR");
-      $("#filter_sp_box").toggle(dept == "SP");
       $("#filter_nt_box").toggle(dept == "NT");
+      $("#filter_sp_box").toggle(dept == "SP");
       $("#filter_fn_box").toggle(dept == "FN");
       $("#filter_rc_box").toggle(dept == "AR");
     }
@@ -471,10 +590,9 @@
 
               html += `
               <div class="col-3 col-sm-2 col-md-2 col-lg-1 mb-2">
-               
 
-                <div class="card text-center edit d-flex flex-column justify-content-center" 
-                  style="background:${warna}; min-height: 20px; height: auto;" 
+               <div class="card text-center edit d-flex flex-column justify-content-center" 
+                  style="background:${warna}; min-height: 50px; height: auto;" 
                   data-mach="${mesin.mach_id}"
                   data-id="${mesin.id}"
                   title="Mesin ${mesin.mach_no} (${mesin.mach_name})\n${mesin.reason_left ?? ''}${mesin.jenis_left ? ' - ' + mesin.jenis_left : ''}">
@@ -545,6 +663,7 @@
 
           $("#summary_clr").html(summaryHtml);
 
+
           let labels = [];
           let series = [];
           let colors = [];
@@ -588,7 +707,7 @@
             plotOptions: {
               pie: {
                 donut: {
-                  size: '65%',
+                  size: '60%',
 
                   labels: {
                     show: true,
@@ -698,14 +817,13 @@
     });
 
     loadMesin();
-    // setInterval(function() {
-    //   loadMesin();
-    // }, 5000);
+
   });
 </script>
 
 <script>
   $(document).ready(function() {
+
     $('#basicModal').on('hidden.bs.modal', function() {
       $('#loadforminput').html("");
     });
@@ -713,8 +831,6 @@
     $('#basicModal-edit').on('hidden.bs.modal', function() {
       $('#loadforminput-edit').html("");
     });
-
-
     $(document).on('click', '.detail', function() {
       const mesin = $(this).data('mesin');
       const kerusakan = $(this).data('kerusakan');
@@ -730,8 +846,8 @@
         bulan: bulan,
         tahun: tahun
       });
-    });
 
+    });
     $(document).on('click', '.detail_mesinof', function(e) {
       const code = $(this).data('code');
       const dept_id = $('#filter').val();
@@ -779,7 +895,10 @@
       if (data) {
         $("#loadforminput-edit").html("");
         $("#basicModal-edit").modal("show");
+
         $("#loadforminput-edit").load("<?= base_url(); ?>dashboard/edit/" + encodeURIComponent(data), function() {
+
+
           $("#ketof").autocomplete({
 
             source: function(request, response) {
@@ -1109,6 +1228,7 @@
 
         });
 
+
       } else {
 
 
@@ -1279,7 +1399,6 @@
       }
 
     });
-
 
 
   });

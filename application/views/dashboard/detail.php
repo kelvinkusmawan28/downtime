@@ -1,7 +1,7 @@
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
         <thead>
-            <tr class="bg-info text-dark">
+            <tr class="bg-light text-dark">
                 <th>No</th>
                 <th>Tanggal</th>
                 <th>Mesin</th>

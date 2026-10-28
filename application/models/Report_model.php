@@ -24,7 +24,6 @@ class Report_model extends CI_model
         $this->db->where('downtime_spekmesin.dept_kode', $dept);
         return $this->db->get()->row_array();
     }
-
     public function deptsekarang($dept)
     {
         return $this->db->get_where('dept', ['dept_id' => $dept])->row_array();
@@ -82,6 +81,7 @@ class Report_model extends CI_model
         $this->db->order_by('downtime.tanggal', 'DESC');
         return $this->db->get()->result_array();
     }
+
     public function getExport_excel_all($bulan, $tahun, $dept_id)
     {
         $this->db->select('downtime.*, dept.dept_id, dept.departemen, downtime_spekmesin.mach_no, downtime_spekmesin.mach_name, downtime_kerusakan.remark, 
@@ -102,7 +102,9 @@ class Report_model extends CI_model
 
         $this->db->where('downtime.dept_id', $dept_id);
         $this->db->where('downtime.status', 1);
-        $this->db->order_by('downtime.tanggal', 'DESC');
+        $this->db->where('(downtime.ins != 1 OR downtime.ins IS NULL)');
+        $this->db->order_by('downtime.tanggal', 'ASC');
+        $this->db->order_by('downtime.nomesin_id', 'ASC');
         return $this->db->get()->result_array();
     }
 }

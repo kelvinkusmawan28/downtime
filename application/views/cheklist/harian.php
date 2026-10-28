@@ -38,6 +38,7 @@
                     <form action="<?= base_url('cheklist/simpan_harian') ?>" method="post">
                         <div class="row">
                             <div class="col-lg-9 mt-3">
+                                <h5><?= format_tanggal_indonesia($tgl_sekarang); ?></h5>
                                 <?php if (!$sudah_cek) : ?>
                                     <button type="button" id="btnAllOk" class="btn btn-sm btn-info text-dark mb-2">
                                         ✔ Semua OK
@@ -48,11 +49,14 @@
                                         ✔ Libur | Mesin OFF
                                     </button>
                                 <?php endif; ?>
+
                             </div>
 
                             <div class="col-lg-3 mb-2">
                                 <label class="font-kecil font-bold text-azure">Tanggal</label>
                                 <input type="date" name="tanggal" class="form-control font-kecil" id="tanggal" value="<?= $tgl_sekarang; ?>">
+                                <hr>
+
                             </div>
                         </div>
 

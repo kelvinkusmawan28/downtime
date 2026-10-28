@@ -54,8 +54,8 @@
                                         <td><?= $key['sp'] ?></td>
                                         <td>
 
-                                            <a href="#" data-id="<?= $key['id']; ?>" class="btn btn-success font-kecil edit text-dark">Edit</a>
-                                            <a class="btn btn-sm btn-danger font-kecil hapus" data-id="<?= $key['id']; ?>" data-url="<?= base_url('ketof/hapus/' . $key['id']); ?>">Hapus</a>
+                                            <a href="#" data-id="<?= $key['id']; ?>" class="btn btn-sm btn-info text-dark edit"> <i class="fa fa-edit"></i></a>
+                                            <a class="btn btn-sm btn-danger font-kecil text-dark hapus" data-id="<?= $key['id']; ?>" data-url="<?= base_url('ketof/hapus/' . $key['id']); ?>"> <i class="fa fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

@@ -100,30 +100,30 @@
     color: #0d6efd;
   }
 
-  .detail-progres {
-    border-left: 1px solid #e3f2fd;
-    border-bottom: 3px solid #e3f2fd;
-  }
+  /* .detail-progres {
+    border-left: 1px solid #2196F3;
+    border-bottom: 3px solid #2196F3;
+  } */
 
   .bg-waiting {
     background-color: #FEFD99;
     color: #777C6D;
   }
 
-  .detail-waiting {
-    border-left: 1px solid #FEFD99;
-    border-bottom: 3px solid #FEFD99;
-  }
+  /* .detail-waiting {
+    border-left: 1px solid #FFF449;
+    border-bottom: 3px solid #FFF449;
+  } */
 
   .bg-total {
     background-color: #D1D3D4;
     color: #EEEEEE;
   }
 
-  .detail-total {
+  /* .detail-total {
     border-left: 1px solid #D1D3D4;
     border-bottom: 3px solid #D1D3D4;
-  }
+  } */
 </style>
 <!-- Content -->
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -274,10 +274,10 @@
             if (mesin.clr != null) {
               warna = "rgb(" + mesin.clr + ")";
               mesin_perbaikan++;
-              //  tampilkan icon gear tapi DIAM (tidak putar)
+
               gearHtml = `<i class="fas fa-cog text-muted" style="font-size: 12px;"></i>`;
             } else {
-              // Jika jalan, gear BERPUTAR
+
               gearHtml = `<i class="fas fa-cog rotating-gear"></i>`;
             }
             let status = mesin.downtime_id ? 1 : 0;
@@ -285,7 +285,7 @@
              <div class="col-3 col-sm-2 col-md-1 mb-2 px-1"> <div class="card text-center mesin-card" style="background:${warna}">
                 <div class="card-body p-2"> <div class="mesin-no fw-bold text-dark viewdata" data-mach="${mesin.downtime_id}" data-status="${status}" >                    
                       <span>${mesin.mach_no} </span>  <br>
-                      <span style ="font-size : 8px ; "> ${mesin.name} </span>  
+                      <span style ="font-size : 7px ; "> ${mesin.name} </span>  
                  </div>
                     <div style="height: 15px; margin-top: 2px;"> ${gearHtml}
                     </div>
@@ -362,6 +362,9 @@
 
           });
           $("#summary_gm").html(summary_gm);
+
+
+
         }
 
       });
@@ -456,6 +459,7 @@
 
   }, 1000);
 </script>
+
 <script>
   function tampilJam() {
     const sekarang = new Date();
@@ -464,7 +468,7 @@
     let menit = sekarang.getMinutes();
     let detik = sekarang.getSeconds();
 
-    // Tambah angka 0 di depan jika < 10
+
     jam = jam < 10 ? '0' + jam : jam;
     menit = menit < 10 ? '0' + menit : menit;
     detik = detik < 10 ? '0' + detik : detik;
@@ -473,9 +477,9 @@
       jam + ':' + menit + ':' + detik;
   }
 
-  // Jalankan setiap 1 detik
+
   setInterval(tampilJam, 1000);
 
-  // Tampilkan langsung saat pertama load
+
   tampilJam();
 </script>

@@ -11,13 +11,11 @@
 
         </div>
         <div class="card-body font-kecil ">
-          <div class=" mt-2 row">
-            <div class="col-lg-5">
-              <?= $this->session->flashdata('message'); ?>
-            </div>
+          <div class="row">
             <div class="col-lg-12">
               <div class="row">
                 <div class="col-lg-12" style="text-align: right;">
+
                   <a id="btn-export-excel" class="btn btn-success btn-sm">
                     <i class="fa fa-file-excel-o"></i><span class="ml-1" style="color: aliceblue;">Export To Excel</span>
                   </a>
@@ -25,9 +23,6 @@
                   <a id="btn-export-pdf" class="btn btn-danger btn-sm" target="_blank">
                     <i class="fa fa-file-pdf-o"></i><span class="ml-1" style="color: aliceblue;">Export To PDF</span>
                   </a>
-
-
-
                 </div>
               </div>
             </div>
@@ -89,6 +84,7 @@
 
                   </select>
                 </div>
+
                 <div class="col-lg-3">
                   <label class="font-kecil font-bold text-azure text-primary">Semester</label>
                   <select name="filter_semester" id="filter_semester" class="form-select font-kecil mt-0">
@@ -97,6 +93,12 @@
                     <option value="2">Semester 2 (Jul–Des)</option>
                   </select>
                 </div>
+
+                <!-- <div class=" mt-3 col-lg-3">
+                  <a href="<?= base_url('downtime_mesin/reset_filter') ?>" class="btn btn-primary " style="font-size: 12px;">
+                    <i class="fa-solid fa-rotate me-2"></i> Bersihkan Filter
+                  </a>
+                </div> -->
               </div>
             </div>
           </div>
@@ -104,9 +106,9 @@
 
 
           <div class="table-responsive">
-            <table id="pengerjaanTable" class="tabel datatable">
+            <table id="pengerjaanTable" class="table table-bordered">
               <thead>
-                <tr>
+                <tr class="bg-primary text-dark">
                   <th>No</th>
                   <th>Departemen</th>
                   <th>Mesin</th>
@@ -146,9 +148,9 @@
           d.dept_id = $('#filter').val();
           d.bulan = $('#filter_bulan').val();
           d.tahun = $('#filter_tahun').val();
-          console.log('bulan:', d.bulan);
-          console.log('tahun:', d.tahun);
+          d.semester = $('#filter_semester').val();
         }
+
       },
       columns: [{
           data: 'no'
@@ -171,9 +173,10 @@
       ],
     });
 
-    $('#filter,#filter_bulan,#filter_tahun').change(function() {
+    $('#filter,#filter_bulan,#filter_tahun,#filter_semester').change(function() {
       table.ajax.reload();
     });
+
   });
 </script>
 

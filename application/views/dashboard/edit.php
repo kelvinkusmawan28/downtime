@@ -41,7 +41,7 @@
     <div class="mb-5" style="border-bottom: 1px solid darkslateblue; padding :5px ;">
         <span style="color: red; font-size : 16px;">INFO MESIN STOP</span> <br>
         <span style="color: black; font-size : 14px ;">Mesin : <?= $title['mach_no']; ?></span> <br>
-        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> | <span class="text-info"> <?= $title['lokasi'] ?? '';  ?> </span><br>
+        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> | <span class="text-danger"> <?= $title['lokasi'] ?? '';  ?> </span> <br>
         <span style="color: black; font-size : 14px ;">Departemen : <?= $title['departemen']; ?></span>
     </div>
     <div class="nav-align-top">
@@ -132,11 +132,6 @@
                             <input type="text" class="form-control font-kecil has-feedback-left" value="<?= format_tanggal_indonesia_waktu($mesinof['ket_on']); ?>" readonly>
                         </div>
                     </div>
-                    <!-- <div class="col-md-8">
-                        <label class="font-kecil">No Mesin</label>
-                        <input type="text" class="form-control font-kecil" value="Mesin <?= $mesinof['mach_no']; ?> - <?= $mesinof['mach_name']; ?>" readonly>
-                        <input type="hidden" name="mach_id" value="<?= $mesinof['nomesin_id']; ?>">
-                    </div> -->
                     <?php if ($mesinof['preventif_kode'] == 'RR-RING') :  ?>
                         <div class="row mt-2" style="border: solid 1px grey; padding :7px; border-radius :10px ;">
                             <div class="col-md-6">
@@ -407,7 +402,7 @@
     <div class="mb-5" style="border-bottom: 1px solid darkslateblue; padding :5px ;">
         <span style="color: red; font-size : 16px;">INFO MESIN STOP</span> <br>
         <span style="color: black; font-size : 14px ;">Mesin : <?= $title['mach_no']; ?></span> <br>
-        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> | <span class="text-info"> <?= $title['lokasi'] ?? '';  ?> </span> <br>
+        <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $title['mach_name']; ?></span> | <span class="text-danger"> <?= $title['lokasi'] ?? '';  ?> </span> <br>
         <span style="color: black; font-size : 14px ;">Departemen : <?= $title['departemen']; ?></span>
     </div>
 

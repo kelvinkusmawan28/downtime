@@ -6,20 +6,22 @@
     </div>
     <div class="row mt-3">
         <div class="col-lg-12">
-            <div class="card" style="border: 1px solid darkgray; ">
+            <div class="card" style="border: 3px solid darkgray; ">
                 <div class="row" style="margin: 5px;">
                     <div class="col-lg-2" style="text-align: center;">
                         <img src="<?= base_url(); ?>/assets/img/avatars/user.png" alt style="width: 80px; height: auto;" class="rounded-circle" />
                     </div>
                     <div class="col-lg-4" style="font-size: 14px;">
                         <input type="hidden" id="name" value="<?= $user['name']; ?>">
-                        <span class="card-title text-dark" style="border-bottom: 1px solid black;">Nama : <?= $user['name']; ?></span> <br>
-                        <span class="card-title text-dark" style="border-bottom: 1px solid black;">Departemen : <?= $user['departemen']; ?></span> <br>
-                        <span class="card-title text-dark" style="border-bottom: 1px solid black;">Jabatan : <?= $user['jabatan']; ?></span>
+                        <span class="card-title text-primary">Nama : <?= $user['name']; ?></span> <br>
+                        <span class="card-title text-primary">Departemen : <?= $user['departemen']; ?></span> <br>
+                        <span class="card-title text-primary">Jabatan : <?= $user['jabatan']; ?></span> <br>
+                        <span class="card-title text-primary">Kontak : <?= !empty($user['telp']) ? $user['telp'] : '-'; ?></span> <br>
+                        <span class="card-title text-primary">Email : <?= !empty($user['email']) ? $user['email'] : '-'; ?></span>
                     </div>
                     <div class="col-lg-3">
                         <label class="font-kecil font-bold text-azure text-primary">Bulan</label>
-                        <select name="filter_bulan" id="filter_bulan" class="form-select font-kecil mt-0">
+                        <select name="pi_bulan" id="pi_bulan" class="form-select font-kecil mt-0">
                             <option value="all" <?= $filter_bulan == 'all' ? 'selected' : '' ?>>Semua Bulan</option>
                             <?php foreach ($bulan_options as $bl) : ?>
                                 <?php if (!empty($bl['bulan']) && !empty($bl['nama_bulan'])) : ?>
@@ -34,7 +36,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label class="font-kecil font-bold text-azure  text-primary">Tahun</label>
-                        <select name="filter_tahun" id="filter_tahun" class="form-select font-kecil mt-0">
+                        <select name="pi_tahun" id="pi_tahun" class="form-select font-kecil mt-0">
                             <option value="all" <?= $filter_tahun == 'all' ? 'selected' : '' ?>>Semua Tahun</option>
                             <?php foreach ($tahun_options as $th) : ?>
                                 <option value="<?= $th['tahun']; ?>" <?= ($filter_tahun == $th['tahun'] || ($filter_tahun == 'all' && $thn_sekarang == $th['tahun'])) ? 'selected' : '' ?>>
@@ -51,12 +53,12 @@
             <div class="card h-100">
                 <div class="card-header ">
                     <div class="card-title mb-0">
-                        <h5 class="mb-1 me-2  text-primary"><?= $title; ?></h5>
+                        <h5 class="mb-1 me-2  text-danger"><?= $title; ?></h5>
                     </div>
                 </div>
                 <div class="card-body font-kecil ">
                     <div class="table-responsive">
-                        <table id="riwayatTable" class="tabel datatable">
+                        <table id="riwayatTable" class="tabel table-bordered">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -92,8 +94,8 @@
                 type: "POST",
                 data: function(d) {
                     d.name = $('#name').val();
-                    d.bulan = $('#filter_bulan').val();
-                    d.tahun = $('#filter_tahun').val();
+                    d.bulan = $('#pi_bulan').val();
+                    d.tahun = $('#pi_tahun').val();
                 }
             },
             columns: [{
@@ -124,7 +126,7 @@
 
         });
 
-        $('#name,#filter_bulan,#filter_tahun').change(function() {
+        $('#name,#pi_bulan,#pi_tahun').change(function() {
             table.ajax.reload();
         });
 

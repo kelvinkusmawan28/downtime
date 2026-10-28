@@ -26,7 +26,7 @@ class Kerusakan extends CI_Controller
             4 => 'SP',
             5 => 'UT',
             6 => 'GF',
-            7 => 'AR',
+            7 => 'AR'
         ];
         $this->load->view('templates/header', $data);
         $this->load->view('kerusakan/index', $data);
@@ -58,7 +58,7 @@ class Kerusakan extends CI_Controller
             4 => 'SP',
             5 => 'UT',
             6 => 'GF',
-            7 => 'AR',
+            7 => 'AR'
         ];
 
         $akses_dept = [];
@@ -106,23 +106,23 @@ class Kerusakan extends CI_Controller
             $row['departemen'] = $row['departemen'] == 'FINISHED GOODS' ? 'GUDANG' : $row['departemen'];
             $row['remark'] = $row['remark'];
             $id = $row['rusak_id'];
-            $dropdown = ' <li><a class=" btn btn-outline-success font-kecil edit" data-id="' . $id . '" href="#"> <i class="fa-solid fa-pencil me-2"></i> Edit Data</a></li>';
-            $dropdown .= '
-                    <li><a class="btn btn-outline-danger font-kecil hapus" data-id="' . $id . '" data-url="' . base_url() . 'kerusakan/hapus/' . $id . '" href="#"><i class="fa fa-trash me-2" ></i> Hapus Data</a></li>
-                ';
+
             $row['aksi'] = '
-                        <div class="dropdown font-kecil">
-                        
-                        <a class="btn btn-secondary dropdown-toggle font-kecil" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Aksi
-                        </a>
-                        <ul class="dropdown-menu">' . $dropdown . '</ul>
-                    </div>';
+                    <a href="#" 
+                            class="btn btn-sm btn-info text-dark edit" 
+                            title="Edit Data" 
+                            data-id="' . $id . '">
+                            <i class="fa fa-edit"></i>
+                     </a>
+                        <a class="btn btn-sm btn-danger btn-icon text-dark hapus"
+                            data-id="' . $id . '"
+                            data-url="' . base_url() . 'kerusakan/hapus/' . $id . '" href="#">
+                            <i class="fa fa-trash"></i>
+                        </a>';
         }
 
         // Penghitungan data yang difilter
         $this->db->from('downtime_kerusakan');
-
         $this->db->join('dept', 'dept.dept_id = downtime_kerusakan.dept_id');
 
         if ($dept_id !== 'all' && !empty($dept_id)) {

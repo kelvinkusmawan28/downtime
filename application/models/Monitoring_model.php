@@ -193,6 +193,7 @@ class Monitoring_model extends CI_model
 
         return $this->db->get()->result();
     }
+
     public function getSummary_pi($dept)
     {
         $hakdowntime = $this->session->userdata('hakdowntime');

@@ -39,7 +39,6 @@ class Monitoring extends CI_Controller
 
     public function getMesinByDept()
     {
-
         $dept = $this->input->post('dept');
         $tanggal = $this->input->post('tanggal');
         $this->session->set_userdata('dept', $dept);

@@ -60,9 +60,9 @@ class Mesin_model extends CI_model
         $this->db->like('mach_no', $inputan);
         $this->db->or_like('mach_name', $inputan);
         $this->db->group_end();
+        $this->db->where('dept_kode', $filter_dept);
 
-
-        $this->db->like('mach_id', $filter_dept, 'after');
+        // $this->db->like('mach_id', $filter_dept, 'after');
 
         $query = $this->db->get('downtime_spekmesin');
         return $query->result_array();
@@ -83,8 +83,8 @@ class Mesin_model extends CI_model
         $this->db->group_start();
         $this->db->like('remark', $kerusakan);
         $this->db->group_end();
-        $this->db->where('dept_id', $filter_dept);
-
+        $this->db->like('dept_id', $filter_dept);
+        $this->db->where('data_ok', 1);
 
         $query = $this->db->get('downtime_kerusakan');
         return $query->result_array();
@@ -165,6 +165,7 @@ class Mesin_model extends CI_model
         $this->db->where('id', $data['id']);
         return $this->db->update('downtime', $data);
     }
+
     public function UpdateData_keterangan()
     {
         $data = $_POST;
@@ -213,6 +214,12 @@ class Mesin_model extends CI_model
         return $this->db->get_where('downtime_tindakan', ['id' => $id])->row_array();
     }
 
+    // public function UpdateData_kesimpulan()
+    // {
+    //     $data = $_POST;
+    //     $this->db->where('id', $data['id']);
+    //     return $this->db->update('downtime', $data);
+    // }
 
     public function hapus_tindakan($id)
     {
@@ -235,12 +242,14 @@ class Mesin_model extends CI_model
         return $this->db->count_all_results();
     }
 
+
+
     public function CekMesin_update($mesin)
     {
         $this->db->from('downtime');
         $this->db->where('nomesin_id', $mesin);
         $this->db->where('ins IS NULL', null, false);
-        $this->db->where_in('status', 0);
+        $this->db->where('status', 0);
         return $this->db->count_all_results();
     }
     public function getExport_Pdf($bulan, $tahun)

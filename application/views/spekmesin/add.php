@@ -7,6 +7,7 @@
     <div class="col-12">
         <label for="mach_id" class="form-label font-kecil">Spek Mesin </label>
         <input type="text" name="mach_name" class="form-control font-kecil" id="mach_name" placeholder="Spek Mesin" required>
+        <input type="hidden" name="dept_kode" class="form-control font-kecil" id="dept_kode" value="<?= $dept; ?>" required>
     </div>
     <br>
     <div class="col-3">

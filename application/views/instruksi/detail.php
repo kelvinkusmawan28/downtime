@@ -8,7 +8,7 @@
   }
 
   .card-header-status {
-    background: #e3f2fd;
+    background: #90CAF9;
     padding: 15px 25px;
     border-bottom: 1px solid #eee;
     display: flex;
@@ -49,7 +49,7 @@
 
   .status-badge {
     padding: 6px 16px;
-    border-radius: 50px;
+    border-radius: 5px;
     font-size: 0.75rem;
     font-weight: 800;
   }
@@ -77,24 +77,27 @@
     </div>
   </div>
   <div class="row mt-4">
+    <div class="col-lg-8">
+      <?= $this->session->flashdata('message'); ?>
+    </div>
     <div class="col-lg-12">
       <div class="card modern-card">
 
         <div class="card-header-status">
           <div class="d-flex align-items-center">
-            <span class="me-3" style="font-size: 1.2rem;">🎰</span>
+            <span class="me-3" style="font-size: 1.2rem;"> <i class="fa-solid fa-barcode fa-2x text-dark"></i></span>
             <div>
-              <h6 class="mb-0 text-dark">Mesin <?= $detail['mach_no']; ?></h6>
+              <h5 class="mb-0 text-dark">Mesin <?= $detail['mach_no']; ?></h5>
               <small class="text-dark"><?= $detail['mach_name']; ?></small>
             </div>
           </div>
           <div>
             <?php if ($detail['status'] == 0) : ?>
-              <span class="badge status-badge bg-warning shadow-sm text-dark">PROGRESS..</span>
+              <span class="badge status-badge bg-light shadow-sm text-dark">PROGRESS..</span>
             <?php elseif ($detail['status'] == 2) : ?>
-              <span class="badge status-badge bg-info shadow-sm text-dark">ANTRIAN..</span>
+              <span class="badge status-badge bg-light shadow-sm text-dark">ANTRIAN..</span>
             <?php else : ?>
-              <span class="badge status-badge bg-danger shadow-sm text-dark">CLOSE</span>
+              <span class="badge status-badge bg-light shadow-sm text-danger">CLOSE</span>
             <?php endif; ?>
           </div>
         </div>
@@ -122,7 +125,7 @@
                     <div class="value-text value-highlight">
                       <?= $detail['ins_kode']; ?> - <?= $detail['remark']; ?>
                     </div>
-                    <div class="text-muted small mt-1">
+                    <div class="text-muted small mt-1  text-uppercase">
                       Instruksi : <?= $detail['keterangan'] ?: '-'; ?>
                     </div>
                   </div>
@@ -285,9 +288,9 @@
               </div>
               <?php if ($this->session->userdata('cekdowntime') == 1) : ?>
                 <?php if ($detail['status'] == 0) : ?>
-                  <div class="row mt-3">
+                  <div class="row">
                     <div class="col-md-4" style="text-align: center;">
-                      <a href="<?= base_url('instruksi/status_ok/' . $id_halaman); ?>" class="btn btn-sm btn-success text-dark"> SELESAI</a>
+                      <a href="<?= base_url('instruksi/status_ok/' . $id_halaman); ?>" class="btn btn-sm btn-danger text-dark"> SELESAI</a>
                       <a href="#" data-id="<?= $detail['id']; ?>" data-url="<?= base_url('instruksi/hapus_tindakan/' . $id_halaman); ?>" class="btn btn-warning btn-sm text-dark status_cansel" title="Reset Data">
                         Reset Data
                       </a>
@@ -314,7 +317,6 @@
 
 </div>
 <!-- / Content -->
-
 <div class="modal modal-blur fade" id="modal-status_cansel" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -345,6 +347,7 @@
     </div>
   </div>
 </div>
+
 
 
 
@@ -494,7 +497,6 @@
       $("#btn-okk").attr("href", url);
       $("#modal-status_cansel").modal("show");
     });
-
 
   });
 </script>

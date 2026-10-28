@@ -132,7 +132,8 @@ class Mesin_of extends CI_Controller
             } else {
                 $row['shift'] = '<span style="color:black;">' . 'MALAM' . '</span>';
             }
-            $row['aksi'] = '
+            if ($row['user_by'] == $this->session->userdata('id')) {
+                $row['aksi'] = '
             <a href="#" 
                     class="btn btn-sm btn-info edit" 
                     title="Edit Data" 
@@ -144,6 +145,10 @@ class Mesin_of extends CI_Controller
                     data-url="' . base_url() . 'mesin_of/hapus/' . $row['id'] . '" href="#">
                     <i class="fa fa-trash"></i>
                 </a>';
+            } else {
+
+                $row['aksi'] = '-';
+            }
         }
 
         // Penghitungan data yang difilter

@@ -38,7 +38,9 @@
                     <form action="<?= base_url('cheklist/simpan_tahunan') ?>" method="post">
                         <div class="row">
                             <div class="col-lg-9 mt-3">
+                                <h5><?= format_tanggal_indonesia($tgl_sekarang); ?></h5>
                                 <?php if (!$sudah_cek) : ?>
+
                                     <button type="button" id="btnAllOk" class="btn btn-sm btn-info text-dark mb-2">
                                         ✔ Semua OK
                                     </button>

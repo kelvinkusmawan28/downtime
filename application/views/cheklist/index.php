@@ -70,16 +70,16 @@
                     <div class="table-responsive">
                         <table id="cheklistTable" class="table table-bordered">
                             <thead>
-                                <tr class="font-kecil">
-                                    <th>Kode Mesin</th>
-                                    <th>Mesin</th>
-                                    <th>Harian</th>
-                                    <th>Mingguan</th>
-                                    <th>Bulanan</th>
-                                    <th>Per 3 Bulan</th>
-                                    <th>Per 6 Bulan</th>
-                                    <th>Tahunan</th>
-                                    <th>Aksi</th>
+                                <tr class="font-kecil bg-info ">
+                                    <th class="text-dark">Kode Mesin</th>
+                                    <th class="text-dark">Mesin</th>
+                                    <th class="text-dark">Harian</th>
+                                    <th class="text-dark">Mingguan</th>
+                                    <th class="text-dark">Bulanan</th>
+                                    <th class="text-dark">Per 3 Bulan</th>
+                                    <th class="text-dark">Per 6 Bulan</th>
+                                    <th class="text-dark">Tahunan</th>
+                                    <th class="text-dark">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>

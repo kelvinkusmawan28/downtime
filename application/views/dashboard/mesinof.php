@@ -81,7 +81,7 @@
 
     <table class="table table-striped table-bordered">
         <thead>
-            <tr>
+            <tr class="bg-light text-dark">
                 <th style="color: black;">No</th>
                 <th style="color: black;">Mesin</th>
                 <th style="color: black;">Total</th>

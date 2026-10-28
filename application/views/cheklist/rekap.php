@@ -49,19 +49,18 @@
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body row g-0 align-items-center">
 
-                                        <!-- Logo -->
+
                                         <div class="col-sm-2 text-center">
                                             <img src="<?= base_url(); ?>/assets/img/avatars/new.png" style="width: 110px;">
                                         </div>
 
-                                        <!-- Info Mesin -->
+
                                         <div class="col-sm-3">
                                             <p class="mb-1 text-dark"><b>Mesin :</b> <?= $header['mach_no']; ?></p>
                                             <p class="mb-1 text-dark"><b>Spek :</b> <?= $header['mach_name']; ?></p>
                                             <p class="mb-0 text-dark"><b>Departemen :</b> <?= $header['departemen']; ?></p>
                                         </div>
 
-                                        <!-- Progress Checklist -->
                                         <div class="col-sm-7 d-flex flex-column gap-2 ps-sm-4">
 
                                             <?php foreach ($rekap as $r) :
@@ -196,7 +195,7 @@
                                                                 </td>
 
                                                                 <td style="width:20%;">
-                                                                    <table class="table table-bordered table-sm" style="font-size:11px; margin-bottom:0;">
+                                                                    <table class="table table-bordered table-sm" style="font-size:12px; margin-bottom:0;">
                                                                         <tr>
                                                                             <td>No. Dok</td>
                                                                             <td>: FM-UT-02 U</td>
@@ -213,7 +212,7 @@
                                                                 </td>
                                                             </tr>
 
-                                                            <tr style="font-size: 11px;">
+                                                            <tr style="font-size: 12px;">
                                                                 <td><strong>NO. MESIN : <?= $header['mach_no']; ?></strong></td>
                                                                 <td>
                                                                     <div class="row">
@@ -235,8 +234,8 @@
                                                         <table class="table table-bordered h-table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th style="font-size:10px;">ITEM PEMERIKSAAN</th>
-                                                                    <th style="font-size:10px;">STANDAR</th>
+                                                                    <th style="font-size:11px;">ITEM PEMERIKSAAN</th>
+                                                                    <th style="font-size:11px;">STANDAR</th>
                                                                     <?php for ($d = 1; $d <= 31; $d++) :
                                                                         $day = str_pad($d, 2, '0', STR_PAD_LEFT);
                                                                     ?>
@@ -247,7 +246,7 @@
 
                                                             <tbody>
                                                                 <?php foreach ($items as $it) : ?>
-                                                                    <tr style="font-size: 10px;">
+                                                                    <tr style="font-size: 11px;">
                                                                         <td><?= $it['nama_item'] ?></td>
                                                                         <td><?= $it['standar'] ?></td>
 
@@ -266,7 +265,7 @@
 
 
                                                     </div>
-                                                    <div class="row" style="border: 1px solid grey; font-size:11px;">
+                                                    <div class="row" style="border: 1px solid grey; font-size:12px;">
                                                         <div class="col-md-6" style="border-right: 1px solid grey;">
                                                             <span style="border-bottom: 1px solid grey;">JADWAL PEMERIKSAAN : </span>
                                                             <div class="row">
@@ -314,7 +313,7 @@
                                                         </td>
 
                                                         <td style="width:25%;">
-                                                            <table class="table table-bordered table-sm" style="font-size:11px; margin-bottom:0;">
+                                                            <table class="table table-bordered table-sm" style="font-size:12px; margin-bottom:0;">
                                                                 <tr>
                                                                     <td>No. Dok</td>
                                                                     <td>: FM-UT-02 U</td>
@@ -331,7 +330,7 @@
                                                         </td>
                                                     </tr>
 
-                                                    <tr style="font-size: 11px;">
+                                                    <tr style="font-size: 12px;">
                                                         <td><strong>NO. MESIN :<?= $header['mach_no']; ?> </strong> </td>
                                                         <td>
                                                             <div class="row">
@@ -350,20 +349,20 @@
                                                 <table class="table table-bordered m-table">
                                                     <thead>
                                                         <tr>
-                                                            <th style="font-size:10px;">Item Pemeriksaan</th>
-                                                            <th style="font-size:10px;">standar</th>
+                                                            <th style="font-size:11px;">Item Pemeriksaan</th>
+                                                            <th style="font-size:11px;">standar</th>
                                                             <?php foreach ($headerTanggal as $tgl) : ?>
-                                                                <th style="text-align: center; font-size:10px;"><?= $tgl ?></th>
+                                                                <th style="text-align: center; font-size:11px;"><?= $tgl ?></th>
                                                             <?php endforeach; ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($items_mingguan as $key) : ?>
                                                             <tr>
-                                                                <td style="font-size:10px;"><?= $key['nama_item'] ?></td>
-                                                                <td style="font-size:10px;"><?= $key['standar'] ?></td>
+                                                                <td style="font-size:11px;"><?= $key['nama_item'] ?></td>
+                                                                <td style="font-size:11px;"><?= $key['standar'] ?></td>
                                                                 <?php foreach ($headerTanggal as $tgl) : ?>
-                                                                    <td class="text-center" style="font-size:10px;">
+                                                                    <td class="text-center" style="font-size:11px;">
                                                                         <?= $matrix_mingguan[$key['id']][$tgl] ?? '-' ?>
                                                                     </td>
                                                                 <?php endforeach; ?>
@@ -372,7 +371,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div class="row" style="border: 1px solid grey; font-size:11px;">
+                                            <div class="row" style="border: 1px solid grey; font-size:12px;">
                                                 <div class="col-md-6" style="border-right: 1px solid grey;">
                                                     <span style="border-bottom: 1px solid grey;">JADWAL PEMERIKSAAN : </span>
                                                     <div class="row">
@@ -417,7 +416,7 @@
                                                         </td>
 
                                                         <td style="width:25%;">
-                                                            <table class="table table-bordered table-sm" style="font-size:11px; margin-bottom:0;">
+                                                            <table class="table table-bordered table-sm" style="font-size:12px; margin-bottom:0;">
                                                                 <tr>
                                                                     <td>No. Dok</td>
                                                                     <td>: FM-UT-02 U</td>
@@ -434,7 +433,7 @@
                                                         </td>
                                                     </tr>
 
-                                                    <tr style="font-size: 11px;">
+                                                    <tr style="font-size: 12px;">
                                                         <td><strong>NO. MESIN : <?= $header['mach_no']; ?></strong></td>
                                                         <td>
                                                             <div class="row">
@@ -453,20 +452,20 @@
                                                 <table class="table table-bordered b-table">
                                                     <thead>
                                                         <tr>
-                                                            <th style="font-size: 10px;">Item Pemeriksaan</th>
-                                                            <th style="font-size: 10px;">Standar</th>
+                                                            <th style="font-size: 11px;">Item Pemeriksaan</th>
+                                                            <th style="font-size: 11px;">Standar</th>
                                                             <?php foreach ($headerBulanan as $bulan) : ?>
-                                                                <th style="text-align: center; font-size:10px"><?= date('F', mktime(0, 0, 0, $bulan, 1)) ?></th>
+                                                                <th style="text-align: center; font-size:11px"><?= date('F', mktime(0, 0, 0, $bulan, 1)) ?></th>
                                                             <?php endforeach; ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($items_bulanan as $bulanan) : ?>
                                                             <tr>
-                                                                <td style="font-size: 10px;"><?= $bulanan['nama_item'] ?></td>
-                                                                <td style="font-size: 10px;"><?= $bulanan['standar'] ?></td>
+                                                                <td style="font-size: 11px;"><?= $bulanan['nama_item'] ?></td>
+                                                                <td style="font-size: 11px;"><?= $bulanan['standar'] ?></td>
                                                                 <?php foreach ($headerBulanan as $bulan) : ?>
-                                                                    <td class="text-center" style="font-size: 10px;">
+                                                                    <td class="text-center" style="font-size: 11px;">
                                                                         <?= $matrix_bulanan[$bulanan['id']][$bulan] ?? '-' ?>
                                                                     </td>
                                                                 <?php endforeach; ?>
@@ -475,7 +474,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div class="row" style="border: 1px solid grey; font-size:11px">
+                                            <div class="row" style="border: 1px solid grey; font-size:12px">
                                                 <div class="col-md-6" style="border-right: 1px solid grey;">
                                                     <span style="border-bottom: 1px solid grey;">JADWAL PEMERIKSAAN : </span>
                                                     <div class="row">
@@ -520,7 +519,7 @@
                                                         </td>
 
                                                         <td style="width:25%;">
-                                                            <table class="table table-bordered" style="font-size:11px; margin-bottom:0;">
+                                                            <table class="table table-bordered" style="font-size:12px; margin-bottom:0;">
                                                                 <tr>
                                                                     <td>No. Dok</td>
                                                                     <td>: FM-UT-02 U</td>
@@ -536,7 +535,7 @@
                                                             </table>
                                                         </td>
                                                     </tr>
-                                                    <tr style="font-size: 11px;">
+                                                    <tr style="font-size: 12px;">
                                                         <td><strong>NO. MESIN :<?= $header['mach_no']; ?> </strong> </td>
                                                         <td>
                                                             <div class="row">
@@ -555,20 +554,20 @@
                                                 <table class="table table-bordered tigab-table">
                                                     <thead>
                                                         <tr>
-                                                            <th style="font-size: 10px;">Item Pemeriksaan</th>
-                                                            <th style="font-size: 10px;">Standar</th>
+                                                            <th style="font-size: 11px;">Item Pemeriksaan</th>
+                                                            <th style="font-size: 11px;">Standar</th>
                                                             <?php foreach ($header_tigabulan as $tigabulan) : ?>
-                                                                <th style="text-align: center; font-size:10px;"><?= date('F', mktime(0, 0, 0, $tigabulan, 1)) ?></th>
+                                                                <th style="text-align: center; font-size:11px;"><?= date('F', mktime(0, 0, 0, $tigabulan, 1)) ?></th>
                                                             <?php endforeach; ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($items_tigabulan as $tiga_bulan) : ?>
                                                             <tr>
-                                                                <td style="font-size: 10px;"><?= $tiga_bulan['nama_item'] ?></td>
-                                                                <td style="font-size: 10px;"><?= $tiga_bulan['standar'] ?></td>
+                                                                <td style="font-size: 11px;"><?= $tiga_bulan['nama_item'] ?></td>
+                                                                <td style="font-size: 11px;"><?= $tiga_bulan['standar'] ?></td>
                                                                 <?php foreach ($header_tigabulan as $bulan) : ?>
-                                                                    <td class="text-center" style="font-size: 10px;">
+                                                                    <td class="text-center" style="font-size: 11px;">
                                                                         <?= $matrix_tigabulan[$tiga_bulan['id']][$bulan] ?? '-' ?>
                                                                     </td>
                                                                 <?php endforeach; ?>
@@ -577,7 +576,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div class="row" style="border: 1px solid grey; font-size:11px;">
+                                            <div class="row" style="border: 1px solid grey; font-size:12px;">
                                                 <div class="col-md-6" style="border-right: 1px solid grey;">
                                                     <span style="border-bottom: 1px solid grey;">JADWAL PEMERIKSAAN : </span>
                                                     <div class="row">
@@ -622,7 +621,7 @@
                                                         </td>
 
                                                         <td style="width:25%;">
-                                                            <table class="table table-bordered table-sm" style="font-size:11px; margin-bottom:0;">
+                                                            <table class="table table-bordered table-sm" style="font-size:12px; margin-bottom:0;">
                                                                 <tr>
                                                                     <td>No. Dok</td>
                                                                     <td>: FM-UT-02 U</td>
@@ -638,7 +637,7 @@
                                                             </table>
                                                         </td>
                                                     </tr>
-                                                    <tr style="font-size: 11px;">
+                                                    <tr style="font-size: 12px;">
                                                         <td><strong>NO. MESIN : <?= $header['mach_no']; ?></strong></td>
                                                         <td>
                                                             <div class="row">
@@ -660,17 +659,17 @@
                                                             <th style="font-size: 10px;">Item Pemeriksaan</th>
                                                             <th style="font-size: 10px;">Standar</th>
                                                             <?php foreach ($header_enambulan as $enambulan) : ?>
-                                                                <th style="text-align: center; font-sie:10px"><?= date('F', mktime(0, 0, 0, $enambulan, 1)) ?></th>
+                                                                <th style="text-align: center; font-sie:11px"><?= date('F', mktime(0, 0, 0, $enambulan, 1)) ?></th>
                                                             <?php endforeach; ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($items_enambulan as $enam_bulan) : ?>
                                                             <tr>
-                                                                <td style="font-=size:10px"><?= $enam_bulan['nama_item'] ?></td>
-                                                                <td style="font-size:10px"><?= $enam_bulan['standar'] ?></td>
+                                                                <td style="font-=size:11px"><?= $enam_bulan['nama_item'] ?></td>
+                                                                <td style="font-size:11px"><?= $enam_bulan['standar'] ?></td>
                                                                 <?php foreach ($header_enambulan as $bulan) : ?>
-                                                                    <td class="text-center" style="font: size 10px;">
+                                                                    <td class="text-center" style="font: size 11px;">
                                                                         <?= $matrix_enambulan[$enam_bulan['id']][$bulan] ?? '-' ?>
                                                                     </td>
                                                                 <?php endforeach; ?>
@@ -680,7 +679,7 @@
                                                 </table>
 
                                             </div>
-                                            <div class="row" style="border: 1px solid grey; font-size:11px">
+                                            <div class="row" style="border: 1px solid grey; font-size:12px">
                                                 <div class="col-md-6" style="border-right: 1px solid grey;">
                                                     <span style="border-bottom: 1px solid grey;">JADWAL PEMERIKSAAN : </span>
                                                     <div class="row">
@@ -725,7 +724,7 @@
                                                         </td>
 
                                                         <td style="width:25%;">
-                                                            <table class="table table-bordered table-sm" style="font: size 11px; margin-bottom:0;">
+                                                            <table class="table table-bordered table-sm" style="font: size 12px; margin-bottom:0;">
                                                                 <tr>
                                                                     <td>No. Dok</td>
                                                                     <td>: FM-UT-02 U</td>
@@ -742,7 +741,7 @@
                                                         </td>
                                                     </tr>
 
-                                                    <tr style="font-size: 11px;">
+                                                    <tr style="font-size: 12px;">
                                                         <td><strong>NO. MESIN :</strong> <?= $header['mach_no']; ?></td>
                                                         <td>
                                                             <div class="row">
@@ -761,20 +760,20 @@
                                                 <table class="table table-bordered th-table">
                                                     <thead>
                                                         <tr>
-                                                            <th style="font-size: 10px;">Item Pemeriksaan</th>
-                                                            <th style="font-size: 10px;">Standar</th>
+                                                            <th style="font-size: 11px;">Item Pemeriksaan</th>
+                                                            <th style="font-size: 11px;">Standar</th>
                                                             <?php foreach ($header_tahunan as $tahunan) : ?>
-                                                                <th style="text-align: center; font-size:10px"><?= date('F', mktime(0, 0, 0, $tahunan, 1)) ?></th>
+                                                                <th style="text-align: center; font-size:11px"><?= date('F', mktime(0, 0, 0, $tahunan, 1)) ?></th>
                                                             <?php endforeach; ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($items_tahunan as $tahun) : ?>
                                                             <tr>
-                                                                <td style="font-size:10px"><?= $tahun['nama_item'] ?></td>
-                                                                <td style="font-size: 10px;"><?= $tahun['standar'] ?></td>
+                                                                <td style="font-size:11px"><?= $tahun['nama_item'] ?></td>
+                                                                <td style="font-size: 11px;"><?= $tahun['standar'] ?></td>
                                                                 <?php foreach ($header_tahunan as $bulan) : ?>
-                                                                    <td class="text-center" style="font-size: 10px;">
+                                                                    <td class="text-center" style="font-size: 11px;">
                                                                         <?= $matrix_tahunan[$tahun['id']][$bulan] ?? '-' ?>
                                                                     </td>
                                                                 <?php endforeach; ?>
@@ -784,7 +783,7 @@
                                                 </table>
 
                                             </div>
-                                            <div class="row" style="border: 1px solid grey; font-size:11px">
+                                            <div class="row" style="border: 1px solid grey; font-size:12px">
                                                 <div class="col-md-6" style="border-right: 1px solid grey;">
                                                     <span style="border-bottom: 1px solid grey;">JADWAL PEMERIKSAAN : </span>
                                                     <div class="row">

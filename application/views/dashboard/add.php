@@ -1,7 +1,7 @@
 <div class="mb-5" style="border-bottom: 1px solid darkslateblue; padding :5px ;">
     <span style="color: red; font-size : 16px;">INFO MESIN STOP</span> <br>
     <span style="color: black; font-size : 14px ;">Mesin : <?= $dept_id['mach_no']; ?></span> <br>
-    <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $dept_id['mach_name']; ?> </span> | <span class="text-info"> <?= $dept_id['lokasi'] ?? '';  ?> </span>
+    <span style="color: black; font-size : 14px ;">Spek Mesin : <?= $dept_id['mach_name']; ?></span> | <span class="text-danger"> <?= $dept_id['lokasi'] ?? '';  ?>
 </div>
 <div class="nav-align-top ">
     <ul class="nav nav-pills mb-4 nav-fill" role="tablist">
@@ -200,8 +200,6 @@
     </div>
 </div>
 
-
-
 <div class="modal modal-blur fade" id="modal-error" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -224,7 +222,7 @@
         </div>
     </div>
 </div>
-<!-- <script src="<?= base_url(); ?>/assets/vendor/libs/jquery/jquery.js"></script> -->
+
 <script>
     $(document).ready(function() {
 
@@ -312,6 +310,7 @@
 
     });
 </script>
+
 <script>
     $("form").on("submit", function(e) {
         const nomesin = $("#nomesin").val();
